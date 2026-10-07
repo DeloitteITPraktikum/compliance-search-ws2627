@@ -88,8 +88,6 @@ def normalize_article(doc_type_or_family, raw):
 def fetch_documents():
     """All records of the document API, tombstones included."""
     url = os.environ["DOCS_URL"].rstrip("/") + "/documents"
-    if os.environ.get("DOCS_AS_OF"):
-        url += "?as_of=" + os.environ["DOCS_AS_OF"]
     request = urllib.request.Request(url, headers={"Authorization": f"Bearer {os.environ['KEY']}"})
     with urllib.request.urlopen(request, timeout=30) as response:
         return json.load(response)["documents"]
