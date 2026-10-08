@@ -2,12 +2,11 @@
 
 ## Who to ask
 
-- TODO(contact): channel for questions the whole team can learn from
-- TODO(contact): technical contact for keys, the model gateway, the document API, the grader and the corpus
-- TODO(contact): organisational contact for dates, rooms, the university side and how the course runs
+- Technical contact, for keys, the model gateway, the document API, the grader and the corpus: Pascal Göllner, pgoellner@deloitte.de
+- Organisational contact, for dates, rooms, the university side and how the course runs: Benedikt Völker, bvoelker@deloitte.de
+- Reviews: Max Bosch, mbosch@deloitte.de
 
-Ask in the channel where you can, so the whole team sees the answer.
-Never post a key, not in the channel and not in an issue.
+Never send a key, not by mail and not in an issue.
 
 ## A service is down
 
@@ -29,7 +28,7 @@ The first prints `{"status":"ok"}`, the second `"I'm alive!"`.
 | `503` from the document API | It could not reach the gateway to check your key. Try again in a minute. |
 | The document API is down | Keep working on the PDFs and metadata you already synced. Your sync catches up on its next run. |
 | The gateway is down | Use the [fallback for local work](07-stack.md#the-stack-we-recommend). Do not write fallback vectors into your real index. |
-| Down for more than a few minutes | Tell us in the channel. |
+| Down for more than a few minutes | Mail the technical contact. |
 
 Your app should stay up when our services are not. Catch the errors and show a clear message.
 

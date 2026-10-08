@@ -140,10 +140,11 @@ call = response.choices[0].message.tool_calls[0]
 print(call.function.name, call.function.arguments)
 ```
 
-> **Warning: The one known limit of `glm-5-3-flash-fast`**
+> **Warning: The one known limit of both `glm` names**
 >
-> A tool call without streaming fails with HTTP 500 and the message `litellm.APIConnectionError: 'content'`.
-> Stream the call, or use `glm-5-3-flash`.
+> With low reasoning effort, a tool call without streaming fails with HTTP 500 and the message `litellm.APIConnectionError: 'content'`.
+> `glm-5-3-flash-fast` runs at low effort by default. `glm-5-3-flash` does so only when you send `reasoning_effort="low"`.
+> With low reasoning effort, stream your tool calls, or use default effort: `glm-5-3-flash` with no `reasoning_effort`.
 
 With streaming, the tool call arrives in pieces. Join the `arguments` strings:
 

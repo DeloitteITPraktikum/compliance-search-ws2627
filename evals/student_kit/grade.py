@@ -5,9 +5,11 @@
                     [--judge-model gpt-6-1-sol] [--out report.json]
 
 The grader checks your answers against the corpus as it is now. It reads
-`id`, `family_id` and `status` of every document from the document API
-(DOCS_URL), with your own key (KEY). A citation of a document that is not
-`active` at this moment fails the currency check.
+every document record from the document API (DOCS_URL), with your own key
+(KEY). A citation fails the currency check if its document is not `active` at
+this moment, if the document's `outdated_by` is not empty, or if it names an
+article that a corrigendum changes and the answer does not cite that
+corrigendum too.
 
 The judge runs through the model gateway (GATEWAY_URL) with the same key. Leave
 GATEWAY_URL unset to skip it. Staff grade with a stronger judge model, so your
@@ -29,13 +31,13 @@ def run(url, gold_path, judge_model=None):
     items = [json.loads(line) for line in Path(gold_path).read_text(encoding="utf-8").splitlines() if line.strip()]
     documents = fetch_documents()
     families = {doc["id"]: doc["family_id"] for doc in documents}
-    statuses = {doc["id"]: doc["status"] for doc in documents}
     corrigenda = {doc["id"] for doc in documents if doc.get("doc_type") == "corrigendum"}
     gateway = os.environ.get("GATEWAY_URL")
     judge_fn = partial(judge, model=judge_model, gateway_url=gateway, key=os.environ["KEY"]) if judge_model and gateway else None
     return {"url": url, "gold": str(gold_path),
             "judge": judge_model if judge_fn else "skipped: GATEWAY_URL is not set",
-            **grade_all(items, url, partial(key_of, families=families, corrigenda=corrigenda), statuses, judge_fn)}
+            **grade_all(items, url, partial(key_of, families=families, corrigenda=corrigenda),
+                        {doc["id"]: doc for doc in documents}, judge_fn)}
 
 
 def main():

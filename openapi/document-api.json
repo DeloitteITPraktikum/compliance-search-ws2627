@@ -1,296 +1,527 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "TUD Document API",
-    "version": "1.0"
-  },
-  "paths": {
-    "/health": {
-      "get": {
-        "summary": "Health",
-        "operationId": "health_health_get",
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      }
-    },
-    "/documents": {
-      "get": {
-        "summary": "List Documents",
-        "operationId": "list_documents_documents_get",
-        "parameters": [
-          {
-            "name": "changed_since",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Changed Since"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      }
-    },
-    "/documents/{doc_id}": {
-      "get": {
-        "summary": "Get Document",
-        "operationId": "get_document_documents__doc_id__get",
-        "parameters": [
-          {
-            "name": "doc_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Doc Id"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      }
-    },
-    "/documents/{doc_id}/file": {
-      "get": {
-        "summary": "Get File",
-        "operationId": "get_file_documents__doc_id__file_get",
-        "parameters": [
-          {
-            "name": "doc_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Doc Id"
-            }
-          },
-          {
-            "name": "if-none-match",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "If-None-Match"
-            }
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "required": false,
-            "schema": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Authorization"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": []
-          }
-        ]
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "HTTPValidationError": {
-        "properties": {
-          "detail": {
-            "items": {
-              "$ref": "#/components/schemas/ValidationError"
-            },
-            "type": "array",
-            "title": "Detail"
-          }
-        },
-        "type": "object",
-        "title": "HTTPValidationError"
-      },
-      "ValidationError": {
-        "properties": {
-          "loc": {
-            "items": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "integer"
-                }
-              ]
-            },
-            "type": "array",
-            "title": "Location"
-          },
-          "msg": {
-            "type": "string",
-            "title": "Message"
-          },
-          "type": {
-            "type": "string",
-            "title": "Error Type"
-          },
-          "input": {
-            "title": "Input"
-          },
-          "ctx": {
-            "type": "object",
-            "title": "Context"
-          }
-        },
-        "type": "object",
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
-        "title": "ValidationError"
-      }
-    },
-    "securitySchemes": {
-      "bearer": {
-        "type": "http",
-        "scheme": "bearer",
-        "description": "Your personal student key (sk-...)"
-      }
-    }
+    "title": "TU Darmstadt practicum: document API",
+    "version": "0.1.0",
+    "description": "A small read-only API for the regulation corpus. Poll it to keep your own copy of the PDFs and their metadata in sync. Documents arrive, change and disappear during the semester without warning.\n\nAuth: send your personal key as a bearer token on every route but /health. The same key works for the model gateway.\n\nRate limit: 60 requests per minute per key. Over that you get 429 with a Retry-After header in seconds.\n\nThere is no pagination. The corpus has fewer than 200 documents.\n\nTimestamps are ISO 8601 with Z or an offset: 2026-10-21T00:00:00Z or 2026-10-21T02:00:00+02:00. In a URL, write the + as %2B.\n\nDo not sync by hash alone. A corrigendum moves the corrected act's updated_at and adds to its corrected_by, but the act's PDF and its sha256 stay the same. Use updated_at to decide what changed. Use sha256 only to decide whether to download the file again."
   },
   "servers": [
     {
       "url": "https://tud-docs.pgoell.com"
     }
-  ]
+  ],
+  "tags": [
+    {
+      "name": "documents",
+      "description": "Metadata and PDFs of the corpus."
+    },
+    {
+      "name": "health",
+      "description": "Health check."
+    }
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Health check",
+        "description": "Needs no key.",
+        "operationId": "getHealth",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "The API is up.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                },
+                "example": {
+                  "status": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents": {
+      "get": {
+        "tags": ["documents"],
+        "summary": "List documents",
+        "description": "Without changed_since you get all documents. With it you get those whose updated_at is at or after that time. The bound is inclusive, so you may see a record twice: upsert by id. Store server_time from the answer and send it as changed_since on your next run. A deleted document stays in the list as a record with status deleted.",
+        "operationId": "listDocuments",
+        "parameters": [
+          {
+            "name": "changed_since",
+            "in": "query",
+            "required": false,
+            "description": "Return only documents whose updated_at is at or after this time. ISO 8601 with Z or an offset. In a URL, write the + as %2B.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-10-21T00:00:00Z"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentList"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/BadTimestamp"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "503": {
+            "$ref": "#/components/responses/GatewayUnreachable"
+          }
+        }
+      }
+    },
+    "/documents/{doc_id}": {
+      "get": {
+        "tags": ["documents"],
+        "summary": "Get one document",
+        "description": "The metadata of one document.",
+        "operationId": "getDocument",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DocumentId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Document"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "503": {
+            "$ref": "#/components/responses/GatewayUnreachable"
+          }
+        }
+      }
+    },
+    "/documents/{doc_id}/file": {
+      "get": {
+        "tags": ["documents"],
+        "summary": "Download the PDF",
+        "description": "The PDF of one document. The ETag is the document's sha256 in quotes. Send the hash of your copy in If-None-Match: if your copy is current, you get 304 and no body. A deleted document gets 410.",
+        "operationId": "getDocumentFile",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/DocumentId"
+          },
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "required": false,
+            "description": "The sha256 of your copy, in double quotes.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "\"47a209a9f73e228e85e1dad2934d917d5791629fc98add06fc6fda0acb872dbf\""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The PDF.",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Your copy of the file is current. No body.",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "410": {
+            "description": "The document is deleted.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "detail": "document is deleted"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "503": {
+            "$ref": "#/components/responses/GatewayUnreachable"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerKey": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Your personal key: Authorization: Bearer <your key>. The same key works for the model gateway."
+      }
+    },
+    "parameters": {
+      "DocumentId": {
+        "name": "doc_id",
+        "in": "path",
+        "required": true,
+        "description": "The id of one version of a document.",
+        "schema": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_-]+$"
+        },
+        "example": "32025R0301_EN"
+      }
+    },
+    "headers": {
+      "ETag": {
+        "description": "The document's sha256 in double quotes.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "Unauthorized": {
+        "description": "Key missing or unknown. A new key that you try too early can stay locked out for up to 5 minutes.",
+        "headers": {
+          "WWW-Authenticate": {
+            "description": "Always Bearer.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "detail": "unknown token"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Unknown id, or not yet published.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "detail": "no such document"
+            }
+          }
+        }
+      },
+      "BadTimestamp": {
+        "description": "Cannot read the timestamp.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "TooManyRequests": {
+        "description": "Too many requests: over 60 per minute for this key. Wait as long as Retry-After says and try again.",
+        "headers": {
+          "Retry-After": {
+            "description": "Seconds to wait.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "detail": "rate limit is 60 requests per minute"
+            }
+          }
+        }
+      },
+      "GatewayUnreachable": {
+        "description": "The API could not reach the model gateway to check your key. Try again.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "Health": {
+        "type": "object",
+        "required": ["status"],
+        "properties": {
+          "status": {
+            "type": "string",
+            "const": "ok"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "required": ["detail"],
+        "properties": {
+          "detail": {
+            "type": "string",
+            "description": "What went wrong, in plain words."
+          }
+        }
+      },
+      "DocumentList": {
+        "type": "object",
+        "required": ["server_time", "documents"],
+        "properties": {
+          "server_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The server's time for this answer. Store it and send it as changed_since on your next run. Do not use your own clock."
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Document"
+            }
+          }
+        }
+      },
+      "Document": {
+        "type": "object",
+        "required": [
+          "id",
+          "family_id",
+          "language",
+          "title",
+          "doc_type",
+          "version_date",
+          "status",
+          "updated_at",
+          "sha256",
+          "pages",
+          "size_bytes",
+          "source_url",
+          "attribution",
+          "binding_note",
+          "supersedes",
+          "superseded_by",
+          "corrects",
+          "corrected_by",
+          "repealed_by",
+          "outdated_by",
+          "corrects_articles"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_-]+$",
+            "description": "Stable id of this one version of a document. Never reused."
+          },
+          "family_id": {
+            "type": "string",
+            "description": "Groups all versions and language editions of the same regulation."
+          },
+          "language": {
+            "type": "string",
+            "enum": ["DE", "EN"],
+            "description": "Language of the text."
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the document."
+          },
+          "doc_type": {
+            "type": "string",
+            "enum": [
+              "regulation",
+              "delegated_regulation",
+              "implementing_regulation",
+              "consolidated",
+              "corrigendum",
+              "circular",
+              "guideline"
+            ],
+            "description": "Kind of document."
+          },
+          "version_date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date this version was issued. Use it as version in your citations."
+          },
+          "status": {
+            "type": "string",
+            "enum": ["active", "superseded", "repealed", "deleted"],
+            "description": "active: current in this corpus (not the same as in force). Upsert the metadata and fetch the file with If-None-Match. superseded: a newer version replaced it. Take it out of answers about current rules and answer from the ids in superseded_by. repealed: the rule no longer applies. Keep the record, mark it, and point to repealed_by. deleted: a tombstone. Remove the file and all text, chunks and vectors you built from it. The file route now gets 410."
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Time of the last change to this record. Drives the sync."
+          },
+          "sha256": {
+            "type": "string",
+            "description": "Hash of the PDF. Also the ETag of the file. It does not change when a corrigendum corrects the document."
+          },
+          "pages": {
+            "type": "integer",
+            "description": "Page count of the PDF."
+          },
+          "size_bytes": {
+            "type": "integer",
+            "description": "Size of the PDF in bytes."
+          },
+          "source_url": {
+            "type": "string",
+            "description": "Where the PDF was published."
+          },
+          "attribution": {
+            "type": "string",
+            "description": "Who issued the document. Show it."
+          },
+          "binding_note": {
+            "type": "string",
+            "description": "Says whether this text is legally binding or a courtesy copy. Show it."
+          },
+          "supersedes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ids of older versions this document replaces."
+          },
+          "superseded_by": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ids of newer versions that replace this document."
+          },
+          "corrects": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ids of documents this corrigendum corrects."
+          },
+          "corrected_by": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ids of corrigenda that correct this document. When it changes, fetch the corrigendum document."
+          },
+          "repealed_by": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ids of documents that repeal this one."
+          },
+          "outdated_by": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Ids of documents that hold the current text of an active document whose own text is out of date. They may be in another language. Not empty: answer from those ids. A citation of this document fails the currency check."
+          },
+          "corrects_articles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Only on a corrigendum: the articles or column codes it changes, as labels such as Article 7 or B_01.02.0010. Empty on every other document. A citation of one of these articles from the corrected act fails the currency check unless the answer also cites this corrigendum."
+          }
+        },
+        "example": {
+          "id": "32025R0301_EN",
+          "family_id": "32025R0301",
+          "language": "EN",
+          "title": "Delegated Regulation (EU) 2025/301: RTS on the content and time limits for reports on major ICT-related incidents",
+          "doc_type": "delegated_regulation",
+          "version_date": "2024-10-23",
+          "status": "active",
+          "updated_at": "2026-10-20T08:00:00Z",
+          "sha256": "47a209a9f73e228e85e1dad2934d917d5791629fc98add06fc6fda0acb872dbf",
+          "pages": 5,
+          "size_bytes": 521410,
+          "source_url": "http://publications.europa.eu/resource/celex/32025R0301",
+          "attribution": "Source: EUR-Lex, https://eur-lex.europa.eu/. © European Union, 1998-2026.",
+          "binding_note": "Only European Union documents published in the Official Journal of the European Union are deemed authentic.",
+          "supersedes": [],
+          "superseded_by": [],
+          "corrects": [],
+          "corrected_by": [],
+          "repealed_by": [],
+          "outdated_by": [],
+          "corrects_articles": []
+        }
+      }
+    }
+  }
 }

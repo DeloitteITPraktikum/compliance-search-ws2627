@@ -32,7 +32,7 @@ export KEY=sk-...                          # your key, the same for both
 python grade.py --url http://localhost:8000 --out report.json
 ```
 
-The grader checks your answers against the corpus as it is now. It asks the document API for the family and the status of every document, so a citation of a document that is no longer `active` fails the currency check. Keep your copy of the corpus in sync.
+The grader checks your answers against the corpus as it is now. It asks the document API for every document record. A citation fails the currency check if its document is no longer `active`, if the document's `outdated_by` is not empty, or if it names an article that a corrigendum changes (`corrects_articles`) and the answer does not cite that corrigendum too. Keep your copy of the corpus in sync.
 
 Leave `GATEWAY_URL` unset to skip the judge. All other metrics still run. Staff use a stronger judge model, so your judge score may differ slightly from theirs.
 
@@ -42,8 +42,10 @@ Start your app, run the grader, then fail the build on the numbers you care abou
 
 ```bash
 python grade.py --url http://localhost:8000 --out report.json
-python -c "import json; t = json.load(open('report.json'))['total']; assert t['citation_recall'] >= 0.7, t"
+python -c "import json; t = json.load(open('report.json'))['total']; assert t['citation_recall'] >= 0.6, t"
 ```
+
+0.6 is a starting point. Raise it as your app gets better.
 
 Store `KEY` as a CI secret. Never commit it.
 
@@ -80,7 +82,7 @@ One JSON object per line: `id`, `level` (1 to 9 or `"abstain"`), `language` of t
 | 5 | Question in one language, source in the other or in both. See the `note` |
 | 6 | Table lookup: a value or label that sits in a table or a template. Hard |
 | 7 | Many documents: three or more acts, or a full list where a missing member is wrong. Hard |
-| 8 | False premise: the question asserts something the text contradicts. Correct it and cite the text. See `false_premise`. Hard |
+| 8 | Premise check: the question asserts something, often in a side clause. Most premises are false (`false_premise`): correct them and cite the text. Controls rest on a true premise (`true_premise`): keep it and answer. Hard |
 | 9 | Near miss: two rules on one topic with different numbers; the wording decides which applies. `distractor` holds the tempting wrong answer. Hard |
 | abstain | The corpus cannot answer. Say so and cite nothing |
 
@@ -101,9 +103,9 @@ The docstring of `metrics.py` holds the exact definitions. In short:
 | `must` | Share of the `must_contain` facts found in the answer, case ignored | items with facts |
 | `judge` | LLM score 0, 1 or 2 against `expected_answer`. Only facts the question asks for count. The report holds the reason | all, if the judge runs |
 | `abst` | Abstain items: 1 if the answer declines and cites nothing. Other items: 0 if the answer declines | all |
-| `prem` | False-premise items: 1 if the judge finds that the answer names or corrects the false premise | level 8, if the judge runs |
+| `prem` | 1 if the judge finds that the answer handles the premise right: it corrects a `false_premise` or keeps a `true_premise` | level 8, if the judge runs |
 | `dist` | 1 if the answer gives the tempting wrong value from `distractor` and not the full right answer. Lower is better | items with a `distractor` |
-| `curr` | 0 if a citation names a document that is not `active` | all |
+| `curr` | 0 if a citation names a document that is not `active` or has a non-empty `outdated_by`, or names an article of a corrected act without the corrigendum that changes it | all |
 
 Rules that tend to surprise:
 

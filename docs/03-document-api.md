@@ -29,6 +29,8 @@ Authorization: Bearer <your key>
 
 There is no pagination. The corpus has fewer than 200 documents.
 
+The same routes as an OpenAPI file: [`openapi.json`](../openapi/document-api.json). Import it into Postman, Bruno or an OpenAPI client generator.
+
 ```sh
 curl "https://tud-docs.pgoell.com/health"
 ```
@@ -86,6 +88,8 @@ This prints `304`.
 | `corrects` | Ids of documents this corrigendum corrects. |
 | `corrected_by` | Ids of corrigenda that correct this document. |
 | `repealed_by` | Ids of documents that repeal this one. |
+| `outdated_by` | Ids of documents that hold the current text of this `active` document. They may be in the other language. Empty for most documents. See [Outdated texts](#outdated-texts). |
+| `corrects_articles` | Only on a corrigendum: the articles or column codes it changes, such as `Article 7` or `B_01.02.0010`. Empty on every other document. |
 
 ## Sync recipe
 
@@ -94,6 +98,7 @@ This prints `304`.
 3. The bound is inclusive, so you may see a record twice. Upsert by `id` and that does no harm.
 4. For each record you get back, act on its status. See the next table.
 5. Follow `corrected_by`. See [Corrigenda](#corrigenda).
+6. Check `outdated_by`. See [Outdated texts](#outdated-texts).
 
 Use the `server_time` from the answer, not your own clock.
 
@@ -123,11 +128,28 @@ When a corrigendum arrives, two records change:
 When `corrected_by` changes on an act, fetch the corrigendum document and decide how your index treats the corrected passage.
 There is nothing to download again for the act itself.
 
+`corrects_articles` on the corrigendum names what it changes.
+If your answer cites one of those articles from the corrected act, cite the corrigendum too.
+Otherwise the grader fails the currency check. See [How we score you](06-scoring.md#currency).
+
 > **Warning: Do not sync by hash alone**
 >
 > The corrected act keeps its PDF and its `sha256`.
 > A client that only compares hashes misses the correction and keeps giving the uncorrected answer.
 > Use `updated_at` to decide what changed. Use `sha256` only to decide whether to download the file again.
+
+## Outdated texts
+
+Some `active` documents hold an older text than another `active` document.
+`outdated_by` names the documents with the current text.
+
+Example: the English MaRisk (`RS-05-2023-BA_EN`) is the text of 05/2023.
+BaFin publishes no English text of the later circulars, so it stays `active`.
+Its `outdated_by` names the German circular that holds the current text.
+
+Answer from the ids in `outdated_by`, in whichever language the question uses.
+A citation of a document whose `outdated_by` is not empty fails the currency check.
+The list can change during the semester, like any other field.
 
 ## Rate limit
 

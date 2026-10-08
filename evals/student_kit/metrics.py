@@ -36,8 +36,10 @@ Abstain   An answer is a refusal if it has no citations and matches REFUSAL belo
           Abstain items score 1 for a refusal, else 0.
           All other items score 0 for a refusal, else 1.
 
-Premise   Only items with `false_premise`, and only if the judge runs: 1 if the
-          judge finds that the answer names or corrects the false premise.
+Premise   Only level 8 items, and only if the judge runs. An item with
+          `false_premise`: 1 if the judge finds that the answer names or corrects
+          the false premise. A control item with `true_premise`: 1 if the judge
+          finds that the answer keeps the true premise and does not call it wrong.
 
 Distractor  Only items with a `distractor` (the tempting wrong answer). 1 if the
           answer holds a spelling from the distractor's `must_contain` and does
@@ -51,9 +53,12 @@ Versions  Items with `requires: ["version_history"]` ask about an older text.
 Stretch   Levels in STRETCH are reported in their own block and stay out of
           `total` unless the caller asks for them.
 
-Currency  n/a when the grader has no document statuses.
-          0 if any citation names a document whose status is not `active`
-          (superseded, repealed, deleted, unknown id). Else 1.
+Currency  n/a when the grader has no document records.
+          0 if any citation names a document that is not `active` (superseded,
+          repealed, deleted, unknown id) or whose `outdated_by` is not empty.
+          0 if a citation names an article of an act that a corrigendum in the
+          act's `corrected_by` lists in `corrects_articles`, unless the answer
+          also cites a corrigendum that lists that article. Else 1.
 """
 import json
 import re
@@ -90,6 +95,10 @@ ANY = "any"  # article key that stands for every passage of a family
 PREMISE_PROMPT = """The question rests on a false premise: {premise}
 Set "premise_caught" to true if the answer says that the premise is wrong or corrects it, else false.
 An answer that accepts the premise scores 0, even if other facts in it are right.
+"""
+TRUE_PREMISE_PROMPT = """The question rests on a premise that is true: {premise}
+Set "premise_caught" to true if the answer keeps the premise and does not call it wrong, else false.
+An answer that calls the premise wrong scores 0, even if other facts in it are right.
 """
 STRETCH = (10, 11)  # levels that need version history
 METRICS = ["recall@5", "recall@10", "precision@5", "mrr", "citation_precision", "citation_recall",
@@ -166,9 +175,21 @@ def is_refusal(answer, citations):
     return not citations and bool(REFUSAL.search(answer))
 
 
-def currency_ok(citations, statuses):
-    """`statuses` maps document id to its status at grading time."""
-    return float(all(statuses.get(c.get("document_id")) == "active" for c in citations))
+def currency_ok(citations, documents, key_of):
+    """`documents` maps document id to its record at grading time."""
+    ids = [c.get("document_id") for c in citations]
+    if not all(documents.get(i, {}).get("status") == "active" and not documents[i].get("outdated_by") for i in ids):
+        return 0.0
+
+    def corrects(document_id):
+        return {key_of(document_id, label) for label in documents.get(document_id, {}).get("corrects_articles", [])}
+
+    shown = set().union(*map(corrects, ids))
+    for citation, document_id in zip(citations, ids):
+        key = key_of(document_id, citation.get("article"))
+        if key not in shown and any(key in corrects(fix) for fix in documents[document_id].get("corrected_by", [])):
+            return 0.0
+    return 1.0
 
 
 def post_json(url, payload, headers=None, timeout=120):
@@ -177,17 +198,21 @@ def post_json(url, payload, headers=None, timeout=120):
         return json.load(response)
 
 
-def judge(question, expected, answer, premise=None, *, model, gateway_url, key):
-    """(score, reason, premise_caught) through the gateway, score 0, 1 or 2. Three times None if three calls fail."""
-    prompt = JUDGE_PROMPT.format(question=question, expected=expected, answer=answer,
-                                 premise=PREMISE_PROMPT.format(premise=premise) if premise else "")
+def judge(question, expected, answer, premise=None, true_premise=None, *, model, gateway_url, key):
+    """(score, reason, premise_caught) through the gateway, score 0, 1 or 2. Three times None if three calls fail.
+
+    `premise` is a false premise, `true_premise` the true premise of a control item. Pass one at most.
+    """
+    block = (PREMISE_PROMPT.format(premise=premise) if premise else
+             TRUE_PREMISE_PROMPT.format(premise=true_premise) if true_premise else "")
+    prompt = JUDGE_PROMPT.format(question=question, expected=expected, answer=answer, premise=block)
     for attempt in range(3):
         try:
             reply = post_json(gateway_url.rstrip("/") + "/chat/completions",
                               {"model": model, "messages": [{"role": "user", "content": prompt}]},
                               {"Authorization": f"Bearer {key}"})
             verdict = json.loads(re.search(r"\{.*\}", reply["choices"][0]["message"]["content"], re.DOTALL)[0])
-            caught = float(bool(verdict.get("premise_caught"))) if premise else None
+            caught = float(bool(verdict.get("premise_caught"))) if block else None
             return (verdict["score"] if verdict["score"] in (0, 1, 2) else None), verdict.get("reason"), caught
         except Exception as error:
             print(f"judge failed (try {attempt + 1} of 3): {error}", file=sys.stderr)
@@ -195,12 +220,12 @@ def judge(question, expected, answer, premise=None, *, model, gateway_url, key):
     return None, None, None
 
 
-def grade_item(item, response, key_of, statuses=None, judge_fn=None):
+def grade_item(item, response, key_of, documents=None, judge_fn=None):
     """All metrics for one item.
 
     `response` is the /ask body, `key_of(document_id, article)` gives a key,
-    `statuses` maps document id to status (None skips currency),
-    `judge_fn(question, expected, answer, premise)` gives (score, reason, premise_caught).
+    `documents` maps document id to its record (None skips currency),
+    `judge_fn(question, expected, answer, false_premise, true_premise)` gives (score, reason, premise_caught).
     """
     answer = str(response.get("answer") or "")
     citations = response.get("citations") or []
@@ -209,10 +234,10 @@ def grade_item(item, response, key_of, statuses=None, judge_fn=None):
     scores["must_contain"] = must_contain_score(answer, item["must_contain"])
     if judge_fn:
         scores["judge"], scores["judge_reason"], scores["premise_caught"] = judge_fn(
-            item["question"], item["expected_answer"], answer, item.get("false_premise"))
+            item["question"], item["expected_answer"], answer, item.get("false_premise"), item.get("true_premise"))
     versioned = "version_history" in item.get("requires", [])
-    if statuses is not None and not versioned:
-        scores["currency"] = currency_ok(citations, statuses)
+    if documents is not None and not versioned:
+        scores["currency"] = currency_ok(citations, documents, key_of)
     if "distractor" in item:
         fell = must_contain_score(answer, item["distractor"]["must_contain"]) > 0 and scores["must_contain"] != 1
         scores["distractor_taken"] = float(fell)
@@ -226,7 +251,7 @@ def grade_item(item, response, key_of, statuses=None, judge_fn=None):
     return scores
 
 
-def grade_all(items, url, key_of, statuses=None, judge_fn=None, include_stretch=False):
+def grade_all(items, url, key_of, documents=None, judge_fn=None, include_stretch=False):
     """Ask every question and return the report body: total, by_level, by_difficulty, stretch and items.
 
     `total` and `by_difficulty` leave out the STRETCH levels unless `include_stretch` is set.
@@ -240,7 +265,7 @@ def grade_all(items, url, key_of, statuses=None, judge_fn=None, include_stretch=
         rows.append({"id": item["id"], "level": item["level"], "difficulty": item.get("difficulty", "standard"),
                      "error": error, "answer": response.get("answer"),
                      "citations": response.get("citations"), "retrieved": response.get("retrieved"),
-                     **grade_item(item, response, key_of, statuses, judge_fn)})
+                     **grade_item(item, response, key_of, documents, judge_fn)})
     levels = sorted({row["level"] for row in rows}, key=lambda level: (isinstance(level, str), level))
     stretch = [r for r in rows if r["level"] in STRETCH]
     headline = rows if include_stretch else [r for r in rows if r["level"] not in STRETCH]

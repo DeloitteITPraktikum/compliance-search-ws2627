@@ -25,15 +25,15 @@ The fixes are yours to find. Most numbers are from our first build, on 28 docume
 
 ## `active` does not mean current
 
-This one costs currency points and wrong answers, and the status field alone will not save you.
+This one costs currency points and wrong answers, and the status field alone will not save you. Read `outdated_by` and `corrected_by` too.
 
 | What went wrong | How we noticed |
 |---|---|
-| Two texts of one circular are `active` at once. The German MaRisk is 06/2024. The English one is 05/2023 and is not a translation of it. Relations stay inside a language, so nothing marks the English text as older. | A German MaRisk question got most of its passages from the older English text. Look at `version_date` on your citations. |
+| Two texts of one circular are `active` at once. The German MaRisk is 06/2024. The English one is 05/2023 and is not a translation of it. The version relations stay inside a language. Only `outdated_by` marks the English text as older. | A German MaRisk question got most of its passages from the older English text. Our app did not check which text is current and cited the English one. Such a citation now fails currency. |
 | "Take the newest version in each family" is no fix. | It would throw out the only English text of the family. |
 | An amending act can sit next to the consolidated text it changed. Both are `active`, both hold the rule, and no relation links them. | The same question cited one in German and the other in English. Decide which one your app prefers, and write down why. |
 | `active` is not "in force". | VAIT is `active`, and its cover says "Aufgehoben mit Ablauf des 16.01.2025". |
-| A corrigendum holds the wrong wording next to the right one ("for:" and "read:"). The act's own text still holds the wrong one. | A question that pulled the act but not the corrigendum got the old answer. A quote check passes on either half. |
+| A corrigendum holds the wrong wording next to the right one ("for:" and "read:"). The act's own text still holds the wrong one. | A question that pulled the act but not the corrigendum got the old answer. A quote check passes on either half. Citing a corrected article from the act alone also fails currency; `corrects_articles` on the corrigendum names those articles. |
 | `version_date` means different things: the date of the act, of the consolidation, or of the circular. | Sorting by it across sources gave nonsense. |
 
 ## Parsing

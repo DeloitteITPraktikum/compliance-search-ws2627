@@ -29,7 +29,7 @@ The sample holds 20 questions: 12 standard and 8 hard. Each item carries `diffic
 | Abstain | No answer | The corpus holds no answer. Say so and cite nothing. | S-12 |
 | 6 | Table lookup (hard) | A value or label that sits in a table or a template. | S-13, S-14 |
 | 7 | Many documents (hard) | Three or more acts, or a full list where a missing member is wrong. | S-15, S-16 |
-| 8 | False premise (hard) | The question asserts something the text contradicts. Correct it and cite the text. | S-17, S-18 |
+| 8 | Premise check (hard) | The question asserts something, often in a side clause. Most premises are false: correct them and cite the text. Some are true: keep them and answer. | S-17 (false), S-18 (true) |
 | 9 | Near miss (hard) | Two rules on one topic with different numbers. The wording decides which applies. | S-19, S-20 |
 
 Our own reference build answers the standard levels almost perfectly. On the hard levels it does clearly worse: it misses about one answer in five and one source in three.
@@ -40,20 +40,23 @@ We score them apart, as a stretch. They do not count in the totals, and the samp
 
 ### The hard kinds, one example each
 
-**Level 6, table lookup: S-13.** Which risk weight does the CRR give a non-short-term exposure to an unrated institution in grade B?
-The answer is 75 %, from Table 1 of CRR Article 121. The cell next to it, for short-term exposures, says 50 %.
-Your chunker must keep the table with its article, and the model must read the right row and column from text that has lost its grid.
-The grader checks the fact (`75 %`) and the key (CRR `art:121`). Nothing new in the scoring: it is the parsing that is hard.
+**Level 6, table lookup: S-13.** Two loans to a public sector entity without its own rating, in a country whose central government is in credit quality step 2. One runs two years, one two months. Which risk weights apply?
+50 % and 20 %, both from CRR Article 116: the first from its Table 2, the second from the rule for an original maturity of three months or less.
+Several CRR articles hold a table that looks the same once the grid is lost, with other numbers in each cell.
+Your chunker must keep each table with its article, and the model must apply the condition and read two cells.
+The grader checks both facts (`50 %`, `20 %`) and the key (CRR `art:116`). Nothing new in the scoring: it is the parsing and the reading that are hard.
 
 **Level 7, many documents: S-15.** Which documents require that exit plans are not only documented but also tested?
 Three: DORA Article 28, RTS 2024/1773 Article 10 and the EBA guidelines paragraph 107. Other documents ask for an exit strategy without a test, and they do not count.
 An answer with two of the three scores must-contain 2 / 3 and citation recall 2 / 3. One with a fourth, wrong document loses citation precision.
 Ten passages from one or two documents will not carry this. Your search must reach across documents.
 
-**Level 8, false premise: S-17.** Which criteria does Article 31 DORA give a financial entity for designating a provider as critical?
-The premise is false: the financial entity designates nobody. The European Supervisory Authorities do.
-A good answer says so and cites Article 31. The new column `prem` is 1 if the judge finds that your answer names or corrects the false premise.
-An answer that accepts the premise gets judge 0, even if other facts in it are right. A refusal is wrong too: the text is there.
+**Level 8, premise check: S-17 and S-18.** S-17 asks which criteria the national authorities must use when they designate a critical ICT provider under Article 31 DORA.
+The premise sits in a side clause, and it is false: the European Supervisory Authorities designate, not the national authorities.
+A good answer says so, gives the criteria and cites Article 31. An answer that lists the criteria and lets the premise stand gets judge 0.
+S-18 is a control. Its premise, a weekly vulnerability scan in the RTS on ICT risk management, is true. A good answer keeps it and names the article.
+The new column `prem` is 1 if the judge finds that your answer handles the premise right: it corrects a false one, or it keeps a true one.
+So an app that calls every premise wrong loses on the controls. A refusal is wrong too: the text is there.
 
 **Level 9, near miss: S-20.** How many working days does the authority have to decide on a complete application of a crypto-asset service provider?
 40 working days, MiCA Article 63. The trap is MiCA Article 20: 60 working days, for issuers of asset-referenced tokens.
@@ -189,19 +192,30 @@ These two apply to the hard kinds only. The examples are [above](#the-hard-kinds
 
 | Column | Applies to | Score |
 |---|---|---|
-| `prem` | Level 8, if the judge runs | 1 if the judge finds that your answer names or corrects the false premise. |
+| `prem` | Level 8, if the judge runs | Items with `false_premise`: 1 if the judge finds that your answer names or corrects the false premise. Controls with `true_premise`: 1 if your answer keeps the true premise and does not call it wrong. |
 | `dist` | Items with a `distractor`, level 9 | 1 if your answer holds the tempting wrong value and not every fact of the right answer. Lower is better. |
 
 ### Currency
 
 Currency applies to every question.
 
-The grader asks the document API for the status of every document, at the moment it runs.
-You score 0 if any citation names a document that is not `active` right now: superseded, repealed, deleted or unknown. Otherwise you score 1.
+The grader asks the document API for every document record, at the moment it runs.
+You score 0 if any citation breaks one of three rules. Otherwise you score 1.
 
-Example: the old version of an act is `superseded` and you still cite it. Currency is 0, even if the answer text is right.
+| Rule | Fails when your citation names |
+|---|---|
+| Status | A document that is not `active` right now: superseded, repealed, deleted or unknown. |
+| Outdated text | An `active` document whose `outdated_by` is not empty. Another document holds its current text. |
+| Corrected article | An article of an act that a corrigendum changes, while your answer does not cite that corrigendum. The corrigendum's `corrects_articles` names the articles. |
 
-A corrected act stays `active`. There the must-contain facts and the judge catch an answer that still gives the old text.
+Examples:
+
+- The old version of an act is `superseded` and you still cite it. Currency is 0, even if the answer text is right.
+- You answer a MaRisk question from the English text of 05/2023. Its `outdated_by` names the current German circular. Currency is 0. Cite the German text: the relevance key is the same.
+- A corrigendum lists `Article 7` in `corrects_articles`. You cite Article 7 of the corrected act alone. Currency is 0. Cite the corrigendum next to it, or in its place.
+
+The corrected-article rule works on the relevance key, so it covers the whole article, not one paragraph.
+Label corrigendum chunks with the article they change (`Article 7`), not only with a page. Then the extra citation also counts as relevant.
 
 ## Run the grader
 
@@ -240,9 +254,11 @@ python -c "
 import json
 total = json.load(open('report.json'))['total']
 print(total)
-assert total['citation_recall'] >= 0.5, total
+assert total['citation_recall'] >= 0.6, total
 "
 ```
+
+0.6 is a starting point. Raise it as your app gets better.
 
 In GitHub Actions, run the same commands in a step.
 
