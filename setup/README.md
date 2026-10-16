@@ -12,6 +12,8 @@ A small uv project that checks your access before you write any code: the model 
 
 uv installs the right Python for you. You do not need `pip` or a virtual environment of your own.
 
+Installed uv with `pip install uv` instead? That works too. If `uv` is not found, run `python -m uv` in its place. Your own Python does not matter: uv uses Python 3.12 from `.python-version` and downloads it if needed.
+
 ## 2. Put your key in `.env`
 
 From the repo root:
@@ -73,6 +75,7 @@ The team's CI key is the repo secret `CI_GATEWAY_KEY`. [`.github/workflows/setup
 | `GATEWAY_KEY is missing` | No `.env`, or you left out `--env-file .env` |
 | `AuthenticationError` or `401` | The key in `.env` is wrong or has a typo |
 | `429` | Over 60 requests per minute. Wait a minute |
-| `uv: command not found` | Open a new terminal after installing uv |
+| `uv: command not found` | Open a new terminal after installing uv. Installed with pip: use `python -m uv` |
+| `unexpected argument '--env-file'` | Your uv is too old. `uv self update`, or `pip install -U uv` if you installed it with pip |
 
 More in the [FAQ](../docs/09-faq.md).
