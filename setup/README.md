@@ -31,11 +31,10 @@ Open `.env` and replace `sk-...` with the key from your mail. `.gitignore` keeps
 uv run --env-file .env check.py
 ```
 
-The same command works on every system. The first run downloads Python and the packages. You should see six lines:
+The same command works on every system. The first run downloads Python and the packages. You should see five lines:
 
 ```
 ok    models             6 models
-ok    chat, mock         This is the gateway mock model. ...
 ok    chat, gpt-6-luna   OK
 ok    embedding          1024 dimensions
 ok    document list      34 documents
