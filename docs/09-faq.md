@@ -56,11 +56,11 @@ The budget is 10 USD per month and resets on the 1st.
 
 ## My invite link for the dashboard no longer works
 
-The link lasts 7 days. Ask the technical contact for a new one.
+The first link works until Friday 2026-11-06, 23:59 Berlin time. After that, ask the technical contact for a new one.
 
 ## Which key goes into CI?
 
-Not yours. The team gets one extra key for CI, with its own budget. Store it as a GitHub Actions secret.
+Not yours. The team gets one extra key for CI, with its own budget. It lives in the GitHub Actions secret `CI_GATEWAY_KEY`. [`setup-check.yml`](https://github.com/DeloitteITPraktikum/compliance-search-ws2627/blob/main/.github/workflows/setup-check.yml) shows how a workflow uses it.
 Personal keys never go into the repo or into CI.
 
 ## The document list is empty

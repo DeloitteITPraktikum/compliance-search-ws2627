@@ -273,11 +273,11 @@ This saves budget, and it keeps a re-ingest fast when a document changes.
 
 The gateway books the cost after each call.
 
-The team also gets one extra key for CI, with its own budget. Personal keys never go into the repo or into CI.
+The team also gets one extra key for CI, with its own budget. It lives in the repo secret `CI_GATEWAY_KEY`. Personal keys never go into the repo or into CI.
 
 ### See your spend
 
-Open the invite link you got with your key and set a password. The link lasts 7 days.
+Open the invite link you got with your key and set a password. The link works until Friday 2026-11-06, 23:59 Berlin time.
 Then log in at [https://tud-llm.pgoell.com/ui](https://tud-llm.pgoell.com/ui) with your email.
 
 | Page | Shows |
@@ -313,6 +313,14 @@ Spend, budget and reset date as JSON:
 ```sh
 curl -H "Authorization: Bearer $GATEWAY_KEY" "https://tud-llm.pgoell.com/key/info"
 ```
+
+On Windows, in PowerShell:
+
+```powershell
+curl.exe -H "Authorization: Bearer $env:GATEWAY_KEY" "https://tud-llm.pgoell.com/key/info"
+```
+
+For curl, set the key in your shell first. See [Quickstart](02-quickstart.md#with-curl).
 
 ### What a budget error looks like
 

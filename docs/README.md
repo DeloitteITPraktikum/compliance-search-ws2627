@@ -39,7 +39,7 @@ At kick-off your own repo receives a copy of that folder and of this `docs/` fol
 | Thing | What it is | Page |
 |---|---|---|
 | One personal key | Works for the model gateway and for the document API | [Quickstart](02-quickstart.md) |
-| One team key for CI | With its own budget. Personal keys never go into the repo or into CI | [How we score you](06-scoring.md#in-ci) |
+| One team key for CI | With its own budget, stored as the repo secret `CI_GATEWAY_KEY`. Personal keys never go into the repo or into CI | [How we score you](06-scoring.md#in-ci) |
 | Document API | `https://tud-docs.pgoell.com`, the PDFs and their metadata, published on 2026-10-20 | [Document API](03-document-api.md) |
 | Model gateway | `https://tud-llm.pgoell.com/v1`, four chat models and one embedding model | [Models](04-models.md) |
 | Budget | 10 USD per month and 60 requests per minute, per student | [Models](04-models.md#budget-and-spend) |
@@ -72,7 +72,8 @@ Do the first two on kick-off day. Both can take days to verify.
 - [ ] Claim [Azure for Students](https://azure.microsoft.com/en-us/free/students) with your TU email. It needs no credit card.
 - [ ] Accept the invite to our GitHub organization.
 - [ ] Get your personal key and your invite link for the dashboard from us.
-- [ ] Open the invite link within 7 days and set a password.
+- [ ] Open the invite link by Friday 2026-11-06, 23:59 Berlin time, and set a password.
+- [ ] Run the setup check in [`setup/`](https://github.com/DeloitteITPraktikum/compliance-search-ws2627/blob/main/setup/README.md): `uv run --env-file .env check.py`.
 - [ ] Make your first model call and your first embedding. See [Quickstart](02-quickstart.md).
 - [ ] List the documents and download one PDF. See [Quickstart](02-quickstart.md#4-list-the-documents).
 - [ ] Run a first full sync on your laptop. See the [sync recipe](03-document-api.md#sync-recipe).
