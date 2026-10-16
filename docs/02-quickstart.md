@@ -22,7 +22,7 @@ Then check everything in one run. The same command works on every system:
 uv run --env-file .env check.py
 ```
 
-You should see six lines that start with `ok`. The [setup README](https://github.com/DeloitteITPraktikum/compliance-search-ws2627/blob/main/setup/README.md) shows them and lists the fixes when one fails.
+You should see five lines that start with `ok`. The [setup README](https://github.com/DeloitteITPraktikum/compliance-search-ws2627/blob/main/setup/README.md) shows them and lists the fixes when one fails.
 
 The same key works for the model gateway and for the document API. All commands below run in `setup/`.
 

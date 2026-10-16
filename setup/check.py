@@ -2,8 +2,8 @@
 
     uv run --env-file .env check.py
 
-Costs a fraction of a cent: one short answer from gpt-6-luna, the rest runs on
-the free model `mock`. Exits 1 if a check fails.
+Costs a fraction of a cent: one short answer from gpt-6-luna. Exits 1 if a
+check fails.
 """
 import os
 import sys
@@ -54,7 +54,6 @@ def pdf():
 
 
 check("models", lambda: f"{len(client.models.list().data)} models")
-check("chat, mock", lambda: chat("mock"))
 check("chat, gpt-6-luna", lambda: chat("gpt-6-luna"))
 check("embedding", lambda: f"{len(client.embeddings.create(model='qwen3-embedding', input=['test']).data[0].embedding)} dimensions")
 check("document list", documents)
