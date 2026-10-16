@@ -1,0 +1,12 @@
+# Keys
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Downloads from the document API
+downloads/
