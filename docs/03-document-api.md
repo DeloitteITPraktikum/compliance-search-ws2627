@@ -31,6 +31,8 @@ There is no pagination. The corpus has fewer than 200 documents.
 
 The same routes as an OpenAPI file: [`openapi.json`](../openapi/document-api.json). Import it into Postman, Bruno or an OpenAPI client generator.
 
+The curl lines on this page are for macOS and Linux, with the key set in your shell. On Windows, use PowerShell, write `curl.exe` and `$env:GATEWAY_KEY`, and put each command on one line. See [Quickstart](02-quickstart.md#with-curl).
+
 ```sh
 curl "https://tud-docs.pgoell.com/health"
 ```

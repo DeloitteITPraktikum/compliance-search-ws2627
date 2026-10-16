@@ -9,7 +9,7 @@ Grades your `POST /ask` endpoint on 20 sample questions about the corpus: 12 sta
 | `grade.py` | The grader |
 | `sample.jsonl` | 20 questions with answers and sources |
 
-No dependencies beyond Python 3.10. Staff grade your app with the same metric code on more questions of the same kinds.
+Needs Python 3.10 or later and nothing else. Staff grade your app with the same metric code on more questions of the same kinds.
 
 ## The contract
 
@@ -25,10 +25,20 @@ No dependencies beyond Python 3.10. Staff grade your app with the same metric co
 
 ## Run it
 
+From `setup/` in your repo, with uv:
+
 ```bash
-export DOCS_URL=https://DOCS_HOST          # the document API
-export GATEWAY_URL=https://GATEWAY_HOST/v1 # the model gateway, for the judge
-export KEY=sk-...                          # your key, the same for both
+uv run --env-file .env ../evals/student_kit/grade.py --url http://localhost:8000 --out report.json
+```
+
+`setup/.env` sets `KEY`, `DOCS_URL` and `GATEWAY_URL`, and uv brings Python 3.12. See `setup/README.md`.
+
+Without uv, set the three variables yourself and run the grader in this folder:
+
+```bash
+export DOCS_URL=https://tud-docs.pgoell.com    # the document API
+export GATEWAY_URL=https://tud-llm.pgoell.com/v1 # the model gateway, for the judge
+export KEY=sk-...                            # your key, the same for both
 python grade.py --url http://localhost:8000 --out report.json
 ```
 
@@ -47,7 +57,16 @@ python -c "import json; t = json.load(open('report.json'))['total']; assert t['c
 
 0.6 is a starting point. Raise it as your app gets better.
 
-Store `KEY` as a CI secret. Never commit it.
+In GitHub Actions, pass the team's CI key from the repo secret `CI_GATEWAY_KEY` as `KEY`:
+
+```yaml
+env:
+  KEY: ${{ secrets.CI_GATEWAY_KEY }}
+  DOCS_URL: https://tud-docs.pgoell.com
+  GATEWAY_URL: https://tud-llm.pgoell.com/v1
+```
+
+Never commit a key, and never put a personal key into CI.
 
 ## Relevance keys
 

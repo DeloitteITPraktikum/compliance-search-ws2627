@@ -92,7 +92,7 @@ The project is technical. You need Python, Git, HTTP APIs and some SQL.
 - The repo lives in our GitHub organization, never in a personal account.
 - Zero cost is a hard rule.
 - Each technology choice has a decision record.
-- Personal keys never go into the repo or into CI. The team's CI key lives in a GitHub Actions secret.
+- Personal keys never go into the repo or into CI. The team's CI key lives in the GitHub Actions secret `CI_GATEWAY_KEY`.
 
 ## Timeline
 

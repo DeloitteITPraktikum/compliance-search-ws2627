@@ -13,7 +13,7 @@ The kit is in [`../evals/student_kit/`](../evals/student_kit/). Your own repo re
 | [`sample.jsonl`](../evals/student_kit/sample.jsonl) | 20 questions with answers and sources: 12 standard, 8 hard. |
 | [`README.md`](../evals/student_kit/README.md) | The kit's own short manual. |
 
-The kit needs Python 3.10 and nothing else. We grade your app with the same metric code, on more questions of the same kinds.
+The kit needs Python 3.10 or later and nothing else. Run from `setup/`, uv brings Python 3.12. We grade your app with the same metric code, on more questions of the same kinds.
 
 ## The question kinds
 
@@ -219,14 +219,13 @@ Label corrigendum chunks with the article they change (`Article 7`), not only wi
 
 ## Run the grader
 
-Start your app. Then, in the kit folder:
+Start your app. Then, in [`setup/`](https://github.com/DeloitteITPraktikum/compliance-search-ws2627/blob/main/setup/README.md):
 
-```sh
-export DOCS_URL=https://tud-docs.pgoell.com
-export GATEWAY_URL=https://tud-llm.pgoell.com/v1
-export KEY=$GATEWAY_KEY
-python grade.py --url http://localhost:8000 --out report.json
+```shell
+uv run --env-file .env ../evals/student_kit/grade.py --url http://localhost:8000 --out report.json
 ```
+
+`setup/.env` sets `KEY`, `DOCS_URL` and `GATEWAY_URL` for you. The report lands in `setup/report.json`.
 
 The grader prints one row per level, one each for `standard` and `hard`, and a total.
 It writes every score to `report.json`, with your answer, citations, retrieved list and the judge's reason per item. Start there when a number drops.
@@ -268,10 +267,10 @@ In GitHub Actions, run the same commands in a step.
     KEY: ${{ secrets.CI_GATEWAY_KEY }}
     DOCS_URL: https://tud-docs.pgoell.com
     GATEWAY_URL: https://tud-llm.pgoell.com/v1
-  run: python grade.py --url http://localhost:8000 --judge-model gpt-6-luna --out report.json
+  run: python evals/student_kit/grade.py --url http://localhost:8000 --judge-model gpt-6-luna --out report.json
 ```
 
-The team gets one extra key for CI, with its own budget. Store it as a secret.
+The team gets one extra key for CI, with its own budget, in the repo secret `CI_GATEWAY_KEY`.
 Your personal key never goes into the repo or into CI.
 
 Keep each `report.json` as a build artifact, so you can track the score over time.
