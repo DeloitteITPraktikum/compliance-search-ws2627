@@ -1,6 +1,6 @@
 # Setup
 
-A small uv project that checks your access before you write any code: the model gateway, the document API and your key. The scripts are the [Quickstart](../docs/02-quickstart.md) as files.
+A small uv project that checks your access before you write any code: the model gateway, the document API and your key. The scripts are the [Quickstart](../handbook/02-quickstart.md) as files.
 
 ## 1. Install the tools
 
@@ -77,4 +77,4 @@ The team's CI key is the repo secret `CI_GATEWAY_KEY`. [`.github/workflows/setup
 | `uv: command not found` | Open a new terminal after installing uv. Installed with pip: use `python -m uv` |
 | `unexpected argument '--env-file'` | Your uv is too old. `uv self update`, or `pip install -U uv` if you installed it with pip |
 
-More in the [FAQ](../docs/09-faq.md).
+More in the [FAQ](../handbook/09-faq.md).

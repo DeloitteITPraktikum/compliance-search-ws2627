@@ -54,7 +54,7 @@ You pick the hosting, the vector store, the framework and the programming langua
 Two rules apply.
 
 1. Zero cost. Nothing you use may cost money.
-2. Every choice gets a short decision record in [`decisions/`](decisions/README.md).
+2. Every choice gets a short decision record in [`decisions/`](../docs/decisions/README.md).
 
 If you have no strong view, start from our [reference stack](07-stack.md).
 

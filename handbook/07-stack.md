@@ -5,7 +5,7 @@ You choose your stack. This page is a recommendation, not a rule.
 Two rules do apply:
 
 1. Zero cost. Nothing may cost money.
-2. Every choice needs a decision record in [`decisions/`](decisions/README.md): what you chose, what else you looked at, and why. That holds if you take our recommendation too.
+2. Every choice needs a decision record in [`decisions/`](../docs/decisions/README.md): what you chose, what else you looked at, and why. That holds if you take our recommendation too.
 
 We checked the offers below on 2026-09-22. Several free tiers vanished this summer, so check again before you commit to one.
 
