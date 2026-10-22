@@ -1,175 +1,78 @@
 # Document API
 
-A small read-only API for the regulation corpus.
-You poll it to keep your own copy of the PDFs and their metadata in sync.
+A read-only API for the regulation corpus. You poll it to keep your copy of the PDFs and their metadata in sync.
+It is the source of truth: documents arrive, change and disappear without warning.
 
-Base URL: `https://tud-docs.pgoell.com`
-
-The documents go online on 2026-10-20.
-After that, documents arrive, change and disappear without warning.
-
-## Auth
-
-Send your key as a bearer token on every route but `/health`.
-It is the same key you use for the models.
-
-```text
-Authorization: Bearer <your key>
-```
+Base URL: `https://tud-docs.pgoell.com`. Send your key as `Authorization: Bearer <key>` on every route but `/health`.
+OpenAPI file: [`openapi/document-api.json`](../openapi/document-api.json).
 
 ## Routes
 
 | Route | Returns |
 |---|---|
-| `GET /health` | `{"status":"ok"}`. Needs no key. |
-| `GET /documents` | All documents: `{"server_time": "...", "documents": [...]}`. |
-| `GET /documents?changed_since=<time>` | Only documents whose `updated_at` is at or after that time. |
-| `GET /documents/{id}` | The metadata of one document. |
-| `GET /documents/{id}/file` | The PDF. |
+| `GET /health` | `{"status":"ok"}`. No key needed |
+| `GET /documents` | All documents: `{"server_time": "...", "documents": [...]}`. No pagination, fewer than 200 documents |
+| `GET /documents?changed_since=<time>` | Only documents with `updated_at` at or after that time |
+| `GET /documents/{id}` | One document's metadata |
+| `GET /documents/{id}/file` | The PDF. Its `ETag` is the `sha256` in quotes: send it as `If-None-Match` and get `304` if your copy is current |
 
-There is no pagination. The corpus has fewer than 200 documents.
-
-The same routes as an OpenAPI file: [`openapi.json`](../openapi/document-api.json). Import it into Postman, Bruno or an OpenAPI client generator.
-
-The curl lines on this page are for macOS and Linux, with the key set in your shell. On Windows, use PowerShell, write `curl.exe` and `$env:GATEWAY_KEY`, and put each command on one line. See [Quickstart](02-quickstart.md#with-curl).
-
-```sh
-curl "https://tud-docs.pgoell.com/health"
-```
-
-```sh
-curl -H "Authorization: Bearer $GATEWAY_KEY" \
-  "https://tud-docs.pgoell.com/documents?changed_since=2026-10-20T00:00:00Z"
-```
-
-```sh
-curl -H "Authorization: Bearer $GATEWAY_KEY" "https://tud-docs.pgoell.com/documents/32022R2554_EN"
-```
-
-### Timestamps
-
-Write times as ISO 8601 with `Z` or an offset: `2026-10-21T00:00:00Z` or `2026-10-21T02:00:00+02:00`.
-In a URL, write the `+` as `%2B`.
-A time the API cannot read gets `422`.
-
-### The file and its ETag
-
-The `ETag` of the file is the document's `sha256` in quotes.
-Send the hash of your copy in `If-None-Match`. If your copy is current, you get `304` and no body.
-
-```sh
-SHA=$(curl -s -H "Authorization: Bearer $GATEWAY_KEY" \
-  "https://tud-docs.pgoell.com/documents/32025R0301_EN" | python3 -c "import json,sys; print(json.load(sys.stdin)['sha256'])")
-
-curl -s -o /dev/null -w "%{http_code}\n" -H "Authorization: Bearer $GATEWAY_KEY" \
-  -H "If-None-Match: \"$SHA\"" "https://tud-docs.pgoell.com/documents/32025R0301_EN/file"
-```
-
-This prints `304`.
+Times are ISO 8601 with `Z` or an offset. In a URL, write `+` as `%2B`.
 
 ## Fields
 
 | Field | Meaning |
 |---|---|
-| `id` | Stable id of this one version of a document. Matches `[A-Za-z0-9_-]+`. Never reused. |
-| `family_id` | Groups all versions and language editions of the same regulation. |
-| `language` | Language of the text: `DE` or `EN`. |
-| `title` | Title of the document. |
-| `doc_type` | Kind of document, such as `regulation`, `delegated_regulation`, `implementing_regulation`, `consolidated`, `guideline`, `circular` or `corrigendum`. |
-| `version_date` | Date this version was issued. Use it as `version` in your citations. |
-| `status` | `active`, `superseded`, `repealed` or `deleted`. |
-| `updated_at` | Time of the last change to this record. Drives the sync. |
-| `sha256` | Hash of the PDF. Also the `ETag` of the file. |
-| `pages` | Page count of the PDF. |
-| `size_bytes` | Size of the PDF in bytes. |
-| `source_url` | Where the PDF was published. |
-| `attribution` | Who issued the document. Show it. |
-| `binding_note` | Says whether this text is legally binding or a courtesy copy. Show it. |
-| `supersedes` | Ids of older versions this document replaces. |
-| `superseded_by` | Ids of newer versions that replace this document. |
-| `corrects` | Ids of documents this corrigendum corrects. |
-| `corrected_by` | Ids of corrigenda that correct this document. |
-| `repealed_by` | Ids of documents that repeal this one. |
-| `outdated_by` | Ids of documents that hold the current text of this `active` document. They may be in the other language. Empty for most documents. See [Outdated texts](#outdated-texts). |
-| `corrects_articles` | Only on a corrigendum: the articles or column codes it changes, such as `Article 7` or `B_01.02.0010`. Empty on every other document. |
+| `id` | One version in one language. Never reused. Your citations use it as `document_id` |
+| `family_id` | Groups all versions and languages of one act. The grader matches on it |
+| `language` | `DE` or `EN` |
+| `title`, `doc_type` | Title and kind: `regulation`, `consolidated`, `circular`, `corrigendum` and so on |
+| `version_date` | Your citations use it as `version` |
+| `status` | `active`, `superseded`, `repealed` or `deleted` |
+| `updated_at` | Last change to this record. Drives the sync |
+| `sha256`, `pages`, `size_bytes`, `source_url` | About the PDF |
+| `attribution`, `binding_note` | The legal notice. Show both in your UI |
+| `supersedes`, `superseded_by` | Older and newer versions |
+| `corrects`, `corrected_by` | Corrigenda and the acts they fix |
+| `corrects_articles` | On a corrigendum: the articles or column codes it changes |
+| `repealed_by` | Acts that repeal this one |
+| `outdated_by` | Documents that hold the current text of this `active` one, possibly in the other language |
 
 ## Sync recipe
 
-1. First run: `GET /documents`. Store every record. Fetch every file whose status is not `deleted`. Store `server_time`.
-2. Each later run: `GET /documents?changed_since=<stored server_time>`. Then store the new `server_time`.
-3. The bound is inclusive, so you may see a record twice. Upsert by `id` and that does no harm.
-4. For each record you get back, act on its status. See the next table.
-5. Follow `corrected_by`. See [Corrigenda](#corrigenda).
-6. Check `outdated_by`. See [Outdated texts](#outdated-texts).
+1. First run: `GET /documents`. Store every record, fetch every file that is not `deleted`, store `server_time`.
+2. Later runs: `GET /documents?changed_since=<stored server_time>`, then store the new `server_time`. Use the server's time, not your clock.
+3. The bound is inclusive. Upsert by `id` so a repeat does no harm.
+4. Act on each record's status (table below), then check `corrected_by` and `outdated_by`.
+5. Save `server_time` last, after all downloads succeeded.
 
-Use the `server_time` from the answer, not your own clock.
+Decide what changed by `updated_at`. Use `sha256` only to decide whether to download the file again: a corrected act keeps its PDF and its hash.
 
 ## Status values
 
-| Status | What it means | What your index must do |
+| Status | Meaning | Your index |
 |---|---|---|
-| `active` | Current in this corpus. | Upsert the metadata. Fetch the file with `If-None-Match`. A `304` means your copy is current. |
-| `superseded` | A newer version replaced it. | Take it out of answers about current rules. Answer from the ids in `superseded_by`. Keep it if you build point-in-time questions. |
-| `repealed` | The rule no longer applies. | Keep the record, mark it, and point to `repealed_by`. Do not cite it as a current rule. |
-| `deleted` | A tombstone. The file is gone. | Remove the file and all text, chunks and vectors you built from it. The file route now gets `410`. |
+| `active` | Current in this corpus. Not the same as "in force" | Upsert. Fetch the file with `If-None-Match` |
+| `superseded` | A newer version replaced it | Take it out of answers. Answer from `superseded_by` |
+| `repealed` | The rule no longer applies | Keep the record, never cite it as current |
+| `deleted` | The file is gone. The record stays as a tombstone | Remove the file and every chunk and vector built from it |
 
-`active` means "current in this corpus". It does not mean "in force".
-A deleted document stays in the list as a record with status `deleted`, so you can see that it went away.
+## Corrigenda and outdated texts
 
-## Corrigenda
+| Case | What happens | What you do |
+|---|---|---|
+| A corrigendum arrives | A new record with `corrects`. The act gains it in `corrected_by`; its PDF stays the same | If you cite an article listed in `corrects_articles`, cite the corrigendum too |
+| An `active` text is older than another | `outdated_by` names the current one. Example: the English MaRisk 05/2023 points to the German 06/2024 | Answer from the documents in `outdated_by` |
 
-A corrigendum is its own document. It fixes an error in an act and so changes what the act says.
-
-When a corrigendum arrives, two records change:
-
-| Record | What changes |
-|---|---|
-| The corrigendum | A new record. `corrects` names the act. |
-| The corrected act | `corrected_by` gains the corrigendum's id. `updated_at` moves. The PDF and its `sha256` stay the same. |
-
-When `corrected_by` changes on an act, fetch the corrigendum document and decide how your index treats the corrected passage.
-There is nothing to download again for the act itself.
-
-`corrects_articles` on the corrigendum names what it changes.
-If your answer cites one of those articles from the corrected act, cite the corrigendum too.
-Otherwise the grader fails the currency check. See [How we score you](06-scoring.md#currency).
-
-> **Warning: Do not sync by hash alone**
->
-> The corrected act keeps its PDF and its `sha256`.
-> A client that only compares hashes misses the correction and keeps giving the uncorrected answer.
-> Use `updated_at` to decide what changed. Use `sha256` only to decide whether to download the file again.
-
-## Outdated texts
-
-Some `active` documents hold an older text than another `active` document.
-`outdated_by` names the documents with the current text.
-
-Example: the English MaRisk (`RS-05-2023-BA_EN`) is the text of 05/2023.
-BaFin publishes no English text of the later circulars, so it stays `active`.
-Its `outdated_by` names the German circular that holds the current text.
-
-Answer from the ids in `outdated_by`, in whichever language the question uses.
-A citation of a document whose `outdated_by` is not empty fails the currency check.
-The list can change during the semester, like any other field.
-
-## Rate limit
-
-60 requests per minute per key.
-Over that you get `429` with a `Retry-After` header in seconds. Wait that long and try again.
+Both rules decide the currency score. See [How we score you](06-scoring.md#the-metrics).
 
 ## Status codes
 
 | Code | Meaning |
 |---|---|
-| `200` | OK. |
-| `304` | Your copy of the file is current. |
-| `401` | Key missing or unknown. |
-| `403` | You sent `as_of`. That parameter is for staff. |
-| `404` | Unknown id, or not yet published. |
-| `410` | The document is deleted. |
-| `422` | Cannot read the timestamp. |
-| `429` | Too many requests. See `Retry-After`. |
-| `503` | The API could not reach the model gateway to check your key. Try again. |
-
-A new key that you try too early can stay locked out for up to 5 minutes.
+| `304` | Your copy of the file is current |
+| `401` | Key missing or unknown. A brand-new key can take up to 5 minutes |
+| `404` | Unknown id |
+| `410` | The document is deleted |
+| `422` | Unreadable timestamp |
+| `429` | Over 60 requests per minute. Wait for `Retry-After` seconds |
+| `503` | The API could not check your key. Try again |
