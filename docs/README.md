@@ -30,6 +30,7 @@ The project runs from the kick-off on Friday 23.10.2026 to demo day in mid-Febru
 | 7 | [Reference stack and free tiers](07-stack.md) | A zero-cost stack we recommend, and its gotchas |
 | 8 | [Pitfalls we hit](08-pitfalls.md) | What went wrong in our own build and how we noticed |
 | 9 | [FAQ and help](09-faq.md) | Who to ask, outages, lost keys, used-up budgets |
+| 10 | [How you document](10-docs.md) | Where your own docs go, decision records, the pull request rule |
 
 The evaluation kit is in [`../evals/student_kit/`](../evals/student_kit/).
 At kick-off your own repo receives a copy of that folder and of this `docs/` folder.
@@ -53,7 +54,7 @@ You pick the hosting, the vector store, the framework and the programming langua
 Two rules apply.
 
 1. Zero cost. Nothing you use may cost money.
-2. Every choice gets a short decision record in the repo.
+2. Every choice gets a short decision record in [`decisions/`](decisions/README.md).
 
 If you have no strong view, start from our [reference stack](07-stack.md).
 
