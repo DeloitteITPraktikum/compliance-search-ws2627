@@ -66,6 +66,9 @@ import sys
 import time
 import urllib.request
 
+# Cloudflare in front of the document API refuses the default Python-urllib agent.
+USER_AGENT = "compliance-search-grader"
+
 REFUSAL = re.compile(
     r"not (?:in|part of|covered by) the (?:corpus|documents)|cannot (?:be answered|answer)|can't answer|"
     r"no (?:information|document|source)|"
@@ -193,7 +196,7 @@ def currency_ok(citations, documents, key_of):
 
 
 def post_json(url, payload, headers=None, timeout=120):
-    request = urllib.request.Request(url, json.dumps(payload).encode(), {"Content-Type": "application/json", **(headers or {})})
+    request = urllib.request.Request(url, json.dumps(payload).encode(), {"Content-Type": "application/json", "User-Agent": USER_AGENT, **(headers or {})})
     with urllib.request.urlopen(request, timeout=timeout) as response:
         return json.load(response)
 
