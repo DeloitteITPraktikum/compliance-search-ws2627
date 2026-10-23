@@ -57,6 +57,7 @@ The default judge is `gpt-6-1-sol`: 20 calls per run. Pass `--judge-model gpt-6-
 ## In CI
 
 Use the team key, never a personal one. Fail the build on the numbers you care about, and keep each `report.json` as an artifact.
+[`evaluate.yml`](../.github/workflows/evaluate.yml) does this and runs on demand: Actions tab, "evaluate", "Run workflow", then pick main or a pull request branch. Fill in its two TODO steps once your app runs. The core step:
 
 ```yaml
 - name: Grade the sample questions

@@ -16,6 +16,6 @@ uv run --env-file .env check.py      # five lines that start with ok
 | `download_pdf.py` | Saves one PDF to `downloads/`, default `32025R0301_EN` |
 
 `.env` also sets `KEY`, `DOCS_URL` and `GATEWAY_URL` for the [grader](../handbook/06-scoring.md#run-the-grader).
-In CI, [`setup-check.yml`](../.github/workflows/setup-check.yml) runs `check.py` with the team key `CI_GATEWAY_KEY`.
+In CI, [`evaluate.yml`](../.github/workflows/evaluate.yml) grades your app with the team key `CI_GATEWAY_KEY`. Start it by hand for main or a pull request branch.
 
 Install steps and fixes for common errors: [Quickstart](../handbook/02-quickstart.md).

@@ -1,0 +1,48 @@
+name: evaluate
+
+# Grades your app on the sample questions with the team key CI_GATEWAY_KEY.
+# Start it by hand: Actions tab, "evaluate", "Run workflow", then pick main or
+# the branch of a pull request. From a terminal:
+#   gh workflow run evaluate.yml --ref <branch>
+# This is a stencil: fill in the two TODO steps once your app exists.
+on:
+  workflow_dispatch:
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    env:
+      KEY: ${{ secrets.CI_GATEWAY_KEY }}
+      DOCS_URL: https://tud-docs.pgoell.com
+      GATEWAY_URL: https://tud-llm.pgoell.com/v1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+
+      # TODO: install and start your app in the background on port 8000, e.g.
+      #   uv sync
+      #   uv run uvicorn app.main:app --port 8000 &
+      - name: Start the app
+        run: echo "TODO: start your app here" && exit 1
+
+      - name: Wait for the app
+        run: |
+          for i in $(seq 60); do
+            curl -s -o /dev/null http://localhost:8000 && exit 0
+            sleep 2
+          done
+          echo "app did not answer on port 8000 within 2 minutes" && exit 1
+
+      - name: Grade the sample questions
+        run: uv run --python 3.12 evals/student_kit/grade.py --url http://localhost:8000 --judge-model gpt-6-luna --out report.json
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: report-${{ github.run_number }}
+          path: report.json
+          if-no-files-found: ignore
+
+      # TODO: fail on the numbers you care about. Start at 0.6 and raise it.
+      - name: Check the scores
+        run: python3 -c "import json; t = json.load(open('report.json'))['total']; assert t['citation_recall'] >= 0.6, t"
