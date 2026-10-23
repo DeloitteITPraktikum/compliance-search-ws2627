@@ -26,6 +26,9 @@ import re
 import urllib.request
 from functools import lru_cache
 
+# Cloudflare in front of the document API refuses the default Python-urllib agent.
+USER_AGENT = "compliance-search-grader"
+
 CIRCULARS = {"circular", "marisk", "bait", "vait"}
 
 
@@ -88,7 +91,7 @@ def normalize_article(doc_type_or_family, raw):
 def fetch_documents():
     """All records of the document API, tombstones included."""
     url = os.environ["DOCS_URL"].rstrip("/") + "/documents"
-    request = urllib.request.Request(url, headers={"Authorization": f"Bearer {os.environ['KEY']}"})
+    request = urllib.request.Request(url, headers={"Authorization": f"Bearer {os.environ['KEY']}", "User-Agent": USER_AGENT})
     with urllib.request.urlopen(request, timeout=30) as response:
         return json.load(response)["documents"]
 
