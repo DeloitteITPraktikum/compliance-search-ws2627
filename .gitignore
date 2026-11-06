@@ -10,3 +10,7 @@ __pycache__/
 
 # Downloads from the document API
 downloads/
+out/
+
+# Own
+personal_notes/
