@@ -17,4 +17,4 @@ That holds if you take our recommended stack too.
 |---|---|---|
 | [0001](0001-record-decisions.md) | We record decisions in this folder | Accepted |
 | [0002](0002-monorepo-folder-structure.md) | One repository with a fixed top-level layout | Proposed |
-| [0004](0004-copilot-reads-jira-via-mcp.md) | Copilot reads Jira through the Atlassian MCP server | Proposed |
+| [0004](0004-copilot-reads-jira-via-mcp.md) | Copilot reads Jira and GitHub through MCP servers | Proposed |
