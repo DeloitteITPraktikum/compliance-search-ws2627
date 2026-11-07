@@ -14,5 +14,5 @@ Jira: https://tuda.atlassian.net/browse/DEL-
 
 - [ ] The branch is named after its Jira ticket, e.g. `DEL-47-git-workflow-jira` (see `docs/decisions/0003-branch-names-from-jira-tickets.md`)
 - [ ] The docs match the change (see `handbook/10-docs.md`), or nothing in the docs needed to change
-- [ ] A technology choice has a decision record in `docs/decisions/`
+- [ ] A technology choice has a decision record in `docs/decisions/`, or the change makes no technology choice
 - [ ] No keys or secrets in the diff
