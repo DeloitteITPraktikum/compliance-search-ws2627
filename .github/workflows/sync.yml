@@ -1,0 +1,11 @@
+# Platzhalter, wird noch ausgearbeitet.
+name: sync
+
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "sync ist noch nicht eingerichtet"

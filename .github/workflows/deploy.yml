@@ -1,0 +1,11 @@
+# Platzhalter, wird noch ausgearbeitet.
+name: deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "deploy ist noch nicht eingerichtet"

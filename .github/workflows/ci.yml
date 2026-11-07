@@ -1,0 +1,11 @@
+# Platzhalter, wird noch ausgearbeitet.
+name: ci
+
+on:
+  workflow_dispatch:
+
+jobs:
+  placeholder:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "ci ist noch nicht eingerichtet"

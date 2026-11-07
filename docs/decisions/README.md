@@ -16,3 +16,4 @@ That holds if you take our recommended stack too.
 | No. | Decision | Status |
 |---|---|---|
 | [0001](0001-record-decisions.md) | We record decisions in this folder | Accepted |
+| [0002](0002-monorepo-folder-structure.md) | One repository with a fixed top-level layout | Proposed |
