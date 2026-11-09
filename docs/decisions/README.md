@@ -19,3 +19,4 @@ That holds if you take our recommended stack too.
 | [0002](0002-monorepo-folder-structure.md) | One repository with a fixed top-level layout | Proposed |
 | [0003](0003-branch-names-from-jira-tickets.md) | Name branches after their Jira ticket | Proposed |
 | [0004](0004-copilot-reads-jira-via-mcp.md) | Copilot reads Jira and GitHub through MCP servers | Proposed |
+| [0005](0005-embedding-model-qwen3.md) | Embed chunks with qwen3-embedding through the gateway | Proposed |
