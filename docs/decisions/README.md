@@ -20,3 +20,4 @@ That holds if you take our recommended stack too.
 | [0003](0003-branch-names-from-jira-tickets.md) | Name branches after their Jira ticket | Proposed |
 | [0004](0004-copilot-reads-jira-via-mcp.md) | Copilot reads Jira and GitHub through MCP servers | Proposed |
 | [0005](0005-embedding-model-qwen3.md) | Embed chunks with qwen3-embedding through the gateway | Proposed |
+| [0006](0006-documentsync-procedure.md) | Document sync via GitHub Actions cron and python script | Proposed |
