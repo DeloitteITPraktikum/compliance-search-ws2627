@@ -3,6 +3,8 @@ from typing import Annotated
 
 from pydantic import BaseModel, StringConstraints
 
+# rules that question must be string, >1 char and removes whitespaces
+# Question is a constrained field type based on the primitive str
 Question = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
@@ -15,7 +17,7 @@ class Citation(BaseModel):
 
     document_id: str  # `id` from the document API
     version: str  # `version_date` from the document API
-    article: str
+    article: str  # smallest named unit
     page: int | None = None
     quote: str
 
@@ -24,7 +26,7 @@ class RetrievedPassage(BaseModel):
     """One passage the search found."""
 
     document_id: str
-    article: str
+    article: str  # smallest named unit
 
 
 class AskResponse(BaseModel):
