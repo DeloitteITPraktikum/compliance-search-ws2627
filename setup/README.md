@@ -14,6 +14,7 @@ uv run --env-file .env check.py      # five lines that start with ok
 | `embed.py` | Embeds two texts, German and English |
 | `list_documents.py` | Lists the documents with status, language and pages |
 | `download_pdf.py` | Saves one PDF to `downloads/`, default `32025R0301_EN` |
+| `download_all_pdfs.py` | Saves every available PDF to `downloads/` without replacing existing files |
 
 `.env` also sets `KEY`, `DOCS_URL` and `GATEWAY_URL` for the [grader](../handbook/06-scoring.md#run-the-grader).
 In CI, [`evaluate.yml`](../.github/workflows/evaluate.yml) grades your app with the team key `CI_GATEWAY_KEY`. Start it by hand for main or a pull request branch.
