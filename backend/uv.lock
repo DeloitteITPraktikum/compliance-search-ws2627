@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 
 [[package]]
@@ -57,6 +57,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
+    { name = "pydantic" },
     { name = "uvicorn" },
 ]
 
@@ -69,6 +70,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.162.4" },
+    { name = "pydantic", specifier = ">=2.14.3" },
     { name = "uvicorn", specifier = ">=0.54.0" },
 ]
 
