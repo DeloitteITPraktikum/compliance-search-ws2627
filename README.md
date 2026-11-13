@@ -5,6 +5,7 @@ TU Darmstadt IT-Praktikum WS 2026/27: compliance search over EU financial regula
 | Folder | Holds |
 |---|---|
 | [`setup/`](setup/README.md) | Start here: install uv, put your key in `.env`, run `uv run --env-file .env check.py` |
+| [`backend/`](docs/reference/ask.md) | The app. Start `POST /ask` from `backend/` with `uv run uvicorn compliance_search.api.app:app --port 8000` |
 | [`handbook/`](handbook/README.md) | The handbook. Start with [handbook/README.md](handbook/README.md) |
 | [`docs/`](handbook/10-docs.md) | Your team's own docs and decision records |
 | [`evals/student_kit/`](evals/student_kit/README.md) | Grade your app on the sample questions with your own key |
