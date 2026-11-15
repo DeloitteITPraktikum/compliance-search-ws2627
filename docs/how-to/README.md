@@ -7,4 +7,5 @@ Steps only. Link to [explanation](../explanation/) for the why and to [reference
 
 | Guide | Task |
 |---|---|
-| _Add yours here_ | |
+| [Deploy Backend on Render](deploy-backend-render.md) | DEL-59: Backend Aufsetzen |
+
