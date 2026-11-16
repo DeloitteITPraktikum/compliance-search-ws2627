@@ -11,6 +11,7 @@ __pycache__/
 # Downloads from the document API
 downloads/
 out/
+setup/documents.json
 
 # Own
 personal_notes/
