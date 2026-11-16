@@ -1,11 +1,55 @@
-# Platzhalter, wird noch ausgearbeitet.
+# DEL-37: Automatic document sync via GitHub Actions (see docs/decisions/0006-documentsync-procedure.md)
 name: sync
 
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"   # every day at 00:00 UTC (01:00 in Germany in winter)
+  workflow_dispatch:        # manual start: Actions -> sync -> "Run workflow"
+
+permissions:
+  contents: write   # the runner may commit and push the documents
+  issues: write     # the runner may open an issue when the sync fails
+
+concurrency:
+  group: document-sync
+  cancel-in-progress: false
 
 jobs:
-  placeholder:
+  sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - run: echo "sync ist noch nicht eingerichtet"
+      - name: Check out main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Run document sync
+        env:
+          DOCS_URL: https://tud-docs.pgoell.com
+          GATEWAY_KEY: ${{ secrets.CI_GATEWAY_KEY }}   # team key, never a personal key
+        run: uv run --project backend python backend/src/compliance_search/sync/document_sync.py
+
+      - name: Commit and push new documents
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "No document changes."
+          else
+            git commit -m "chore(sync): update documents from Document API"
+            git push origin main
+          fi
+
+      - name: Notify team on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh issue create \
+            --title "Document sync failed ($(date -u +%Y-%m-%d))" \
+            --body "The document sync failed. Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
