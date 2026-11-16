@@ -1,0 +1,25 @@
+{
+  "family_id": "MaRisk",
+  "language": "EN",
+  "title": "Circular 05/2023 (BA): Minimum Requirements for Risk Management (MaRisk), annotated text",
+  "doc_type": "circular",
+  "version_date": "2023-06-29",
+  "status": "active",
+  "sha256": "5d91101e22c71a28b951f1dfd3a5e31168e2db2a7540ccc7e4a3817be99bc047",
+  "pages": 119,
+  "size_bytes": 1674694,
+  "source_url": "https://www.bafin.de/SharedDocs/Downloads/EN/Rundschreiben/dl_rs_0523_marisk_ba_en.pdf?__blob=publicationFile&v=3",
+  "attribution": "© Federal Financial Supervisory Authority / www.bafin.de",
+  "binding_note": "This English version is provided for information purposes only. The original German text is binding in all respects.",
+  "supersedes": [],
+  "superseded_by": [],
+  "corrects": [],
+  "corrected_by": [],
+  "repealed_by": [],
+  "outdated_by": [
+    "RS-06-2024-BA_DE"
+  ],
+  "corrects_articles": [],
+  "id": "RS-05-2023-BA_EN",
+  "updated_at": "2026-10-20T08:00:00Z"
+}
