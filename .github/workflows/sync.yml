@@ -19,10 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Check out main
-        uses: actions/checkout@v4
-        with:
-          ref: main
+      - name: Check out the repo
+        uses: actions/checkout@v4   # scheduled runs always use main
 
       - name: Install uv
         uses: astral-sh/setup-uv@v6
@@ -42,7 +40,7 @@ jobs:
             echo "No document changes."
           else
             git commit -m "chore(sync): update documents from Document API"
-            git push origin main
+            git push
           fi
 
       - name: Notify team on failure
