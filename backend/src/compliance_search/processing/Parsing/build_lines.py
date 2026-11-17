@@ -38,7 +38,9 @@ def build_lines(fragments: list) -> list:
             "font_size": min(fragment["font_size"] for fragment in line_fragments),
             "real_font_size": min(fragment["effective_font_size"] for fragment in line_fragments),
             "bold": any(fragment["bold"] for fragment in line_fragments),
-            "text": " ".join(fragment["text"] for fragment in line_fragments)
+            # Join without a separator (spaces come from the PDF), then
+            # collapse runs of whitespace and trim the ends
+            "text": " ".join("".join(fragment["text"] for fragment in line_fragments).split())
         })
 
     return lines

@@ -12,9 +12,9 @@ def parse_pdf(source_path: Path) -> dict:
 
         def visitor_function(text, cm, tm, font_dict, font_size):
 
-            text = text.strip()
-
-            if not text:
+            # Skip empty fragments, but keep the raw text: its spaces show
+            # where the PDF separates words (used in build_lines)
+            if not text.strip():
                 return
 
             # Position: transform the text matrix with cm into page coordinates (pt)
