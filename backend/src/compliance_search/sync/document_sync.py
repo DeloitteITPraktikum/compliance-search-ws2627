@@ -1,88 +1,60 @@
 import os
-import time
+import hashlib
 from pathlib import Path
 from typing import Any
 import json
 
-import requests
+from compliance_search.clients.document_api import (
+    downloadDocuments,
+    listDocuments,
+    startSession,
+)
 
-# Umgebungsvariblen 
+# Environment variables
 
 DOCS_URL = os.environ.get("DOCS_URL")
 GATEWAY_KEY = os.environ.get("GATEWAY_KEY")
 if not GATEWAY_KEY:
     raise RuntimeError("GATEWAY_KEY fehlt!")
 
-# relative Pfade
+# Relative paths
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 BACKEND_DIR = SCRIPT_DIR.parents[3]
 DATA_DIR = BACKEND_DIR / "data"
 PDF_DIR = DATA_DIR / "pdfs"
+ACTIVE_PDF_DIR = PDF_DIR / "active"
+DELETED_PDF_DIR = PDF_DIR / "deleted"
 METADATA_DIR = DATA_DIR / "metadata"
 STATE_DIR = DATA_DIR / "state"
 STATE_FILE = STATE_DIR / "state.json"
 
-# Funktion zum Starten einer HTTP-Session
+# File-writing functions
 
-def startSession():
-    global session
-    session = requests.Session()
-    session.headers["Authorization"] = f"Bearer {GATEWAY_KEY}"
-
-# Funktionen zum Abrufen der verfügbaren Anwortarten der API
-
-def healthCheck() -> bool:
-    try: 
-        response = session.get(f"{DOCS_URL}/health", timeout=10)
-        response.raise_for_status()
-        return True
-    except requests.RequestException:
-        return False
-
-def listDocuments(changedSince: str | None = None) -> dict[str, Any]:
-    params = {"changed_since": changedSince} if changedSince is not None else None
-    response = session.get(
-        f"{DOCS_URL}/documents",
-        params=params,
-        timeout=60,
-    )
-    response.raise_for_status()
-    return response.json()
-
-def getChangedDocuments(changedSince: str | None = None) -> dict[str, Any]:
-    if changedSince is None and STATE_FILE.exists():
-        with STATE_FILE.open("r", encoding="utf-8") as file:
-            state = json.load(file)
-        changedSince = state.get("server_time")
-
-    result = listDocuments(changedSince)
-    saveAsJasonFile(STATE_FILE, {"server_time": result["server_time"]})
-    return result
-
-def downloadMetadata(doc_id: str) -> dict[str, Any]:
-    response = session.get(f"{DOCS_URL}/documents/{doc_id}", timeout=60)
-    response.raise_for_status()
-    return response.json()
-    
-def downloadDocuments(doc_id: str) -> bytes:
-    response = session.get(f"{DOCS_URL}/documents/{doc_id}/file", timeout=60)
-    response.raise_for_status()
-    return response.content
-
-# Funktionen zum Speichern von Daten in Dateien
-
-def saveAsJasonFile(filePath: Path, data: Any) -> None:
+def saveAsJsonFile(filePath: Path, data: Any) -> None:
+    """Create the parent directory and save formatted UTF-8 JSON data."""
     filePath.parent.mkdir(parents=True, exist_ok=True)
     with filePath.open("w", encoding="utf-8") as file:
         json.dump(data, file, indent=2, ensure_ascii=False)
         file.write("\n")
 
 def saveAsPdfFile(filePath: Path, data: bytes) -> None:
+    """Create the parent directory and save binary PDF data."""
     filePath.parent.mkdir(parents=True, exist_ok=True)
     filePath.write_bytes(data)
 
-# Funktion zum Filtern der JSON-Dateien nach bestimmten Werten 
+def getLocalPdfSha256(filePath: Path) -> str | None:
+    """Calculate the SHA-256 hash of a local PDF, or return None if it is missing."""
+    if not filePath.exists():
+        return None
+
+    sha256 = hashlib.sha256()
+    with filePath.open("rb") as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b""):
+            sha256.update(chunk)
+    return sha256.hexdigest()
+
+# Function for filtering JSON files by selected values
 
 def filterJsonFile(
     jsonFilePath: Path,
@@ -91,9 +63,8 @@ def filterJsonFile(
     with jsonFilePath.open("r", encoding="utf-8") as file:
         data = json.load(file)
 
-    # Rekursive Funktion die alle Ebenen des JSON-Dokuments durchläuft und nur die angegebenen Werte beibehält
-
     def reduceValues(value: Any):
+        """Recursively keep matching values and remove all other JSON values."""
         if isinstance(value, dict):
             reduced_value: dict[str, Any] = {}
             for key, item in value.items():
@@ -119,56 +90,91 @@ def filterJsonFile(
 
     reducedData = reduceValues(data)
 
-    saveAsJasonFile(jsonFilePath, reducedData)
+    saveAsJsonFile(jsonFilePath, reducedData)
 
-# Synicing Funktionen und Überprüfung des Syncs
+# Synchronization functions and synchronization checks
 
-def syncDocuments():
-    startSession()
-    documents = getChangedDocuments()
-    for document in documents.get("documents", []):
-        documentId = document["id"]
-        metadataPath = METADATA_DIR / f"{documentId}.json"
-        previousMetadata = {}
-        if metadataPath.exists():
-            with metadataPath.open("r", encoding="utf-8") as file:
-                previousMetadata = json.load(file)
+def syncDocuments(
+    docsUrl: str,
+    gatewayKey: str,
+    metadataDir: Path,
+    pdfDir: Path,
+    stateFile: Path,
+) -> dict[str, int]:
+    """Query metadata, reconcile local PDFs by status, and update local metadata."""
+    session = startSession(gatewayKey)
+    activePdfDir = pdfDir / "active"
+    deletedPdfDir = pdfDir / "deleted"
+    activePdfDir.mkdir(parents=True, exist_ok=True)
+    deletedPdfDir.mkdir(parents=True, exist_ok=True)
 
-        saveAsJasonFile(metadataPath, document)
+    # 1. Query every document so orphan PDFs and missing metadata are also reconciled.
+    documentResult = listDocuments(session, docsUrl)
 
-        if document.get("status") == "deleted":
+    downloaded = 0
+    skipped = 0
+    deleted = 0
+
+    for remoteMetadata in documentResult.get("documents", []):
+        documentId = remoteMetadata.get("id")
+        if not documentId:
             continue
 
-        pdfPath = PDF_DIR / f"{documentId}.pdf"
-        if (
-            pdfPath.exists()
-            and previousMetadata.get("sha256") == document.get("sha256")
-        ):
+        metadataPath = metadataDir / f"{documentId}.json"
+        activePdfPath = activePdfDir / f"{documentId}.pdf"
+        deletedPdfPath = deletedPdfDir / f"{documentId}.pdf"
+
+        if remoteMetadata.get("status") == "deleted":
+            deleted += 1
+
+            if activePdfPath.exists():
+                activePdfPath.replace(deletedPdfPath)
+            elif deletedPdfPath.exists():
+                pass
+            elif (pdfDir / f"{documentId}.pdf").exists():
+                (pdfDir / f"{documentId}.pdf").replace(deletedPdfPath)
+
+            saveAsJsonFile(metadataPath, remoteMetadata)
             continue
 
-        pdfData = downloadDocuments(documentId)
-        saveAsPdfFile(pdfPath, pdfData)
+        if deletedPdfPath.exists():
+            deletedPdfPath.replace(activePdfPath)
 
+        legacyPdfPath = pdfDir / f"{documentId}.pdf"
+        if legacyPdfPath.exists():
+            if activePdfPath.exists():
+                legacyPdfPath.unlink()
+            else:
+                legacyPdfPath.replace(activePdfPath)
 
-def checkDocumentsWithCurrentMetadata() -> dict[str, list[str]]:
-    metadata_ids = {
-        metadata_path.stem
-        for metadata_path in METADATA_DIR.glob("*.json")
-    } if METADATA_DIR.exists() else set()
-    pdf_ids = {
-        pdf_path.stem
-        for pdf_path in PDF_DIR.glob("*.pdf")
-    } if PDF_DIR.exists() else set()
+        # 3. Download only when the local PDF hash differs or the PDF is missing.
+        remoteSha256 = remoteMetadata.get("sha256")
+        localPdfSha256 = getLocalPdfSha256(activePdfPath)
+        if localPdfSha256 != remoteSha256:
+            pdfData = downloadDocuments(session, docsUrl, documentId)
+            saveAsPdfFile(activePdfPath, pdfData)
+            downloaded += 1
+        else:
+            skipped += 1
 
+        # 4. Update the individual metadata file for this document.
+        saveAsJsonFile(metadataPath, remoteMetadata)
+
+    saveAsJsonFile(stateFile, {"server_time": documentResult["server_time"]})
     return {
-        "metadata_only": sorted(metadata_ids - pdf_ids),
-        "pdf_only": sorted(pdf_ids - metadata_ids),
-        "matching": sorted(metadata_ids & pdf_ids),
+        "downloaded": downloaded,
+        "skipped": skipped,
+        "deleted": deleted,
     }
 
 def main():
-    syncDocuments()
-    report = checkDocumentsWithCurrentMetadata()
-    print(json.dumps(report, indent=2, ensure_ascii=False))
+    sessionReport = syncDocuments(
+        docsUrl=DOCS_URL,
+        gatewayKey=GATEWAY_KEY,
+        metadataDir=METADATA_DIR,
+        pdfDir=PDF_DIR,
+        stateFile=STATE_FILE,
+    )
+    print(json.dumps(sessionReport, indent=2, ensure_ascii=False))
 if __name__ == "__main__":
     main()
