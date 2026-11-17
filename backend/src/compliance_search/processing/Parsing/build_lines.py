@@ -1,47 +1,44 @@
-from collections import defaultdict
-
 def build_lines(fragments: list) -> list:
-    
-    grouped_fragments = defaultdict(list)
 
-    for fragment in fragments:
-        line_key = (fragment["page_number"], round(fragment["y"], 3))
-        grouped_fragments[line_key].append(fragment)
+    # 1. Sort: page by page, then from top to bottom
+    sorted_fragments = sorted(fragments, key=lambda f: (f["page_number"], -f["y"]))
 
+    # 2. Group: a fragment belongs to the current line if it is on the same page
+    #    and at most half its font size away from the line's first fragment
+    grouped_fragments = []
+    for fragment in sorted_fragments:
+        if grouped_fragments:
+            first_fragment = grouped_fragments[-1][0]
+            tolerance = fragment["effective_font_size"] / 2
+            if (fragment["page_number"] == first_fragment["page_number"]
+                    and abs(fragment["y"] - first_fragment["y"]) <= tolerance):
+                grouped_fragments[-1].append(fragment)
+                continue
+        grouped_fragments.append([fragment])
+
+    # 3. Build the lines: fragments left to right, numbered per page
     lines = []
-    for _, line_fragments in grouped_fragments.items():
-        line_fragments.sort(key=lambda f: f["x"])
-        text = " ".join(fragment["text"] for fragment in line_fragments)
-        first_fragment = line_fragments[0]
-        lines.append({
-            "page_number": first_fragment["page_number"],
-            "line_number": 0,
-            "x": min(fragment["x"]
-                for fragment in line_fragments),
-            "y": first_fragment["y"],
-            "font": first_fragment["font"],
-            "font_size": min(fragment["font_size"]
-                for fragment in line_fragments),
-            "real_font_size": min(fragment["effective_font_size"]
-                for fragment in line_fragments),
-            "bold": any(fragment["bold"] for fragment in line_fragments),
-            "text": text
-        })
-    
-    lines.sort(key=lambda line: (line["page_number"], -line["y"]))
-
     current_page = None
     current_line_number = 0
-    for line in lines:
-        if line["page_number"] != current_page:
-            current_page = line["page_number"]
-            current_line_number = 1
-        else:
-            current_line_number += 1
+    for line_fragments in grouped_fragments:
+        line_fragments.sort(key=lambda f: f["x"])
+        first_fragment = line_fragments[0]
 
-        line["line_number"] = current_line_number
-        
-        
-        
-        
+        if first_fragment["page_number"] != current_page:
+            current_page = first_fragment["page_number"]
+            current_line_number = 0
+        current_line_number += 1
+
+        lines.append({
+            "page_number": first_fragment["page_number"],
+            "line_number": current_line_number,
+            "x": first_fragment["x"],
+            "y": first_fragment["y"],
+            "font": first_fragment["font"],
+            "font_size": min(fragment["font_size"] for fragment in line_fragments),
+            "real_font_size": min(fragment["effective_font_size"] for fragment in line_fragments),
+            "bold": any(fragment["bold"] for fragment in line_fragments),
+            "text": " ".join(fragment["text"] for fragment in line_fragments)
+        })
+
     return lines

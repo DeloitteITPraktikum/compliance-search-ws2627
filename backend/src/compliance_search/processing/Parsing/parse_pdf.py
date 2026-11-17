@@ -17,8 +17,9 @@ def parse_pdf(source_path: Path) -> dict:
             if not text:
                 return
 
-            x = cm[4] + tm[4]
-            y = cm[5] + tm[5]
+            # Position: transform the text matrix with cm into page coordinates (pt)
+            x = tm[4] * cm[0] + tm[5] * cm[2] + cm[4]
+            y = tm[4] * cm[1] + tm[5] * cm[3] + cm[5]
 
             font = ""
 
@@ -33,7 +34,8 @@ def parse_pdf(source_path: Path) -> dict:
                 "y": y,
                 "font": font,
                 "font_size": font_size,
-                "effective_font_size": font_size * cm[0],
+                # Font size on the page: font_size × vertical scale of tm × vertical scale of cm
+                "effective_font_size": font_size * tm[3] * cm[3],
                 "bold": bold,
                 "text": text
             })
