@@ -3,7 +3,7 @@ from compliance_search.processing.Parsing.build_lines import build_lines
 
 def fragment(x, y, text):
     return {"page_number": 1, "x": x, "y": y, "font": "/Regular",
-            "font_size": 1.0, "effective_font_size": 9.6, "bold": False, "text": text}
+            "font_size": 9.6, "bold": False, "text": text}
 
 
 def test_fragments_with_almost_the_same_y_form_one_line():

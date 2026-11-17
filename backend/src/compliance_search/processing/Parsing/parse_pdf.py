@@ -33,9 +33,9 @@ def parse_pdf(source_path: Path) -> dict:
                 "x": x,
                 "y": y,
                 "font": font,
-                "font_size": font_size,
-                # Font size on the page: font_size × vertical scale of tm × vertical scale of cm
-                "effective_font_size": font_size * tm[3] * cm[3],
+                # Font size on the page: pypdf's font_size (often 1.0)
+                # × vertical scale of tm × vertical scale of cm
+                "font_size": font_size * tm[3] * cm[3],
                 "bold": bold,
                 "text": text
             })

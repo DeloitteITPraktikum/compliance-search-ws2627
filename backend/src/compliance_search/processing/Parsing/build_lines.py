@@ -9,7 +9,7 @@ def build_lines(fragments: list) -> list:
     for fragment in sorted_fragments:
         if grouped_fragments:
             first_fragment = grouped_fragments[-1][0]
-            tolerance = fragment["effective_font_size"] / 2
+            tolerance = fragment["font_size"] / 2
             if (fragment["page_number"] == first_fragment["page_number"]
                     and abs(fragment["y"] - first_fragment["y"]) <= tolerance):
                 grouped_fragments[-1].append(fragment)
@@ -36,7 +36,6 @@ def build_lines(fragments: list) -> list:
             "y": first_fragment["y"],
             "font": first_fragment["font"],
             "font_size": min(fragment["font_size"] for fragment in line_fragments),
-            "real_font_size": min(fragment["effective_font_size"] for fragment in line_fragments),
             "bold": any(fragment["bold"] for fragment in line_fragments),
             # Join without a separator (spaces come from the PDF), then
             # collapse runs of whitespace and trim the ends
