@@ -5,6 +5,7 @@ description = "Sync, processing, retrieval and the POST /ask API for the complia
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.162.4",
+    "pypdf>=7.1.0",
     "uvicorn>=0.54.0",
 ]
 
