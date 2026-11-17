@@ -13,19 +13,20 @@ EBA Guidelines. Only one guideline in two languages, and the two files have diff
 
 **Differs between DE and EN.**
 
-| Block | EN | DE |
+| Section | EN begins with | DE begins with |
 |---|---|---|
-| Contents | yes | no |
-| Executive summary | yes | no |
-| Background and rationale | yes | no |
-| 1. Compliance and reporting obligations | yes | yes |
-| 2. Subject matter, scope and definitions | yes | yes |
-| 3. Implementation | yes | yes |
-| 4. Guidelines on outsourcing | yes | yes |
-| 5. Accompanying documents (cost-benefit analysis / impact assessment, feedback on the public consultation) | yes | no |
+| `header` | `Final Report on …` | `EBA/GL/2019/02` |
+| `contents` | `Contents` | – |
+| `executive_summary` | `Executive summary` | – |
+| `background` | `Background` | – |
+| `compliance_reporting` | `1. Compliance and reporting` | `1. Einhaltung und Meldepflichten` |
+| `subject_scope_definitions` | `2. Subject matter, scope and definitions` | `2. Gegenstand, Anwendungsbereich …` |
+| `implementation` | `3. Implementation` | `3. Umsetzung` |
+| `guidelines` | `4. Guidelines on outsourcing` | `4. Leitlinien zu Auslagerungen` |
+| `accompanying_documents` | `5. Accompanying documents` (cost-benefit analysis / impact assessment, feedback on the public consultation) | – |
 
-- The EN file is the full Final Report; the DE file contains only the guidelines (blocks 1–4).
-- Blocks 1–4 are the common core. The consultation feedback in block 5 is mostly tables (comment · EBA analysis · amendment).
+- The EN file is the full Final Report; the DE file contains only `header` and the guidelines (`compliance_reporting` to `guidelines`).
+- These four numbered sections are the common core. The consultation feedback in `accompanying_documents` is mostly tables (comment · EBA analysis · amendment).
 - A running header (`FINAL REPORT ON THE GUIDELINES ON OUTSOURCING` / `ABSCHLUSSBERICHT ZU DEN LEITLINIEN ZU AUSLAGERUNGEN`) repeats on the pages.
 
 ## Level 2: grouping headings

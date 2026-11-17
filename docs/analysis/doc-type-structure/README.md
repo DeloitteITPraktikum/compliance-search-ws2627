@@ -2,7 +2,9 @@
 
 This folder describes, for each `doc_type` returned by the document API, which documents belong to it and how far their structure is the same on each level. It is meant as the basis for choosing a parser per document and for splitting documents into sections.
 
-It complements [`../analyisis-compliance-documents.md`](../analyisis-compliance-documents.md). That analysis groups the documents into five structural classes by hand. The API field `doc_type` splits them into six types, and it is available for every new document, so the parser can be selected from it.
+The API field `doc_type` splits the 34 documents into six types. It is available for every new document, so the parser can be selected from it.
+
+The level-1 sections named in these files are the labels used in [`../level_1_structured_docs/doc_type_analysis.md`](../level_1_structured_docs/doc_type_analysis.md), which lists the opening phrase of every section in EN and DE. The labeled PDFs are in the `<doc_type>/` subfolders there.
 
 ## Files
 
@@ -15,24 +17,16 @@ It complements [`../analyisis-compliance-documents.md`](../analyisis-compliance-
 | `guideline` | 2 | [guideline.md](guideline.md) |
 | `circular` | 5 | [circular.md](circular.md) |
 
-Mapping to the classes of the earlier analysis:
-
-| Earlier class | `doc_type` |
-|---|---|
-| 1. European primary and secondary legislation | `regulation` (original texts) and `consolidated` (consolidated texts); `32016R0098` is `delegated_regulation` |
-| 2. Regulatory Technical Standards (RTS) | `delegated_regulation` |
-| 3. Implementing Technical Standards (ITS) | `implementing_regulation` |
-| 4. EBA Guidelines | `guideline` |
-| 5. BaFin circulars | `circular` |
-
 ## Levels
 
 | Level | Meaning | Example |
 |---|---|---|
-| 1 | Large blocks of the document | recitals, enacting terms (articles), final formula, annexes |
+| 1 | Large blocks of the document (sections) | `header`, `citations`, `recitals`, `enacting_formula`, `enacting_terms`, `final_formula`, `annex` |
 | 2 | Grouping headings above the smallest numbered unit | Part, Title, Chapter, Section; MaRisk modules |
 | 3 | Smallest numbered unit with its own heading or number | Article; numbered paragraph (Randnummer / Textziffer) |
 | 4 | Parts inside that unit | paragraphs, points, sub-points |
+
+Every page also has `footnotes` sections; they are not listed per type.
 
 Each file states per level how the documents are split, whether all documents of the type are the same, and where they differ.
 
@@ -43,9 +37,9 @@ Each file states per level how the documents are split, whether all documents of
 | `delegated_regulation` | same in all | differs (none to three levels) | same (articles with title) | same per language, differs between DE and EN |
 | `regulation` | same, annexes optional | differs | same | same per language, differs between DE and EN |
 | `implementing_regulation` | same | none in the articles | same in the articles; annexes differ per document | same per language in the articles |
-| `consolidated` | same | differs | same | same per language, differs between DE and EN |
+| `consolidated` | same (`amendments` missing in AI Act DE) | differs | same | same per language, differs between DE and EN |
 | `guideline` | differs between DE and EN | same (Titles I–V, numbered sections) | same (paragraphs 1–119) | same (`a.`, `i.`) |
-| `circular` | only "contents + body" in common | differs (MaRisk vs. BAIT/VAIT) | differs | differs |
+| `circular` | only `header` + `contents` in common, then MaRisk or BAIT/VAIT sections | differs (MaRisk vs. BAIT/VAIT) | differs | differs |
 
 Consequences for parsing:
 

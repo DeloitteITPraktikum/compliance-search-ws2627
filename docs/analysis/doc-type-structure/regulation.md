@@ -15,17 +15,17 @@ The German AI Act is not in this type: `02024R1689-20240712_DE` is a consolidate
 
 **Same in all documents, annexes optional.**
 
-```
-Official Journal header
-Citations
-Recitals
-Enacting formula "HAVE ADOPTED THIS REGULATION:" / "HABEN FOLGENDE VERORDNUNG ERLASSEN:"
-Articles
-Final formula    "Done at …" / "Geschehen zu …"  + signatures
-Annexes          only AI Act (ANNEX I–XIII)
-```
+| Section | EN begins with | DE begins with |
+|---|---|---|
+| `header` | `I` / `(Legislative acts)` (DORA), `REGULATION (EU) 2024/1689 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL` (AI Act) | `I` (DORA) |
+| `citations` | `THE EUROPEAN PARLIAMENT AND THE COUNCIL OF THE EUROPEAN UNION,` | `DAS EUROPÄISCHE PARLAMENT UND DER RAT DER EUROPÄISCHEN UNION —` |
+| `recitals` | `Whereas:` | `in Erwägung nachstehender Gründe:` |
+| `enacting_formula` | `HAVE ADOPTED THIS REGULATION:` | `HABEN FOLGENDE VERORDNUNG ERLASSEN:` |
+| `enacting_terms` | `CHAPTER I` | `KAPITEL I` |
+| `final_formula` | `Done at Strasbourg, <date>.` (DORA), `Done at Brussels, <date>.` (AI Act) + signatures | `Geschehen zu Straßburg am <date>.` (DORA) |
+| `annex` | `ANNEX I`, `ANNEX II`, … (AI Act only) | – |
 
-- The final formula comes before the annexes.
+- The final formula comes before the annexes. The DE column covers DORA only.
 - AI Act annexes: lists (Union legislation, criminal offences, high-risk systems), required contents of technical documentation, conformity procedures. Text and lists, no data tables.
 
 ## Level 2: grouping headings

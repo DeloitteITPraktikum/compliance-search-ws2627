@@ -20,12 +20,25 @@ Notes:
 
 ## Level 1: blocks
 
-**Only partly the same.** Common to all: BaFin header (circular number, addressees, title), contents, body.
+**Only partly the same.** Common to all: `header` (circular number, addressees, title) and `contents`. The body sections depend on the variant.
 
-| Variant | Blocks |
-|---|---|
-| MaRisk | header → contents → `AT` modules (general part, starting with `AT 1 Preliminary remarks`) → `BT` modules (special part) |
-| BAIT / VAIT | header → contents → `I. Vorbemerkung` / `I. Preliminary remarks` → `II. Anforderungen` / `II. Requirements` |
+MaRisk:
+
+| Section | EN begins with | DE begins with |
+|---|---|---|
+| `header` | `Minimum Requirements for Risk Management` | `Rundschreiben` |
+| `contents` | `Contents` | `Inhalt` |
+| `general_part_AT` | `AT 1 Preliminary remarks` | `AT 1 Vorbemerkung` |
+| `special_part_BT` | `BT 1 Special requirements relating to the internal control system` | `BT 1 Besondere Anforderungen an das interne …` |
+
+BAIT / VAIT:
+
+| Section | EN begins with | DE begins with |
+|---|---|---|
+| `header` | `Circular 10/2017 (BA) in the version of …` | `Rundschreiben 10/2017 (BA) …` / `Rundschreiben 10/2018 (VA) …` |
+| `contents` | `Contents` | `Inhalt` |
+| `preliminary_remarks` | `I. Preliminary remarks` | `I. Vorbemerkung` |
+| `requirements` | `II. Requirements` | `II. Anforderungen` |
 
 ## Level 2: grouping headings
 

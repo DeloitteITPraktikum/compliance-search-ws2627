@@ -13,7 +13,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-# Section names per doc_type, as in setup/downloads/labeled/tables.md
+# Section names per doc_type, as in docs/analysis/level_1_structured_docs/doc_type_analysis.md
 SectionType = Literal[
     # regulation, delegated_regulation, implementing_regulation
     "header",
@@ -46,9 +46,9 @@ SectionType = Literal[
     "footnotes",
 ]
 
-
+# based on 
 class Section(BaseModel):
-    
+
     section_id: str  # <document_id>#<seq> to order the sections
     document_id: str
     seq: int  # order within the document, starting at 0

@@ -20,17 +20,17 @@ The 12 DORA RTS exist in DE and EN; `32016R0098` only in EN.
 
 **Same in all 13 documents.**
 
-```
-Official Journal header (title, date, "(Text with EEA relevance)")
-Citations ("Having regard to …" / "gestützt auf …")
-Recitals        "Whereas:" / "in Erwägung nachstehender Gründe:"  then (1), (2), …
-Enacting formula "HAS ADOPTED THIS REGULATION:" / "HAT FOLGENDE VERORDNUNG ERLASSEN:"
-Articles
-Final formula   "Done at Brussels, …" / "Brüssel, den …"  + signature
-```
+| Section | EN begins with | DE begins with |
+|---|---|---|
+| `header` | `COMMISSION DELEGATED REGULATION (EU) …` (2016/98: `REGULATIONS`) | `DELEGIERTE VERORDNUNG (EU) … DER KOMMISSION` |
+| `citations` | `THE EUROPEAN COMMISSION,` | `DIE EUROPÄISCHE KOMMISSION —` |
+| `recitals` | `Whereas:`, then (1), (2), … | `in Erwägung nachstehender Gründe:` |
+| `enacting_formula` | `HAS ADOPTED THIS REGULATION:` | `HAT FOLGENDE VERORDNUNG ERLASSEN:` |
+| `enacting_terms` | first grouping heading or `Article 1`, see level 2 | `KAPITEL I`, `TITEL I` or `Artikel 1` |
+| `final_formula` | `Done at Brussels, <date>.` + signature | `Brüssel, den <date>` + signature |
 
-- No document of this type has an annex.
-- The final formula differs by language: EN `Done at Brussels, <date>.`, DE `Brüssel, den <date>`.
+- No document of this type has an `annex` section.
+- `enacting_terms` starts with `CHAPTER 1` (2016/98, Arabic), `CHAPTER I` (1772), `TITLE I` (1774) or directly with `Article 1` (1773, 0301, 0420, 0532).
 
 ## Level 2: grouping headings
 

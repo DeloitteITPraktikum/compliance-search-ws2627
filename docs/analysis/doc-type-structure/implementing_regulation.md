@@ -14,18 +14,18 @@ Commission Implementing Regulations, here Implementing Technical Standards (ITS)
 
 **Same in all documents.**
 
-```
-Official Journal header
-Citations
-Recitals
-Enacting formula
-Articles
-Final formula  + signature
-Annexes
-```
+| Section | EN begins with | DE begins with |
+|---|---|---|
+| `header` | `COMMISSION IMPLEMENTING REGULATION (EU) …` | `DURCHFÜHRUNGSVERORDNUNG (EU) … DER KOMMISSION` |
+| `citations` | `THE EUROPEAN COMMISSION,` | `DIE EUROPÄISCHE KOMMISSION —` |
+| `recitals` | `Whereas:` | `in Erwägung nachstehender Gründe:` |
+| `enacting_formula` | `HAS ADOPTED THIS REGULATION:` | `HAT FOLGENDE VERORDNUNG ERLASSEN:` |
+| `enacting_terms` | `Article 1` | `Artikel 1` |
+| `final_formula` | `Done at Brussels, <date>.` + signature | `Brüssel, den <date>` + signature |
+| `annex` | `ANNEX I`, `ANNEX II`, … | `ANHANG I`, `ANHANG II`, … |
 
 - The annexes follow the final formula.
-- In `32024R3172` the heading `ANNEX I` does not appear in the extracted text; the annex content starts directly after the signature. Rule that works for all documents: everything after the final formula is annex content.
+- In `32024R3172` the heading `ANNEX I` does not appear in the extracted text; the first `annex` section starts at `Section 1 – 'Disclosure of overview…'` (DE: `Abschnitt 1 – „Offenlegung…"`). Rule that works for all documents: everything after the final formula is annex content.
 
 ## Level 2: grouping headings
 

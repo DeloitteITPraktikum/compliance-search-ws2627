@@ -15,15 +15,17 @@ Article counts include inserted articles (e.g. `Article 8a`).
 
 ## Level 1: blocks
 
-**Same in all documents.**
+**Same in all documents**, except that the AI Act (DE) has no `amendments`.
 
-```
-Notice "This text is meant purely as a documentation tool …" / "Dieser Text dient lediglich zu Informationszwecken …"
-Base act title with ►B
-"Amended by" / "Geändert durch" list (M1, M2, …)
-Articles
-Annexes
-```
+| Section | EN begins with | DE begins with |
+|---|---|---|
+| `notice` | `This text is meant purely as a documentation tool and has no legal effect.` | `Dieser Text dient lediglich zu Informationszwecken und hat keine Rechtswirkung.` |
+| `amendments` | `Amended by:` (list M1, M2, …) | `Geändert durch:` |
+| `enacting_terms` | `TITLE I` (CRD, MiCA), `PART ONE` (CRR) | `TITEL I` (MiCA), `TEIL 1` (CRR), `KAPITEL I` (AI Act) |
+| `annex` | `ANNEX I`, … | `ANHANG I`, … |
+
+- There is no `header` section: the base act title with `►B` follows the notice and belongs to `notice`.
+- The consolidated AI Act (DE) has no `amendments` section.
 
 Differences to the original texts:
 
