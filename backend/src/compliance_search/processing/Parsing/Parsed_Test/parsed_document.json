@@ -1,0 +1,1606 @@
+{
+    "document": "C:/Users/timsi/source/repos/DeloitteITPraktikum/compliance-search-ws2627/setup/downloads/32025R0532_DE.pdf",
+    "pages": 7,
+    "lines": [
+        {
+            "page": 1,
+            "line_no": 1,
+            "text": "DELEGIERTE VERORDNUNG (EU) 2025/532 DER KOMMISSION"
+        },
+        {
+            "page": 1,
+            "line_no": 2,
+            "text": "vom 24. März 2025"
+        },
+        {
+            "page": 1,
+            "line_no": 3,
+            "text": "zur Ergänzung der Verordnung (EU) 2022/2554 des Europäischen Parlaments und des Rates durch"
+        },
+        {
+            "page": 1,
+            "line_no": 4,
+            "text": "technische Regulierungsstandards zur Präzisierung der Aspekte, die ein Finanzunternehmen bei der"
+        },
+        {
+            "page": 1,
+            "line_no": 5,
+            "text": "Untervergabe von IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen"
+        },
+        {
+            "page": 1,
+            "line_no": 6,
+            "text": "bestimmen und bewerten muss"
+        },
+        {
+            "page": 1,
+            "line_no": 7,
+            "text": "(Text von Bedeutung für den EWR)"
+        },
+        {
+            "page": 1,
+            "line_no": 8,
+            "text": "DIE EUROPÄISCHE KOMMISSION —"
+        },
+        {
+            "page": 1,
+            "line_no": 9,
+            "text": "gestützt auf den Vertrag über die Arbeitsweise der Europäischen Union,"
+        },
+        {
+            "page": 1,
+            "line_no": 10,
+            "text": "gestützt auf die Verordnung (EU) 2022/2554 des Europäischen Parlaments und des Rates vom 14. Dezember 2022 über die"
+        },
+        {
+            "page": 1,
+            "line_no": 11,
+            "text": "digitale operationale Resilienz im Finanzsektor und zur Änderung der Verordnungen (EG) Nr. 1060/2009, (EU)"
+        },
+        {
+            "page": 1,
+            "line_no": 12,
+            "text": "Nr. 648/2012, (EU) Nr. 600/2014, (EU) Nr. 909/2014 und (EU) 2016/1011 (1), insbesondere auf Artikel 30 Absatz 5"
+        },
+        {
+            "page": 1,
+            "line_no": 13,
+            "text": "Unterabsatz 4,"
+        },
+        {
+            "page": 1,
+            "line_no": 14,
+            "text": "in Erwägung nachstehender Gründe:"
+        },
+        {
+            "page": 1,
+            "line_no": 15,
+            "text": "(1) Die Erbringung von IKT-Dienstleistungen für Finanzunternehmen hängt häufig von einer komplexen Kette von"
+        },
+        {
+            "page": 1,
+            "line_no": 16,
+            "text": "IKT-Unterauftragnehmern ab, wobei IKT-Drittdienstleister eine oder mehrere Unterauftragsvereinbarungen mit"
+        },
+        {
+            "page": 1,
+            "line_no": 17,
+            "text": "anderen IKT-Drittdienstleistern schließen können. Die indirekte Abhängigkeit von IKT-Unterauftragnehmern kann"
+        },
+        {
+            "page": 1,
+            "line_no": 18,
+            "text": "die Fähigkeit eines Finanzunternehmens beeinträchtigen, seine Risiken zu ermitteln, zu bewerten und zu steuern,"
+        },
+        {
+            "page": 1,
+            "line_no": 19,
+            "text": "einschließlich Risiken in Verbindung mit lückenhaften Informationen von IKT-Drittdienstleistern sowie mit der"
+        },
+        {
+            "page": 1,
+            "line_no": 20,
+            "text": "begrenzten Möglichkeit eines Finanzunternehmens, Informationen von IKT-Unterauftragnehmern zu erhalten, die"
+        },
+        {
+            "page": 1,
+            "line_no": 21,
+            "text": "IKT-Dienstleistungen erbringen, welche kritische oder wichtige Funktionen oder wesentliche Teile davon"
+        },
+        {
+            "page": 1,
+            "line_no": 22,
+            "text": "unterstützen. In diesem Zusammenhang ist es in Fällen, in denen die Erbringung von IKT-Dienstleistungen für"
+        },
+        {
+            "page": 1,
+            "line_no": 23,
+            "text": "Finanzunternehmen von einer potenziell langen oder komplexen Kette von IKT-Unterauftragnehmern abhängt, von"
+        },
+        {
+            "page": 1,
+            "line_no": 24,
+            "text": "wesentlicher Bedeutung, dass Finanzunternehmen die Gesamtkette der Unterauftragnehmer ermitteln, die"
+        },
+        {
+            "page": 1,
+            "line_no": 25,
+            "text": "IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen erbringen."
+        },
+        {
+            "page": 1,
+            "line_no": 26,
+            "text": "(2) Von den Unterauftragnehmern, die IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen"
+        },
+        {
+            "page": 1,
+            "line_no": 27,
+            "text": "erbringen, sollten sich Finanzunternehmen insbesondere und kontinuierlich auf diejenigen Unterauftragnehmer"
+        },
+        {
+            "page": 1,
+            "line_no": 28,
+            "text": "konzentrieren, die die IKT-Dienstleistung zur Unterstützung kritischer oder wichtiger Funktionen sicherstellen,"
+        },
+        {
+            "page": 1,
+            "line_no": 29,
+            "text": "einschließlich aller Unterauftragnehmer, die IKT-Dienstleistungen erbringen, deren Störung die Sicherheit oder"
+        },
+        {
+            "page": 1,
+            "line_no": 30,
+            "text": "Kontinuität der Dienstleistung beeinträchtigen würde, wie im Informationsregister gemäß Artikel 28 Absatz 3 der"
+        },
+        {
+            "page": 1,
+            "line_no": 31,
+            "text": "Verordnung (EU) 2022/2554 festgelegt."
+        },
+        {
+            "page": 1,
+            "line_no": 32,
+            "text": "(3) Finanzunternehmen unterscheiden sich in Bezug auf Größe, Struktur, interne Organisation sowie Art und"
+        },
+        {
+            "page": 1,
+            "line_no": 33,
+            "text": "Komplexität ihrer Tätigkeiten erheblich. Um die Verhältnismäßigkeit sicherzustellen, sollten diese Unterschiede"
+        },
+        {
+            "page": 1,
+            "line_no": 34,
+            "text": "berücksichtigt werden, wenn festgelegt wird, welche Aspekte ein Finanzunternehmen bei der Untervergabe von"
+        },
+        {
+            "page": 1,
+            "line_no": 35,
+            "text": "IKT-Dienstleistungen, die kritische oder wichtige Funktionen unterstützen, bestimmen und bewerten sollte."
+        },
+        {
+            "page": 1,
+            "line_no": 36,
+            "text": "(4) Auch wenn die Finanzunternehmen gemäß Artikel 30 Absatz 2 der Verordnung (EU) 2022/2554 die Nutzung von an"
+        },
+        {
+            "page": 1,
+            "line_no": 37,
+            "text": "Unterauftragnehmer vergebenen IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen durch"
+        },
+        {
+            "page": 1,
+            "line_no": 38,
+            "text": "IKT-Drittdienstleister gestatten, entbindet dies die Leitungsorgane der Finanzunternehmen nicht von ihrer"
+        },
+        {
+            "page": 1,
+            "line_no": 39,
+            "text": "letztendlichen Verantwortung für das Risikomanagement und die Einhaltung ihrer gesetzlichen und regulatorischen"
+        },
+        {
+            "page": 1,
+            "line_no": 40,
+            "text": "Pflichten. Ist die Untervergabe von IKT-Dienstleistungen, die kritische oder wichtige Funktionen unterstützen,"
+        },
+        {
+            "page": 1,
+            "line_no": 41,
+            "text": "zulässig, ist es wichtig, dass Finanzunternehmen einen klaren und ganzheitlichen Überblick über die Risiken haben,"
+        },
+        {
+            "page": 1,
+            "line_no": 42,
+            "text": "die mit der Vergabe von Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen an Unterauft­"
+        },
+        {
+            "page": 1,
+            "line_no": 43,
+            "text": "ragnehmer verbunden sind, damit sie diese Risiken überwachen, steuern und mindern können. Daher sollten sie"
+        },
+        {
+            "page": 1,
+            "line_no": 44,
+            "text": "diese Risiken vor der Untervergabe dieser Dienstleistungen bewerten."
+        },
+        {
+            "page": 1,
+            "line_no": 45,
+            "text": "(5) Gruppeninterne IKT-Unterauftragnehmer, die IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger"
+        },
+        {
+            "page": 1,
+            "line_no": 46,
+            "text": "Funktionen oder wesentlicher Teile davon erbringen, einschließlich gruppeninterner IKT-Unterauftragnehmer, die"
+        },
+        {
+            "page": 1,
+            "line_no": 47,
+            "text": "sich im vollständigen oder gemeinsamen Besitz von Finanzunternehmen innerhalb desselben institutsbezogenen"
+        },
+        {
+            "page": 1,
+            "line_no": 48,
+            "text": "Sicherungssystems befinden, sollten als IKT-Unterauftragnehmer betrachtet werden."
+        },
+        {
+            "page": 1,
+            "line_no": 49,
+            "text": "Amtsblatt"
+        },
+        {
+            "page": 1,
+            "line_no": 50,
+            "text": "der Europäischen Union"
+        },
+        {
+            "page": 1,
+            "line_no": 51,
+            "text": "DE"
+        },
+        {
+            "page": 1,
+            "line_no": 52,
+            "text": "Reihe L"
+        },
+        {
+            "page": 1,
+            "line_no": 53,
+            "text": "2025/532 2.7.2025"
+        },
+        {
+            "page": 1,
+            "line_no": 54,
+            "text": "ELI: http://data.europa.eu/eli/reg_del/2025/532/oj 1/7"
+        },
+        {
+            "page": 1,
+            "line_no": 55,
+            "text": "(1) ABl. L 333 vom 27.12.2022, S. 1, ELI: http://data.europa.eu/eli/reg/2022/2554/oj."
+        },
+        {
+            "page": 2,
+            "line_no": 1,
+            "text": "(6) Liegt eine Gruppe von Finanzunternehmen vor, sollte gegebenenfalls deren Mutterunternehmen sicherstellen, dass die"
+        },
+        {
+            "page": 2,
+            "line_no": 2,
+            "text": "Leitlinie über den Einsatz von IKT-Unterauftragnehmern, die IKT-Dienstleistungen zur Unterstützung kritischer oder"
+        },
+        {
+            "page": 2,
+            "line_no": 3,
+            "text": "wichtiger Funktionen oder eines wesentlichen Teils davon erbringen, innerhalb der Gruppe auf konsistente und"
+        },
+        {
+            "page": 2,
+            "line_no": 4,
+            "text": "kohärente Weise angewandt wird."
+        },
+        {
+            "page": 2,
+            "line_no": 5,
+            "text": "(7) Es ist wichtig, ein umfassendes Management der Risiken sicherzustellen, die entstehen können, wenn IKT-Dienst­"
+        },
+        {
+            "page": 2,
+            "line_no": 6,
+            "text": "leistungen, die kritische oder wichtige Funktionen unterstützen, an Unterauftragnehmer vergeben werden. Aus"
+        },
+        {
+            "page": 2,
+            "line_no": 7,
+            "text": "diesem Grund sollten Finanzunternehmen die einzelnen Phasen des Lebenszyklus einer vertraglichen Vereinbarung"
+        },
+        {
+            "page": 2,
+            "line_no": 8,
+            "text": "über die Nutzung von IKT-Dienstleistungen, die diese Funktionen unterstützen und von IKT-Drittdienstleistern"
+        },
+        {
+            "page": 2,
+            "line_no": 9,
+            "text": "erbracht werden, verfolgen, auch bei Unterauftragsvereinbarungen. Daher sind Anforderungen an"
+        },
+        {
+            "page": 2,
+            "line_no": 10,
+            "text": "Finanzunternehmen festzulegen, die in ihren vertraglichen Vereinbarungen mit IKT-Drittdienstleistern zum"
+        },
+        {
+            "page": 2,
+            "line_no": 11,
+            "text": "Ausdruck kommen sollten, wenn die Nutzung von IKT-Dienstleistungen, die an Unterauftragnehmer vergeben"
+        },
+        {
+            "page": 2,
+            "line_no": 12,
+            "text": "werden und kritische oder wichtige Funktionen unterstützen, zulässig ist."
+        },
+        {
+            "page": 2,
+            "line_no": 13,
+            "text": "(8) Um Risiken im Zusammenhang mit der Vergabe von Unteraufträgen zu mindern, müssen die Bedingungen festgelegt"
+        },
+        {
+            "page": 2,
+            "line_no": 14,
+            "text": "werden, unter denen IKT-Drittdienstleister Unterauftragnehmer für die Erbringung von IKT-Dienstleistungen, die"
+        },
+        {
+            "page": 2,
+            "line_no": 15,
+            "text": "kritische oder wichtige Funktionen unterstützen, in Anspruch nehmen können. Zu diesem Zweck sollten in"
+        },
+        {
+            "page": 2,
+            "line_no": 16,
+            "text": "vertraglichen IKT-Vereinbarungen zwischen Finanzunternehmen und IKT-Drittdienstleistern entsprechende"
+        },
+        {
+            "page": 2,
+            "line_no": 17,
+            "text": "Bedingungen festgelegt werden, einschließlich der Planung von Unterauftragsvereinbarungen, der"
+        },
+        {
+            "page": 2,
+            "line_no": 18,
+            "text": "Risikobewertungen, der Sorgfaltspflicht und des Genehmigungsverfahrens für neue IKT-Unterauftragsverein­"
+        },
+        {
+            "page": 2,
+            "line_no": 19,
+            "text": "barungen für IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen oder wesentlicher Teile"
+        },
+        {
+            "page": 2,
+            "line_no": 20,
+            "text": "davon. Gleiches gilt für wesentliche Änderungen an bestehenden Vereinbarungen, die vom IKT-Drittdienstleister"
+        },
+        {
+            "page": 2,
+            "line_no": 21,
+            "text": "vorgenommen werden."
+        },
+        {
+            "page": 2,
+            "line_no": 22,
+            "text": "(9) Um Risiken zu ermitteln, die entstehen könnten, bevor ein Finanzunternehmen eine Vereinbarung mit einem"
+        },
+        {
+            "page": 2,
+            "line_no": 23,
+            "text": "IKT-Unterauftragnehmer schließt, sollten IKT-Drittdienstleister die Eignung potenzieller Unterauftragnehmer auf der"
+        },
+        {
+            "page": 2,
+            "line_no": 24,
+            "text": "Grundlage der vertraglichen IKT-Vereinbarungen, die der IKT-Drittdienstleister mit dem Finanzunternehmen"
+        },
+        {
+            "page": 2,
+            "line_no": 25,
+            "text": "geschlossen hat, angemessen und verhältnismäßig bewerten. Diese vertraglichen IKT-Vereinbarungen sollten daher"
+        },
+        {
+            "page": 2,
+            "line_no": 26,
+            "text": "vorschreiben, dass der IKT-Drittdienstleister oder gegebenenfalls das Finanzunternehmen direkt die Ressourcen des"
+        },
+        {
+            "page": 2,
+            "line_no": 27,
+            "text": "potenziellen Unterauftragnehmers bewertet, zum Beispiel seine Fachkenntnisse und die Frage, ob er über"
+        },
+        {
+            "page": 2,
+            "line_no": 28,
+            "text": "angemessene finanzielle, personelle und technische Ressourcen verfügt, seine Informationssicherheit und seine"
+        },
+        {
+            "page": 2,
+            "line_no": 29,
+            "text": "Organisationsstruktur, einschließlich des Risikomanagements und der internen Kontrollen, über die der Unterauft­"
+        },
+        {
+            "page": 2,
+            "line_no": 30,
+            "text": "ragnehmer verfügen sollte."
+        },
+        {
+            "page": 2,
+            "line_no": 31,
+            "text": "(10) Um Schwachstellen und Bedrohungen, die Risiken für ihre IKT-Systeme und -Vorgänge darstellen können, zu"
+        },
+        {
+            "page": 2,
+            "line_no": 32,
+            "text": "mindern, sollten Finanzunternehmen in der Lage sein, die Leistung der IKT-Dienstleistung zu überwachen und über"
+        },
+        {
+            "page": 2,
+            "line_no": 33,
+            "text": "alle relevanten Änderungen innerhalb ihrer IKT-Unterauftragskette unterrichtet zu werden, wenn diese Änderungen"
+        },
+        {
+            "page": 2,
+            "line_no": 34,
+            "text": "kritische oder wichtige Funktionen betreffen."
+        },
+        {
+            "page": 2,
+            "line_no": 35,
+            "text": "(11) Damit Finanzunternehmen die Risiken im Zusammenhang mit Unterauftragsvereinbarungen oder wesentlichen"
+        },
+        {
+            "page": 2,
+            "line_no": 36,
+            "text": "Änderungen daran bewerten können, sollten IKT-Drittdienstleister die Finanzunternehmen, für die sie IKT-Dienst­"
+        },
+        {
+            "page": 2,
+            "line_no": 37,
+            "text": "leistungen erbringen, über alle derartigen neuen Vereinbarungen oder Änderungen rechtzeitig vor deren"
+        },
+        {
+            "page": 2,
+            "line_no": 38,
+            "text": "Inkrafttreten informieren. Aus demselben Grund sollten Finanzunternehmen das Recht haben, den Vertrag mit dem"
+        },
+        {
+            "page": 2,
+            "line_no": 39,
+            "text": "IKT-Drittdienstleister zu kündigen, wenn das Ergebnis ihrer Risikobewertung zeigt, dass die neuen Vereinbarungen"
+        },
+        {
+            "page": 2,
+            "line_no": 40,
+            "text": "oder wesentlichen Änderungen ein Risiko bergen, das ihre Risikotoleranz übersteigt."
+        },
+        {
+            "page": 2,
+            "line_no": 41,
+            "text": "DE ABl. L vom 2.7.2025"
+        },
+        {
+            "page": 2,
+            "line_no": 42,
+            "text": "2/7 ELI: http://data.europa.eu/eli/reg_del/2025/532/oj"
+        },
+        {
+            "page": 3,
+            "line_no": 1,
+            "text": "(12) Die Europäischen Aufsichtsbehörden haben zu dem Entwurf der technischen Regulierungsstandards, auf den sich"
+        },
+        {
+            "page": 3,
+            "line_no": 2,
+            "text": "diese Verordnung stützt, eine öffentliche Konsultation durchgeführt, die damit verbundenen potenziellen Kosten-"
+        },
+        {
+            "page": 3,
+            "line_no": 3,
+            "text": "und Nutzeneffekte analysiert und nach Artikel 37 der Verordnung (EU) Nr. 1093/2010 des Europäischen Parlaments"
+        },
+        {
+            "page": 3,
+            "line_no": 4,
+            "text": "und des Rates (2), Artikel 37 der Verordnung (EU) Nr. 1094/2010 des Europäischen Parlaments und des Rates (3) und"
+        },
+        {
+            "page": 3,
+            "line_no": 5,
+            "text": "Artikel 37 der Verordnung (EU) Nr. 1095/2010 des Europäischen Parlaments und des Rates (4) Empfehlungen der"
+        },
+        {
+            "page": 3,
+            "line_no": 6,
+            "text": "Interessengruppen der Europäischen Aufsichtsbehörden eingeholt."
+        },
+        {
+            "page": 3,
+            "line_no": 7,
+            "text": "(13) Der Europäische Datenschutzbeauftragte wurde gemäß Artikel 42 Absatz 1 der Verordnung (EU) 2018/1725 des"
+        },
+        {
+            "page": 3,
+            "line_no": 8,
+            "text": "Europäischen Parlaments und des Rates (5) konsultiert und hat am 20. August 2024 eine Stellungnahme"
+        },
+        {
+            "page": 3,
+            "line_no": 9,
+            "text": "abgegeben ––"
+        },
+        {
+            "page": 3,
+            "line_no": 10,
+            "text": "HAT FOLGENDE VERORDNUNG ERLASSEN:"
+        },
+        {
+            "page": 3,
+            "line_no": 11,
+            "text": "Artikel 1"
+        },
+        {
+            "page": 3,
+            "line_no": 12,
+            "text": "Gesamtrisikoprofil und Komplexität"
+        },
+        {
+            "page": 3,
+            "line_no": 13,
+            "text": "Finanzunternehmen berücksichtigen ihre Größe und ihr Gesamtrisikoprofil sowie die Art, den Umfang und die Aspekte"
+        },
+        {
+            "page": 3,
+            "line_no": 14,
+            "text": "erhöhter oder verringerter Komplexität ihrer Dienstleistungen, Tätigkeiten und Geschäfte, einschließlich der Aspekte, die"
+        },
+        {
+            "page": 3,
+            "line_no": 15,
+            "text": "sich auf Folgendes beziehen:"
+        },
+        {
+            "page": 3,
+            "line_no": 16,
+            "text": "a) die Art der IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen, die unter die vertragliche"
+        },
+        {
+            "page": 3,
+            "line_no": 17,
+            "text": "Vereinbarung zwischen dem Finanzunternehmen und dem IKT-Drittdienstleister fallen;"
+        },
+        {
+            "page": 3,
+            "line_no": 18,
+            "text": "b) die Art der IKT-Dienstleistungen, die unter die vertragliche Vereinbarung zwischen dem IKT-Drittdienstleister und"
+        },
+        {
+            "page": 3,
+            "line_no": 19,
+            "text": "seinen Unterauftragnehmern fallen;"
+        },
+        {
+            "page": 3,
+            "line_no": 20,
+            "text": "c) den Standort des IKT-Unterauftragnehmers, der IKT-Dienstleistungen erbringt, die kritische oder wichtige Funktionen"
+        },
+        {
+            "page": 3,
+            "line_no": 21,
+            "text": "oder einen wesentlichen Teil davon unterstützen, oder den Standort seines Mutterunternehmens;"
+        },
+        {
+            "page": 3,
+            "line_no": 22,
+            "text": "d) die Länge und Komplexität der vom IKT-Drittdienstleister genutzten Kette von Unterauftragnehmern, die IKT-Dienst­"
+        },
+        {
+            "page": 3,
+            "line_no": 23,
+            "text": "leistungen zur Unterstützung kritischer oder wichtiger Funktionen oder wesentlicher Teile davon erbringen;"
+        },
+        {
+            "page": 3,
+            "line_no": 24,
+            "text": "e) die Art der Daten, die an IKT-Unterauftragnehmer weitergegeben werden, die IKT-Dienstleistungen zur"
+        },
+        {
+            "page": 3,
+            "line_no": 25,
+            "text": "Unterstützung kritischer oder wichtiger Funktionen oder wesentlicher Teile davon erbringen;"
+        },
+        {
+            "page": 3,
+            "line_no": 26,
+            "text": "f) die Frage, ob die IKT-Dienstleistungen, die kritische oder wichtige Funktionen oder wesentliche Teile davon"
+        },
+        {
+            "page": 3,
+            "line_no": 27,
+            "text": "unterstützen, von Unterauftragnehmern erbracht werden, die ihren Sitz in einem Mitgliedstaat oder in einem"
+        },
+        {
+            "page": 3,
+            "line_no": 28,
+            "text": "Drittland haben, einschließlich des Standorts, von dem aus die IKT-Dienstleistungen tatsächlich erbracht werden,"
+        },
+        {
+            "page": 3,
+            "line_no": 29,
+            "text": "und des Standorts, an dem die Daten tatsächlich verarbeitet und gespeichert werden;"
+        },
+        {
+            "page": 3,
+            "line_no": 30,
+            "text": "g) die Frage, ob die IKT-Unterauftragnehmer, die IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger"
+        },
+        {
+            "page": 3,
+            "line_no": 31,
+            "text": "Funktionen oder wesentlicher Teile davon erbringen, derselben Gruppe angehören wie das Finanzunternehmen, für"
+        },
+        {
+            "page": 3,
+            "line_no": 32,
+            "text": "das diese Dienstleistungen erbracht werden;"
+        },
+        {
+            "page": 3,
+            "line_no": 33,
+            "text": "ABl. L vom 2.7.2025 DE"
+        },
+        {
+            "page": 3,
+            "line_no": 34,
+            "text": "ELI: http://data.europa.eu/eli/reg_del/2025/532/oj 3/7"
+        },
+        {
+            "page": 3,
+            "line_no": 35,
+            "text": "(2) Verordnung (EU) Nr. 1093/2010 des Europäischen Parlaments und des Rates vom 24. November 2010 zur Errichtung einer"
+        },
+        {
+            "page": 3,
+            "line_no": 36,
+            "text": "Europäischen Aufsichtsbehörde (Europäische Bankenaufsichtsbehörde), zur Änderung des Beschlusses Nr. 716/2009/EG und zur"
+        },
+        {
+            "page": 3,
+            "line_no": 37,
+            "text": "Aufhebung des Beschlusses 2009/78/EG der Kommission (ABl. L 331 vom 15.12.2010, S. 12, ELI: http://data.europa.eu/eli/reg/2010/"
+        },
+        {
+            "page": 3,
+            "line_no": 38,
+            "text": "1093/oj)."
+        },
+        {
+            "page": 3,
+            "line_no": 39,
+            "text": "(3) Verordnung (EU) Nr. 1094/2010 des Europäischen Parlaments und des Rates vom 24. November 2010 zur Errichtung einer"
+        },
+        {
+            "page": 3,
+            "line_no": 40,
+            "text": "Europäischen Aufsichtsbehörde (Europäische Aufsichtsbehörde für das Versicherungswesen und die betriebliche Altersversorgung),"
+        },
+        {
+            "page": 3,
+            "line_no": 41,
+            "text": "zur Änderung des Beschlusses Nr. 716/2009/EG und zur Aufhebung des Beschlusses 2009/79/EG der Kommission (ABl. L 331 vom"
+        },
+        {
+            "page": 3,
+            "line_no": 42,
+            "text": "15.12.2010, S. 48, ELI: http://data.europa.eu/eli/reg/2010/1094/oj)."
+        },
+        {
+            "page": 3,
+            "line_no": 43,
+            "text": "(4) Verordnung (EU) Nr. 1095/2010 des Europäischen Parlaments und des Rates vom 24. November 2010 zur Errichtung einer"
+        },
+        {
+            "page": 3,
+            "line_no": 44,
+            "text": "Europäischen Aufsichtsbehörde (Europäische Wertpapier- und Marktaufsichtsbehörde), zur Änderung des Beschlusses"
+        },
+        {
+            "page": 3,
+            "line_no": 45,
+            "text": "Nr. 716/2009/EG und zur Aufhebung des Beschlusses 2009/77/EG der Kommission (ABl. L 331 vom 15.12.2010, S. 84, ELI: http://"
+        },
+        {
+            "page": 3,
+            "line_no": 46,
+            "text": "data.europa.eu/eli/reg/2010/1095/oj)."
+        },
+        {
+            "page": 3,
+            "line_no": 47,
+            "text": "(5) Verordnung (EU) 2018/1725 des Europäischen Parlaments und des Rates vom 23. Oktober 2018 zum Schutz natürlicher Personen bei"
+        },
+        {
+            "page": 3,
+            "line_no": 48,
+            "text": "der Verarbeitung personenbezogener Daten durch die Organe, Einrichtungen und sonstigen Stellen der Union, zum freien"
+        },
+        {
+            "page": 3,
+            "line_no": 49,
+            "text": "Datenverkehr und zur Aufhebung der Verordnung (EG) Nr. 45/2001 und des Beschlusses Nr. 1247/2002/EG (ABl. L 295 vom"
+        },
+        {
+            "page": 3,
+            "line_no": 50,
+            "text": "21.11.2018, S. 39, ELI: http://data.europa.eu/eli/reg/2018/1725/oj)."
+        },
+        {
+            "page": 4,
+            "line_no": 1,
+            "text": "h) die Frage, ob die IKT-Unterauftragnehmer, die IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger"
+        },
+        {
+            "page": 4,
+            "line_no": 2,
+            "text": "Funktionen oder wesentlicher Teile davon erbringen, einer Zulassung, einer Registrierung oder der Beaufsichtigung"
+        },
+        {
+            "page": 4,
+            "line_no": 3,
+            "text": "oder Überwachung durch eine zuständige Behörde in einem Mitgliedstaat oder dem Überwachungsrahmen nach"
+        },
+        {
+            "page": 4,
+            "line_no": 4,
+            "text": "Kapitel V Abschnitt II der Verordnung (EU) 2022/2554 unterliegen;"
+        },
+        {
+            "page": 4,
+            "line_no": 5,
+            "text": "i) die Frage, ob die IKT-Drittdienstleister, die kritische oder wichtige Funktionen oder wesentliche Teile davon"
+        },
+        {
+            "page": 4,
+            "line_no": 6,
+            "text": "unterstützen, einer Zulassung, einer Registrierung oder der Beaufsichtigung oder Überwachung durch eine"
+        },
+        {
+            "page": 4,
+            "line_no": 7,
+            "text": "Aufsichtsbehörde in einem Drittstaat unterliegen;"
+        },
+        {
+            "page": 4,
+            "line_no": 8,
+            "text": "j) die Frage, ob sich die Erbringung von IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen"
+        },
+        {
+            "page": 4,
+            "line_no": 9,
+            "text": "oder wesentlicher Teile davon auf einen einzigen Unterauftragnehmer eines IKT-Drittdienstleisters oder eine kleine"
+        },
+        {
+            "page": 4,
+            "line_no": 10,
+            "text": "Zahl solcher Unterauftragnehmer konzentriert;"
+        },
+        {
+            "page": 4,
+            "line_no": 11,
+            "text": "k) die Frage, ob sich die Vergabe von Unteraufträgen für IKT-Dienstleistungen, die kritische oder wichtige Funktionen"
+        },
+        {
+            "page": 4,
+            "line_no": 12,
+            "text": "oder wesentliche Teile unterstützen, auf die Übertragbarkeit dieser IKT-Dienstleistungen auf einen anderen"
+        },
+        {
+            "page": 4,
+            "line_no": 13,
+            "text": "IKT-Drittdienstleister auswirken würde;"
+        },
+        {
+            "page": 4,
+            "line_no": 14,
+            "text": "l) die potenzielle Auswirkung von Störungen auf die Kontinuität und Verfügbarkeit der IKT-Dienstleistungen, die"
+        },
+        {
+            "page": 4,
+            "line_no": 15,
+            "text": "kritische oder wichtige Funktionen oder wesentliche Teile davon unterstützen und vom IKT-Drittdienstleister"
+        },
+        {
+            "page": 4,
+            "line_no": 16,
+            "text": "erbracht werden, wenn ein Unterauftragnehmer eingesetzt wird, der IKT-Dienstleistungen erbringt, die kritische oder"
+        },
+        {
+            "page": 4,
+            "line_no": 17,
+            "text": "wichtige Funktionen oder wesentliche Teile davon unterstützen."
+        },
+        {
+            "page": 4,
+            "line_no": 18,
+            "text": "Artikel 2"
+        },
+        {
+            "page": 4,
+            "line_no": 19,
+            "text": "Anwendung auf eine Gruppe"
+        },
+        {
+            "page": 4,
+            "line_no": 20,
+            "text": "Findet diese Verordnung auf teilkonsolidierter oder konsolidierter Basis Anwendung, so trägt das Mutterunternehmen, das"
+        },
+        {
+            "page": 4,
+            "line_no": 21,
+            "text": "für die Erstellung des konsolidierten oder teilkonsolidierten Abschlusses für die Gruppe verantwortlich zeichnet, dafür"
+        },
+        {
+            "page": 4,
+            "line_no": 22,
+            "text": "Sorge, dass die Bedingungen für die Vergabe von Unteraufträgen für die Nutzung von IKT-Dienstleistungen, die kritische"
+        },
+        {
+            "page": 4,
+            "line_no": 23,
+            "text": "oder wichtige Funktionen oder wesentliche Teile davon unterstützen — sofern eine solche Unterauftragsvergabe nach den"
+        },
+        {
+            "page": 4,
+            "line_no": 24,
+            "text": "vertraglichen Vereinbarungen über die Nutzung von IKT-Dienstleistungen zulässig ist — in allen Finanzunternehmen, die"
+        },
+        {
+            "page": 4,
+            "line_no": 25,
+            "text": "Teil der Gruppe sind, konsistent umgesetzt werden und für die wirksame Anwendung dieser Verordnung auf allen"
+        },
+        {
+            "page": 4,
+            "line_no": 26,
+            "text": "relevanten Ebenen angemessen sind."
+        },
+        {
+            "page": 4,
+            "line_no": 27,
+            "text": "Artikel 3"
+        },
+        {
+            "page": 4,
+            "line_no": 28,
+            "text": "Sorgfaltspflicht und Risikobewertung in Bezug auf den Einsatz von Unterauftragnehmern, die kritische oder"
+        },
+        {
+            "page": 4,
+            "line_no": 29,
+            "text": "wichtige Funktionen unterstützen"
+        },
+        {
+            "page": 4,
+            "line_no": 30,
+            "text": "(1) Bevor ein Finanzunternehmen eine vertragliche Vereinbarung mit einem IKT-Drittdienstleister schließt, muss es"
+        },
+        {
+            "page": 4,
+            "line_no": 31,
+            "text": "entscheiden, ob dieser IKT-Drittdienstleister eine IKT-Dienstleistung, die kritische oder wichtige Funktionen oder"
+        },
+        {
+            "page": 4,
+            "line_no": 32,
+            "text": "wesentliche Teile davon unterstützt, an Unterauftragnehmer vergeben darf. Das Finanzunternehmen darf eine solche"
+        },
+        {
+            "page": 4,
+            "line_no": 33,
+            "text": "vertragliche Vereinbarung nur dann schließen, wenn es festgestellt hat, dass alle folgenden Bedingungen erfüllt sind:"
+        },
+        {
+            "page": 4,
+            "line_no": 34,
+            "text": "a) Durch die im Rahmen der Sorgfaltspflicht durchgeführten Verfahren in Bezug auf den IKT-Drittdienstleister wird"
+        },
+        {
+            "page": 4,
+            "line_no": 35,
+            "text": "sichergestellt, dass dieser in der Lage ist, potenzielle IKT-Unterauftragnehmer, die IKT-Dienstleistungen zur"
+        },
+        {
+            "page": 4,
+            "line_no": 36,
+            "text": "Unterstützung kritischer oder wichtiger Funktionen oder wesentlicher Teile davon erbringen sollen, auszuwählen"
+        },
+        {
+            "page": 4,
+            "line_no": 37,
+            "text": "und deren operative und finanzielle Fähigkeiten zu beurteilen, auch indem er auf Verlangen des Finanzunternehmens"
+        },
+        {
+            "page": 4,
+            "line_no": 38,
+            "text": "an Tests der digitalen operationalen Resilienz gemäß Kapitel IV der Verordnung (EU) 2022/2554 teilnimmt;"
+        },
+        {
+            "page": 4,
+            "line_no": 39,
+            "text": "b) der IKT-Drittdienstleister ist in der Lage, alle Unterauftragnehmer, die IKT-Dienstleistungen zur Unterstützung"
+        },
+        {
+            "page": 4,
+            "line_no": 40,
+            "text": "kritischer oder wichtiger Funktionen oder wesentlicher Teile davon erbringen, zu ermitteln, um das"
+        },
+        {
+            "page": 4,
+            "line_no": 41,
+            "text": "Finanzunternehmen über diese Unterauftragnehmer zu benachrichtigen und zu informieren, und ist in der Lage,"
+        },
+        {
+            "page": 4,
+            "line_no": 42,
+            "text": "dem Finanzunternehmen alle Informationen zur Verfügung zu stellen, die für die Bewertung der Bedingungen nach"
+        },
+        {
+            "page": 4,
+            "line_no": 43,
+            "text": "diesem Artikel erforderlich sein könnten;"
+        },
+        {
+            "page": 4,
+            "line_no": 44,
+            "text": "c) der IKT-Drittdienstleister stellt sicher, dass die vertraglichen Vereinbarungen mit den Unterauftragnehmern, die"
+        },
+        {
+            "page": 4,
+            "line_no": 45,
+            "text": "IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen oder wesentlicher Teile davon"
+        },
+        {
+            "page": 4,
+            "line_no": 46,
+            "text": "erbringen, es dem Finanzunternehmen ermöglichen, seine eigenen Verpflichtungen aus der Verordnung"
+        },
+        {
+            "page": 4,
+            "line_no": 47,
+            "text": "(EU) 2022/2554 und den geltenden Rechtsvorschriften der Union und der Mitgliedstaaten zu erfüllen;"
+        },
+        {
+            "page": 4,
+            "line_no": 48,
+            "text": "d) der Unterauftragnehmer räumt dem Finanzunternehmen und den zuständigen Behörden und Abwicklungsbehörden"
+        },
+        {
+            "page": 4,
+            "line_no": 49,
+            "text": "die gleichen vertraglichen Zugangs- und Inspektionsrechte wie der IKT-Drittdienstleister ein;"
+        },
+        {
+            "page": 4,
+            "line_no": 50,
+            "text": "DE ABl. L vom 2.7.2025"
+        },
+        {
+            "page": 4,
+            "line_no": 51,
+            "text": "4/7 ELI: http://data.europa.eu/eli/reg_del/2025/532/oj"
+        },
+        {
+            "page": 5,
+            "line_no": 1,
+            "text": "e) unbeschadet der letztendlichen Verantwortung des Finanzunternehmens für die Einhaltung seiner rechtlichen und"
+        },
+        {
+            "page": 5,
+            "line_no": 2,
+            "text": "regulatorischen Pflichten verfügt der IKT-Drittdienstleister selbst über ausreichende Fähigkeiten, Fachkenntnisse und"
+        },
+        {
+            "page": 5,
+            "line_no": 3,
+            "text": "angemessene finanzielle, personelle und technische Ressourcen, um die IKT-Risiken auf der Ebene der Unterauft­"
+        },
+        {
+            "page": 5,
+            "line_no": 4,
+            "text": "ragnehmer zu überwachen, unter anderem durch die Anwendung geeigneter Informationssicherheitsstandards und"
+        },
+        {
+            "page": 5,
+            "line_no": 5,
+            "text": "durch die Einrichtung einer angemessenen Organisationsstruktur, eines entsprechenden Risikomanagements und"
+        },
+        {
+            "page": 5,
+            "line_no": 6,
+            "text": "interner Kontrollen sowie durch die Meldung von Vorfällen und die Reaktion darauf;"
+        },
+        {
+            "page": 5,
+            "line_no": 7,
+            "text": "f) das Finanzunternehmen verfügt über ausreichende Fähigkeiten, Fachkenntnisse und angemessene finanzielle,"
+        },
+        {
+            "page": 5,
+            "line_no": 8,
+            "text": "personelle und technische Ressourcen, um die IKT-Risiken im Zusammenhang mit der Dienstleistung zur"
+        },
+        {
+            "page": 5,
+            "line_no": 9,
+            "text": "Unterstützung kritischer oder wichtiger Funktionen oder wesentlicher Teile davon, die an Unterauftragnehmer"
+        },
+        {
+            "page": 5,
+            "line_no": 10,
+            "text": "vergeben wurde, zu überwachen, unter anderem durch die Anwendung geeigneter Informationssicherheitsstandards"
+        },
+        {
+            "page": 5,
+            "line_no": 11,
+            "text": "und durch die Einrichtung einer angemessenen Organisationsstruktur und eines angemessenen Risikomanagements"
+        },
+        {
+            "page": 5,
+            "line_no": 12,
+            "text": "sowie durch Reaktionsmaßnahmen bei Vorfällen, ein Geschäftsfortführungsmanagement und interne Kontrollen;"
+        },
+        {
+            "page": 5,
+            "line_no": 13,
+            "text": "g) das Finanzunternehmen hat die Auswirkungen eines möglichen Ausfalls eines Unterauftragnehmers, der IKT-Dienst­"
+        },
+        {
+            "page": 5,
+            "line_no": 14,
+            "text": "leistungen zur Unterstützung kritischer oder wichtiger Funktionen oder eines wesentlichen Teils davon erbringt, auf"
+        },
+        {
+            "page": 5,
+            "line_no": 15,
+            "text": "die digitale operationale Resilienz und die finanzielle Solidität des Finanzunternehmens bewertet;"
+        },
+        {
+            "page": 5,
+            "line_no": 16,
+            "text": "h) das Finanzunternehmen hat die Risiken bewertet, die mit dem Standort der potenziellen Unterauftragnehmer in"
+        },
+        {
+            "page": 5,
+            "line_no": 17,
+            "text": "Bezug auf die vom IKT-Drittdienstleister erbrachten IKT-Dienstleistungen zur Unterstützung kritischer oder"
+        },
+        {
+            "page": 5,
+            "line_no": 18,
+            "text": "wichtiger Funktionen oder eines wesentlichen Teils davon verbunden sind;"
+        },
+        {
+            "page": 5,
+            "line_no": 19,
+            "text": "i) das Finanzunternehmen hat die IKT-Konzentrationsrisiken auf Unternehmensebene gemäß Artikel 29 der"
+        },
+        {
+            "page": 5,
+            "line_no": 20,
+            "text": "Verordnung (EU) 2022/2554 bewertet;"
+        },
+        {
+            "page": 5,
+            "line_no": 21,
+            "text": "j) das Finanzunternehmen hat geprüft, ob es Hindernisse für die Ausübung der Prüfungs-, Inspektions- und"
+        },
+        {
+            "page": 5,
+            "line_no": 22,
+            "text": "Zugangsrechte durch die zuständigen Behörden, die Abwicklungsbehörden oder das Finanzunternehmen,"
+        },
+        {
+            "page": 5,
+            "line_no": 23,
+            "text": "einschließlich der von ihnen benannten Personen, gibt."
+        },
+        {
+            "page": 5,
+            "line_no": 24,
+            "text": "(2) Finanzunternehmen, die IKT-Drittdienstleister nutzen, welche IKT-Dienstleistungen zur Unterstützung kritischer"
+        },
+        {
+            "page": 5,
+            "line_no": 25,
+            "text": "oder wichtiger Funktionen oder wesentlicher Teile davon an Unterauftragnehmer vergeben, führen regelmäßig die in"
+        },
+        {
+            "page": 5,
+            "line_no": 26,
+            "text": "Absatz 1 Buchstaben f bis j genannte Risikobewertung in Bezug auf mögliche Veränderungen in ihrem Geschäftsumfeld"
+        },
+        {
+            "page": 5,
+            "line_no": 27,
+            "text": "durch, auch mit Blick auf Veränderungen bei den unterstützten Geschäftsfunktionen, einschließlich Risikobewertungen der"
+        },
+        {
+            "page": 5,
+            "line_no": 28,
+            "text": "IKT-Bedrohungen, IKT-Konzentrationsrisiken und geopolitischen Risiken."
+        },
+        {
+            "page": 5,
+            "line_no": 29,
+            "text": "(3) Der Rückgriff auf die Ergebnisse der Risikobewertung, die ihre IKT-Drittdienstleister für ihre Unterauftragnehmer im"
+        },
+        {
+            "page": 5,
+            "line_no": 30,
+            "text": "Hinblick auf die Erfüllung der in diesem Artikel festgelegten Pflichten durchgeführt haben, entbindet die"
+        },
+        {
+            "page": 5,
+            "line_no": 31,
+            "text": "Finanzunternehmen nicht von ihrer letztendlichen Verantwortung für die Erfüllung ihrer rechtlichen und regulatorischen"
+        },
+        {
+            "page": 5,
+            "line_no": 32,
+            "text": "Pflichten gemäß der Verordnung (EU) 2022/2554."
+        },
+        {
+            "page": 5,
+            "line_no": 33,
+            "text": "Artikel 4"
+        },
+        {
+            "page": 5,
+            "line_no": 34,
+            "text": "Bedingungen, unter denen IKT-Dienstleistungen, die kritische oder wichtige Funktionen einen wesentlichen Teil"
+        },
+        {
+            "page": 5,
+            "line_no": 35,
+            "text": "davon unterstützen, an Unterauftragnehmer vergeben werden können"
+        },
+        {
+            "page": 5,
+            "line_no": 36,
+            "text": "(1) In der vertraglichen Vereinbarung zwischen dem Finanzunternehmen und dem IKT-Drittdienstleister wird festgelegt,"
+        },
+        {
+            "page": 5,
+            "line_no": 37,
+            "text": "welche IKT-Dienstleistungen, die kritische oder wichtige Funktionen oder wesentliche Teile davon unterstützen, für eine"
+        },
+        {
+            "page": 5,
+            "line_no": 38,
+            "text": "Unterauftragsvergabe infrage kommen und unter welchen Bedingungen. In diesem Vertrag wird festgelegt,"
+        },
+        {
+            "page": 5,
+            "line_no": 39,
+            "text": "a) dass der IKT-Drittdienstleister für die Erbringung der von den Unterauftragnehmern erbrachten Dienstleistungen"
+        },
+        {
+            "page": 5,
+            "line_no": 40,
+            "text": "verantwortlich ist;"
+        },
+        {
+            "page": 5,
+            "line_no": 41,
+            "text": "b) dass der IKT-Drittdienstleister verpflichtet ist, alle an Unterauftragnehmer vergebenen IKT-Dienstleistungen, die"
+        },
+        {
+            "page": 5,
+            "line_no": 42,
+            "text": "kritische oder wichtige Funktionen oder wesentliche Teile davon unterstützen, zu überwachen, um sicherzustellen,"
+        },
+        {
+            "page": 5,
+            "line_no": 43,
+            "text": "dass seine vertraglichen Verpflichtungen gegenüber dem Finanzunternehmen jederzeit erfüllt werden;"
+        },
+        {
+            "page": 5,
+            "line_no": 44,
+            "text": "c) welche Überwachungs- und Berichtspflichten der IKT-Drittdienstleister gegenüber dem Finanzunternehmen in Bezug"
+        },
+        {
+            "page": 5,
+            "line_no": 45,
+            "text": "auf Unterauftragnehmer hat, die IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen oder"
+        },
+        {
+            "page": 5,
+            "line_no": 46,
+            "text": "wesentlicher Teile davon erbringen;"
+        },
+        {
+            "page": 5,
+            "line_no": 47,
+            "text": "d) dass der IKT-Drittdienstleister alle Risiken zu bewerten hat, die mit dem Standort der derzeitigen oder potenziellen"
+        },
+        {
+            "page": 5,
+            "line_no": 48,
+            "text": "Unterauftragnehmer, die IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger Funktionen oder"
+        },
+        {
+            "page": 5,
+            "line_no": 49,
+            "text": "wesentlicher Teile davon erbringen, und ihres Mutterunternehmens sowie mit dem Standort, von dem aus die"
+        },
+        {
+            "page": 5,
+            "line_no": 50,
+            "text": "betreffende IKT-Dienstleistung erbracht wird, verbunden sind;"
+        },
+        {
+            "page": 5,
+            "line_no": 51,
+            "text": "e) an welchem Ort die Daten vom Unterauftragnehmer gegebenenfalls verarbeitet oder gespeichert werden;"
+        },
+        {
+            "page": 5,
+            "line_no": 52,
+            "text": "ABl. L vom 2.7.2025 DE"
+        },
+        {
+            "page": 5,
+            "line_no": 53,
+            "text": "ELI: http://data.europa.eu/eli/reg_del/2025/532/oj 5/7"
+        },
+        {
+            "page": 6,
+            "line_no": 1,
+            "text": "f) dass der IKT-Drittdienstleister in seinem Vertrag mit seinen Unterauftragnehmern die Überwachungs- und Berichters­"
+        },
+        {
+            "page": 6,
+            "line_no": 2,
+            "text": "tattungspflichten dieses Unterauftragnehmers gegenüber dem IKT-Drittdienstleister und, sofern vereinbart,"
+        },
+        {
+            "page": 6,
+            "line_no": 3,
+            "text": "gegenüber dem Finanzunternehmen festzulegen hat;"
+        },
+        {
+            "page": 6,
+            "line_no": 4,
+            "text": "g) dass der IKT-Drittdienstleister die Kontinuität der IKT-Dienstleistungen, die kritische oder wichtige Funktionen"
+        },
+        {
+            "page": 6,
+            "line_no": 5,
+            "text": "unterstützen, entlang der gesamten Kette von Unterauftragnehmern sicherstellen muss, wenn ein IKT-Unterauft­"
+        },
+        {
+            "page": 6,
+            "line_no": 6,
+            "text": "ragnehmer seinen vertraglichen Verpflichtungen nicht nachkommt;"
+        },
+        {
+            "page": 6,
+            "line_no": 7,
+            "text": "h) dass die vertragliche Vereinbarung zwischen dem IKT-Drittdienstleister und seinen Unterauftragnehmern die in"
+        },
+        {
+            "page": 6,
+            "line_no": 8,
+            "text": "Artikel 30 Absatz 3 Buchstabe c der Verordnung (EU) 2022/2554 genannten Anforderungen an Geschäftsfortfüh­"
+        },
+        {
+            "page": 6,
+            "line_no": 9,
+            "text": "rungspläne enthält und die von den IKT-Unterauftragnehmern in Bezug auf diese Pläne zu erfüllende Dienstleis­"
+        },
+        {
+            "page": 6,
+            "line_no": 10,
+            "text": "tungsgüte vorschreibt;"
+        },
+        {
+            "page": 6,
+            "line_no": 11,
+            "text": "i) dass die vertragliche Vereinbarung zwischen dem IKT-Drittdienstleister und seinen Unterauftragnehmern die"
+        },
+        {
+            "page": 6,
+            "line_no": 12,
+            "text": "IKT-Sicherheitsstandards und alle zusätzlichen Sicherheitsanforderungen nach Artikel 30 Absatz 3 Buchstabe c der"
+        },
+        {
+            "page": 6,
+            "line_no": 13,
+            "text": "Verordnung (EU) 2022/2554 vorschreibt;"
+        },
+        {
+            "page": 6,
+            "line_no": 14,
+            "text": "j) dass der Unterauftragnehmer dem Finanzunternehmen und den relevanten zuständigen Behörden und Abwicklungs­"
+        },
+        {
+            "page": 6,
+            "line_no": 15,
+            "text": "behörden dieselben Zugangs-, Inspektions- und Auditrechte wie die in Artikel 30 Absatz 3 Buchstabe e der"
+        },
+        {
+            "page": 6,
+            "line_no": 16,
+            "text": "Verordnung (EU) 2022/2554 genannten gewähren muss;"
+        },
+        {
+            "page": 6,
+            "line_no": 17,
+            "text": "k) dass der IKT-Drittdienstleister dem Finanzunternehmen jede wesentliche Änderung der Unterauftragsvereinbarungen"
+        },
+        {
+            "page": 6,
+            "line_no": 18,
+            "text": "zu melden hat;"
+        },
+        {
+            "page": 6,
+            "line_no": 19,
+            "text": "l) dass das Finanzunternehmen das Recht hat, den Vertrag mit dem IKT-Drittdienstleister zu kündigen, wenn die in"
+        },
+        {
+            "page": 6,
+            "line_no": 20,
+            "text": "Artikel 6 der vorliegenden Verordnung oder die in Artikel 28 Absatz 7 der Verordnung (EU) 2022/2554"
+        },
+        {
+            "page": 6,
+            "line_no": 21,
+            "text": "beschriebenen Bedingungen erfüllt sind."
+        },
+        {
+            "page": 6,
+            "line_no": 22,
+            "text": "(2) Änderungen, die aufgrund der vorliegenden Verordnung an vertraglichen Vereinbarungen zwischen dem"
+        },
+        {
+            "page": 6,
+            "line_no": 23,
+            "text": "Finanzunternehmen und IKT-Drittdienstleistern, die IKT-Dienstleistungen zur Unterstützung kritischer oder wichtiger"
+        },
+        {
+            "page": 6,
+            "line_no": 24,
+            "text": "Funktionen oder wesentlicher Teile davon erbringen, vorgenommen werden müssen, werden zeitnah und so bald wie"
+        },
+        {
+            "page": 6,
+            "line_no": 25,
+            "text": "möglich umgesetzt. Das Finanzunternehmen dokumentiert den geplanten zeitlichen Ablauf der Umsetzung."
+        },
+        {
+            "page": 6,
+            "line_no": 26,
+            "text": "Artikel 5"
+        },
+        {
+            "page": 6,
+            "line_no": 27,
+            "text": "Wesentliche Änderungen an Unterauftragsvereinbarungen über IKT-Dienstleistungen, die kritische oder wichtige"
+        },
+        {
+            "page": 6,
+            "line_no": 28,
+            "text": "Funktionen oder wesentliche Teile davon unterstützen"
+        },
+        {
+            "page": 6,
+            "line_no": 29,
+            "text": "(1) Die vertragliche Vereinbarung sieht vor, dass der IKT-Drittdienstleister das Finanzunternehmen rechtzeitig über alle"
+        },
+        {
+            "page": 6,
+            "line_no": 30,
+            "text": "beabsichtigten wesentlichen Änderungen seiner Unterauftragsvereinbarungen informiert, damit das Finanzunternehmen"
+        },
+        {
+            "page": 6,
+            "line_no": 31,
+            "text": "Folgendes bewerten kann:"
+        },
+        {
+            "page": 6,
+            "line_no": 32,
+            "text": "a) die Auswirkung auf die Risiken, denen er ausgesetzt ist oder ausgesetzt sein könnte;"
+        },
+        {
+            "page": 6,
+            "line_no": 33,
+            "text": "b) ob solche wesentlichen Änderungen die Fähigkeit des IKT-Drittdienstleisters beeinträchtigen könnten, seinen"
+        },
+        {
+            "page": 6,
+            "line_no": 34,
+            "text": "vertraglichen Verpflichtungen gegenüber dem Finanzunternehmen nachzukommen."
+        },
+        {
+            "page": 6,
+            "line_no": 35,
+            "text": "(2) Die vertragliche Vereinbarung muss eine angemessene Mitteilungsfrist enthalten, in der das Finanzunternehmen den"
+        },
+        {
+            "page": 6,
+            "line_no": 36,
+            "text": "Änderungen zustimmen oder sie ablehnen kann."
+        },
+        {
+            "page": 6,
+            "line_no": 37,
+            "text": "(3) Der IKT-Drittdienstleister setzt die wesentlichen Änderungen seiner Unterauftragsvereinbarungen erst dann um,"
+        },
+        {
+            "page": 6,
+            "line_no": 38,
+            "text": "wenn das Finanzunternehmen die Änderungen bis zum Ablauf der Mitteilungsfrist entweder genehmigt oder sie nicht"
+        },
+        {
+            "page": 6,
+            "line_no": 39,
+            "text": "abgelehnt hat."
+        },
+        {
+            "page": 6,
+            "line_no": 40,
+            "text": "(4) Ist das Finanzunternehmen der Auffassung, dass die in Absatz 1 genannten wesentlichen Änderungen die"
+        },
+        {
+            "page": 6,
+            "line_no": 41,
+            "text": "Risikotoleranz des Finanzunternehmens überschreiten, so muss es vor Ablauf der Mitteilungsfrist"
+        },
+        {
+            "page": 6,
+            "line_no": 42,
+            "text": "a) den IKT-Drittdienstleister davon in Kenntnis setzen;"
+        },
+        {
+            "page": 6,
+            "line_no": 43,
+            "text": "b) die Änderungen ablehnen und vor deren Umsetzung Anpassungen verlangen."
+        },
+        {
+            "page": 6,
+            "line_no": 44,
+            "text": "DE ABl. L vom 2.7.2025"
+        },
+        {
+            "page": 6,
+            "line_no": 45,
+            "text": "6/7 ELI: http://data.europa.eu/eli/reg_del/2025/532/oj"
+        },
+        {
+            "page": 7,
+            "line_no": 1,
+            "text": "Artikel 6"
+        },
+        {
+            "page": 7,
+            "line_no": 2,
+            "text": "Kündigung des Vertrags zwischen dem Finanzunternehmen und dem IKT-Drittdienstleister"
+        },
+        {
+            "page": 7,
+            "line_no": 3,
+            "text": "Das Finanzunternehmen hat das Recht, in der vertraglichen Vereinbarung mit dem IKT-Drittdienstleister vorzusehen, dass"
+        },
+        {
+            "page": 7,
+            "line_no": 4,
+            "text": "die vertragliche Vereinbarung in jedem der folgenden Fälle beendet wird:"
+        },
+        {
+            "page": 7,
+            "line_no": 5,
+            "text": "a) Das Finanzunternehmen hat wesentliche Änderungen der Unterauftragsvereinbarungen zur Unterstützung kritischer"
+        },
+        {
+            "page": 7,
+            "line_no": 6,
+            "text": "oder wichtiger Funktionen abgelehnt und um Anpassungen dieser Änderungen gebeten, doch der"
+        },
+        {
+            "page": 7,
+            "line_no": 7,
+            "text": "IKT-Drittdienstleister hat diese wesentlichen Änderungen dennoch umgesetzt;"
+        },
+        {
+            "page": 7,
+            "line_no": 8,
+            "text": "b) der IKT-Drittdienstleister hat vor Ablauf der Mitteilungsfrist ohne Genehmigung des Finanzunternehmens"
+        },
+        {
+            "page": 7,
+            "line_no": 9,
+            "text": "wesentliche Änderungen an den Unterauftragsvereinbarungen zur Unterstützung kritischer oder wichtiger"
+        },
+        {
+            "page": 7,
+            "line_no": 10,
+            "text": "Funktionen oder wesentlicher Teile davon vorgenommen;"
+        },
+        {
+            "page": 7,
+            "line_no": 11,
+            "text": "c) der IKT-Drittdienstleister hat eine IKT-Dienstleistung, die eine kritische oder wichtige Funktion oder einen"
+        },
+        {
+            "page": 7,
+            "line_no": 12,
+            "text": "wesentlichen Teil davon unterstützt, als Unterauftrag vergeben, obwohl eine derartige Unterauftragsvergabe im"
+        },
+        {
+            "page": 7,
+            "line_no": 13,
+            "text": "Vertrag zwischen dem Finanzunternehmen und dem IKT-Drittdienstleister nicht ausdrücklich genehmigt wurde."
+        },
+        {
+            "page": 7,
+            "line_no": 14,
+            "text": "Artikel 7"
+        },
+        {
+            "page": 7,
+            "line_no": 15,
+            "text": "Inkrafttreten"
+        },
+        {
+            "page": 7,
+            "line_no": 16,
+            "text": "Diese Verordnung tritt am zwanzigsten Tag nach ihrer Veröffentlichung im Amtsblatt der Europäischen Union in Kraft."
+        },
+        {
+            "page": 7,
+            "line_no": 17,
+            "text": "Diese Verordnung ist in allen ihren Teilen verbindlich und gilt unmittelbar in jedem"
+        },
+        {
+            "page": 7,
+            "line_no": 18,
+            "text": "Mitgliedstaat."
+        },
+        {
+            "page": 7,
+            "line_no": 19,
+            "text": "Brüssel, den 24. März 2025"
+        },
+        {
+            "page": 7,
+            "line_no": 20,
+            "text": "Für die Kommission"
+        },
+        {
+            "page": 7,
+            "line_no": 21,
+            "text": "Die Präsidentin"
+        },
+        {
+            "page": 7,
+            "line_no": 22,
+            "text": "Ursula VON DER LEYEN"
+        },
+        {
+            "page": 7,
+            "line_no": 23,
+            "text": "ABl. L vom 2.7.2025 DE"
+        },
+        {
+            "page": 7,
+            "line_no": 24,
+            "text": "ELI: http://data.europa.eu/eli/reg_del/2025/532/oj 7/7"
+        }
+    ]
+}
