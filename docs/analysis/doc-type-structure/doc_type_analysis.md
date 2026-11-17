@@ -1,6 +1,6 @@
 # Section start phrases per doc_type
 
-Opening phrase of each labeled section in the PDFs in `../level_1_structured_docs/<doc_type>/`, in English and German.
+Opening phrase of each labeled section in the PDFs in `../labeled-pdfs/<doc_type>/`, in English and German.
 
 ## regulation (DORA 2022/2554, AI Act 2024/1689)
 
