@@ -4,7 +4,7 @@ This folder describes, for each `doc_type` returned by the document API, which d
 
 The API field `doc_type` splits the 34 documents into six types. It is available for every new document, so the parser can be selected from it.
 
-The level-1 sections named in these files are the labels used in [`../level_1_structured_docs/doc_type_analysis.md`](../level_1_structured_docs/doc_type_analysis.md), which lists the opening phrase of every section in EN and DE. The labeled PDFs are in the `<doc_type>/` subfolders there.
+The level-1 sections named in these files are the labels used in [`doc_type_analysis.md`](doc_type_analysis.md), which lists the opening phrase of every section in EN and DE. The labeled PDFs are in the `<doc_type>/` subfolders of [`../level_1_structured_docs/`](../level_1_structured_docs/).
 
 ## Files
 

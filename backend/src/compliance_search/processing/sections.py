@@ -13,7 +13,7 @@ from typing import Literal
 
 from pydantic import BaseModel
 
-# Section names per doc_type, as in docs/analysis/level_1_structured_docs/doc_type_analysis.md
+# Section names per doc_type, as in docs/analysis/doc-type-structure/doc_type_analysis.md
 SectionType = Literal[
     # regulation, delegated_regulation, implementing_regulation
     "header",
