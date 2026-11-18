@@ -20,8 +20,8 @@ if not GATEWAY_KEY:
 # Relative paths
 
 SCRIPT_DIR = Path(__file__).resolve().parent
-BACKEND_DIR = SCRIPT_DIR.parents[3]
-DATA_DIR = BACKEND_DIR / "data"
+ROOT_DIR = SCRIPT_DIR.parents[3]
+DATA_DIR = ROOT_DIR / "data"
 PDF_DIR = DATA_DIR / "pdfs"
 ACTIVE_PDF_DIR = PDF_DIR / "active"
 DELETED_PDF_DIR = PDF_DIR / "deleted"
