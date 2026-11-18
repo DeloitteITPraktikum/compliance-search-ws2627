@@ -1,4 +1,5 @@
-def build_lines(fragments: list) -> list:
+from compliance_search.processing.sections import SectionLine
+def build_lines(fragments: list, document_id: str) -> list:
 
     # 1. Sort: page by page, then from top to bottom
     sorted_fragments = sorted(fragments, key=lambda f: (f["page_number"], -f["y"]))
@@ -29,17 +30,18 @@ def build_lines(fragments: list) -> list:
             current_line_number = 0
         current_line_number += 1
 
-        lines.append({
-            "page_number": first_fragment["page_number"],
-            "line_number": current_line_number,
-            "x": first_fragment["x"],
-            "y": first_fragment["y"],
-            "font": first_fragment["font"],
-            "font_size": min(fragment["font_size"] for fragment in line_fragments),
-            "bold": any(fragment["bold"] for fragment in line_fragments),
+        lines.append(SectionLine(
+            section_id="",
+            page_number=first_fragment["page_number"],
+            seq=current_line_number,
+            x=first_fragment["x"],
+            y=first_fragment["y"],
+            font=first_fragment["font"],
+            font_size=min(fragment["font_size"] for fragment in line_fragments),
+            bold=any(fragment["bold"] for fragment in line_fragments),
             # Join without a separator (spaces come from the PDF), then
             # collapse runs of whitespace and trim the ends
-            "text": " ".join("".join(fragment["text"] for fragment in line_fragments).split())
-        })
+            text=" ".join("".join(fragment["text"] for fragment in line_fragments).split())
+        ))
 
     return lines
