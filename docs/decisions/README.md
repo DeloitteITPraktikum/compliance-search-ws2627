@@ -22,3 +22,5 @@ That holds if you take our recommended stack too.
 | [0005](0005-embedding-model-qwen3.md) | Embed chunks with qwen3-embedding through the gateway | Proposed |
 | [0006](0006-documentsync-procedure.md) | Document sync via GitHub Actions cron and python script | Proposed |
 | [0007](0007-backend-framework-fastapi.md) | The backend is a FastAPI app served by uvicorn | Proposed |
+| [0008](0008-database-provider.md) | The database provider is Supabase with pgvector and | Proposed |
+| [0009](0009-database-type.md) | The database type is a relational database (PostgreSQL) | Proposed |
