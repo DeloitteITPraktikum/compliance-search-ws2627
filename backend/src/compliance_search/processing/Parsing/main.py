@@ -8,18 +8,16 @@ from compliance_search.processing.Parsing import (
 )
 from compliance_search.processing import sections
 
-
 REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
-print(REPOSITORY_ROOT)
 
+# TODO: Switch this path to data/pdfs/... once DEL-91 is done.
+# Until then the parser reads the static PDF folder in docs/analysis.
 SOURCE_FOLDER = (
     REPOSITORY_ROOT
     /"docs"
     / "analysis"
     / "unlabled-pdfs"
 )
-print(SOURCE_FOLDER)
-print(f"Exists: {SOURCE_FOLDER.exists()}")
 
 OUTPUT_FOLDER = (
     Path(__file__).resolve().parent
