@@ -16,6 +16,8 @@ Opening phrase of each labeled section in the PDFs in `../labeled-pdfs/<doc_type
 
 The AI Act is only in English here (the German version is under `consolidated`), so the DE column covers DORA only.
 
+In the AI Act, the `header` label on page 1 also covers the Official Journal masthead (`Official Journal of the European Union` / `L series`). Depending on the extractor the header starts with the masthead (`pdftotext`) or with the title (pypdf).
+
 ## delegated_regulation (2016/98, 2024/1772, 2024/1773, 2024/1774, 2025/301, 2025/420, 2025/532)
 
 | Section | EN begins with | DE begins with |
@@ -42,6 +44,8 @@ None of the delegated regulations has an annex section. 2016/98 exists only in E
 | `annex` | `ANNEX I`, `ANNEX II`, … | `ANHANG I`, `ANHANG II`, … |
 
 In 2024/3172 the first annex section starts at `Section 1 – 'Disclosure of overview…'` (DE: `Abschnitt 1 – „Offenlegung…"`), not at `ANNEX I`. 2024/2956 exists only in English.
+
+On page 1 the `header` label also covers the Official Journal masthead (`Official Journal of the European Union` / `L series`). Depending on the extractor the header starts with the masthead (`pdftotext`) or with the title (pypdf).
 
 ## consolidated
 
@@ -78,7 +82,7 @@ The consolidated AI Act (DE) has no `amendments` section.
 
 | Section | EN begins with | DE begins with |
 | --- | --- | --- |
-| `header` | `Final Report on …` | `EBA/GL/2019/02` |
+| `header` | `EBA/GL/2019/02` | `EBA/GL/2019/02` |
 | `contents` | `Contents` | – |
 | `executive_summary` | `Executive summary` | – |
 | `background` | `Background` | – |

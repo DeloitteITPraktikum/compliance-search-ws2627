@@ -15,7 +15,7 @@ EBA Guidelines. Only one guideline in two languages, and the two files have diff
 
 | Section | EN begins with | DE begins with |
 |---|---|---|
-| `header` | `Final Report on …` | `EBA/GL/2019/02` |
+| `header` | `EBA/GL/2019/02` | `EBA/GL/2019/02` |
 | `contents` | `Contents` | – |
 | `executive_summary` | `Executive summary` | – |
 | `background` | `Background` | – |
@@ -51,7 +51,7 @@ Title V – Guidelines on outsourcing addressed to competent authorities
 
 ## Level 3: numbered paragraphs
 
-**Same in DE and EN.** Consecutive paragraph numbers `1.` to `119.` across all titles, e.g. `36. The management body is …` / `36. Das Leitungsorgan ist …`.
+**Same in DE and EN.** Consecutive paragraph numbers `1.` to `119.` through the whole document: `1.`–`17.` before Title I, Title I starts at `18.`. E.g. `36. The management body is …` / `36. Das Leitungsorgan ist …`.
 
 ## Level 4: points
 

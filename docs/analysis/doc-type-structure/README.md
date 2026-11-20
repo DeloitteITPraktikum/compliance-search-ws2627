@@ -26,7 +26,7 @@ The level-1 sections named in these files are the labels used in [`doc_type_anal
 | 3 | Smallest numbered unit with its own heading or number | Article; numbered paragraph (Randnummer / Textziffer) |
 | 4 | Parts inside that unit | paragraphs, points, sub-points |
 
-Every page also has `footnotes` sections; they are not listed per type.
+Pages with footnotes also have a `footnotes` section; they are not listed per type. Some PDFs have no footnotes at all.
 
 Each file states per level how the documents are split, whether all documents of the type are the same, and where they differ.
 
@@ -44,13 +44,14 @@ Each file states per level how the documents are split, whether all documents of
 Consequences for parsing:
 
 - `doc_type` selects the parser. For the four EU types, level 1 is fixed by `doc_type`.
-- Level 2 is not fixed by `doc_type` for any EU type. The parser has to detect which headings occur (Part, Title, Chapter, Section, Sub-section) and build the hierarchy from them. Section headings are sometimes extracted letter-spaced (`Se cti on I`, in DORA and `32024R1774`), and section numbers are Roman in some documents and Arabic in others.
+- Level 2 is not fixed by `doc_type` for any EU type. The parser has to detect which headings occur (Part, Title, Chapter, Section, Sub-section) and build the hierarchy from them. With `pdftotext`, section headings in DORA and `32024R1774` come out letter-spaced (`Se cti on I`); pypdf, which the parser uses, extracts them cleanly. Section numbers are Roman in some documents and Arabic in others.
 - Level 4 depends on the language. In EU texts, English numbers paragraphs `1.` and points `(a)`; German numbers paragraphs `(1)` and points `a)`. Numbered definitions are the other way round (EN `(1)`, DE `1.`).
 - For `guideline` and `circular`, the parser also has to recognise the variant of the document from its content.
 
 ## Method
 
 - All 34 PDFs were downloaded with `setup/download_all_pdfs.py` and converted with `pdftotext -layout` (poppler).
+- The parser uses pypdf, not `pdftotext`. Statements about how text is extracted (spacing, order, missing headings) were made with `pdftotext` and can differ with pypdf.
 - Headings and numbering were counted with regular expressions on the text. Each difference named in these files was also checked by reading the text.
 - `doc_type`, titles and status come from `setup/documents.json` (API `/documents`).
 - Counts can be off by a few hits, for example where a heading is split across a page break. They show the structure, they are not exact totals.

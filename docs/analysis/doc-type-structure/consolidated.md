@@ -6,8 +6,8 @@ Consolidated versions from EUR-Lex: the base act with all later amendments merge
 
 | ID | Title (API) | Pages | Level 2 | Articles | Annexes |
 |---|---|---:|---|---:|---:|
-| `02013L0036-20260111_EN` | Directive 2013/36/EU (CRD), consolidated 11.01.2026 | 224 | 10 titles, 16 chapters, sections, sub-sections | 189 | 2 |
-| `02013R0575-20260101_DE` / `_EN` | Regulation (EU) No 575/2013 (CRR), consolidated 01.01.2026 | 897 | 10 parts, 21 titles, 33 chapters, 76 sections, 41 sub-sections | ~746 | 4 |
+| `02013L0036-20260111_EN` | Directive 2013/36/EU (CRD), consolidated 11.01.2026 | 224 | 10 titles, 17 chapters, sections, sub-sections | 189 | 2 |
+| `02013R0575-20260101_DE` / `_EN` | Regulation (EU) No 575/2013 (CRR), consolidated 01.01.2026 | 897 | 11 parts (Part Five deleted, Part Seven A inserted), 22 titles, 36 chapters, 76 sections, 42 sub-sections | ~746 | 4 |
 | `02023R1114-20240109_DE` / `_EN` | Regulation (EU) 2023/1114 (MiCA), consolidated 09.01.2024 | 222 | 9 titles, 18 chapters | 150 | 6 |
 | `02024R1689-20240712_DE` | Regulation (EU) 2024/1689 (AI Act), consolidated 12.07.2024 | 137 | 13 chapters, 16 sections | 113 | 13 |
 

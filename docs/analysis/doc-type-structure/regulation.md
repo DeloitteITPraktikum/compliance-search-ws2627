@@ -37,7 +37,7 @@ The German AI Act is not in this type: `02024R1689-20240712_DE` is a consolidate
 | DORA | `CHAPTER` (9); Chapters II, V and IX each split into `Section I` and `Section II` |
 | AI Act | `CHAPTER` (13) → `SECTION` (16) |
 
-- DORA section headings come out letter-spaced in both languages, e.g. `Se cti on I I`, `Abschn i tt I`. A parser has to remove the spaces before matching.
+- With `pdftotext`, DORA section headings come out letter-spaced in both languages, e.g. `Se cti on I I`, `Abschn i tt I`. pypdf, which the parser uses, extracts them cleanly (`Section II`, `Abschnitt I`).
 - DORA numbers sections with Roman numerals, the AI Act with Arabic numerals.
 
 ## Level 3: articles

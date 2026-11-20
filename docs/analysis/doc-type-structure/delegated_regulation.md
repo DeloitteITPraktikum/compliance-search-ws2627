@@ -45,10 +45,10 @@ The 12 DORA RTS exist in DE and EN; `32016R0098` only in EN.
 
 Headings stand alone on a line (`CHAPTER I`), the heading text follows on the next line.
 
-Extraction problems in `1774`:
+Extraction differences in `1774`:
 
-- Section headings come out letter-spaced, e.g. `S ect io n 1`, `Ab schni t t 6`. A parser has to remove the spaces before matching. In the DE file only one of the eight section headings is recognisable even then.
-- The heading `CHAPTER IV` / `KAPITEL IV` of Title II is missing from the extracted text in both languages.
+- With `pdftotext`, section and some chapter headings come out letter-spaced, e.g. `S ect io n 1`, `ABS CHN I TT 2`, `C HAP TER IV`. pypdf, which the parser uses, extracts all of them cleanly.
+- The DE section headings are upper case (`ABSCHNITT 1`), except `Abschnitt 6`. A parser has to match both spellings.
 
 ## Level 3: articles
 
