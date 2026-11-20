@@ -1,298 +1,121 @@
-# -*- coding: cp1252 -*-
-"""Erkennung und Klassifizierung von Dokumentabschnitten.
+"""Assign a section_type to every line of a delegated regulation (level 1).
 
-Das Modul weist jeder Textzeile anhand ihres Inhalts, ihrer Position und
-ihrer Schriftgröße eine ``section_type`` zu. Die Funktionen verändern die
-übergebenen Zeilenobjekte direkt und geben anschließend dieselbe Liste zurück.
+The detectors change the lines in place. Their order matters, so call
+detect_sections instead of the single detectors:
 
-Die Reihenfolge der Erkennung ist wichtig: Die Einleitungs- und Schlussformel
-müssen vor den erlassenden Bestimmungen erkannt werden. Die Fußnoten werden
-zuletzt erkannt, weil ihre Erkennung auf der kleinsten Schriftgröße des
-Dokuments basiert.
+1. enacting_formula and final_formula are found by their phrase.
+2. enacting_terms lie between them.
+3. recitals, citations and header are filled backwards from there, each one
+   stops where the section after it begins.
+4. footnotes come last, because they overwrite lines inside other sections.
 
-Eine ausführliche Beschreibung der Erkennungsregeln befindet sich in
-``section-detection.md``.
+The rules are described in section-detection.md.
 """
-
 import re
 
 from compliance_search.processing.sections import SectionLine
 
+# Start phrases, English and German
+ENACTING_FORMULA = re.compile(r"^(HAS ADOPTED THIS REGULATION:|HAT FOLGENDE VERORDNUNG ERLASSEN:)")
+FINAL_FORMULA = re.compile(r"^(Done at Brussels,|BrÃ¼ssel, den)")
+RECITALS_START = re.compile(r"^(Whereas|in ErwÃ¤gung nachstehender GrÃ¼nde:)")
+CITATIONS_START = re.compile(r"^(THE EUROPEAN COMMISSION,|DIE EUROPÃ„ISCHE KOMMISSION)")
+HEADER_START = re.compile(r"^(COMMISSION DELEGATED REGULATION \(EU\)|DELEGIERTE VERORDNUNG \(EU\))")
 
-def detect_enacting_formula_lines(lines: list) -> list:
-    """Markiert die Einleitungsformel einer Verordnung.
+# Footnotes: small font, a number at the start, in the lower part of the page
+FOOTNOTE_MARKER = re.compile(r"^(?:\(\d+\)|\d+)\s*")  # "1" or "(1)"
+FOOTNOTE_MAX_FONT_FACTOR = 1.05  # at most 5 % above the smallest font size of the document
+FOOTNOTE_MAX_Y = 500
 
-    Unterstützt werden die deutsche Formulierung
-    ``HAT FOLGENDE VERORDNUNG ERLASSEN:`` und die englische Formulierung
-    ``HAS ADOPTED THIS REGULATION:``.
 
-    Args:
-        lines: Geordnete Textzeilen mit den Attributen ``text`` und
-            ``section_type``.
-
-    Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
-
-    Siehe auch:
-        ``section-detection.md``
-    """
+def detect_enacting_formula_lines(lines: list[SectionLine]) -> None:
+    """Label the line "HAS ADOPTED THIS REGULATION:" as enacting_formula."""
     for line in lines:
-        if re.match(r"^HAT FOLGENDE VERORDNUNG ERLASSEN:", line.text):
-            line.section_type = "enacting_formula"
-        if re.match(r"^HAS ADOPTED THIS REGULATION:", line.text):
+        if ENACTING_FORMULA.match(line.text):
             line.section_type = "enacting_formula"
 
-    return lines
 
-def detect_final_formula_lines(lines: list) -> list:
-    """Markiert die Schlussformel und die nachfolgenden Zeilen.
-
-    Die Erkennung beginnt bei ``Brüssel, den`` beziehungsweise
-    ``Done at Brussels,``. Die erkannte Startzeile und alle danach folgenden
-    Zeilen werden als ``final_formula`` markiert.
-
-    Args:
-        lines: Geordnete Textzeilen des Dokuments.
-
-    Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
-
-    Siehe auch:
-        ``section-detection.md``
-    """
-    line_before = False
+def detect_final_formula_lines(lines: list[SectionLine]) -> None:
+    """Label "Done at Brussels, â€¦" and every line after it as final_formula."""
+    started = False
     for line in lines:
-        if line_before:
+        if FINAL_FORMULA.match(line.text):
+            started = True
+        if started:
             line.section_type = "final_formula"
-        if re.match(r"^Br.*ssel, den", line.text):
-            line.section_type = "final_formula"
-            line_before = True
-        if re.match(r"^Done at Brussels,", line.text):
-            line.section_type = "final_formula"
-            line_before = True
 
-    return lines
 
-def detect_enacting_terms_lines(lines: list) -> list:
-    """Markiert den verfügenden Teil zwischen den Formeln.
-
-    Die Markierung beginnt nach der erkannten ``enacting_formula`` und endet,
-    sobald eine Zeile mit ``final_formula`` erreicht wird. Deshalb muss diese
-    Funktion nach ``detect_enacting_formula_lines`` und
-    ``detect_final_formula_lines`` aufgerufen werden.
-
-    Args:
-        lines: Geordnete Textzeilen des Dokuments.
-
-    Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
-
-    Siehe auch:
-        ``section-detection.md``
-    """
-    beginns = False
-    for line in lines :
+def detect_enacting_terms_lines(lines: list[SectionLine]) -> None:
+    """Label every line between enacting_formula and final_formula as enacting_terms."""
+    started = False
+    for line in lines:
         if line.section_type == "enacting_formula":
-            beginns = True
+            started = True
             continue
-        if (beginns and not line.section_type == "final_formula"):
+        if started and line.section_type != "final_formula":
             line.section_type = "enacting_terms"
 
-    return lines
 
-
-def detect_recitals_lines(lines: list) -> list:
-    """Markiert die Erwägungsgründe einer Verordnung.
-
-    Die Erkennung beginnt auf Seite 1 bei ``Whereas`` oder bei der deutschen
-    Formulierung ``in Erwägung nachstehender Gründe:`` und läuft bis zur
-    ``enacting_formula``.
-
-    Args:
-        lines: Geordnete Textzeilen des Dokuments.
-
-    Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
-
-    Siehe auch:
-        ``section-detection.md``
-    """
-    begin_fill = False
-    
+def _label_until(lines: list[SectionLine], start: re.Pattern, stop_type: str, label: str) -> None:
+    """Label lines from a start phrase on page 1 until the first line of stop_type."""
+    started = False
     for line in lines:
-        if (line.section_type == "enacting_formula"):
+        if line.section_type == stop_type:
             break
-        
-        if (begin_fill):
-            line.section_type = "recitals"
-        
-        if (re.match(r"^Whereas", line.text) and line.page_number == 1):
-                line.section_type = "recitals"
-                begin_fill = True
-        if (re.match(r"^in Erw.*gung nachstehender Gr.*nde:", line.text) and line.page_number == 1):
-                line.section_type = "recitals"
-                begin_fill = True
+        if line.page_number == 1 and start.match(line.text):
+            started = True
+        if started:
+            line.section_type = label
 
-    return lines
 
-def detect_citations_lines(lines: list) -> list:
-    """Markiert den einleitenden Abschnitt mit den Zitierungen.
+def detect_recitals_lines(lines: list[SectionLine]) -> None:
+    """Label the recitals: from "Whereas" on page 1 up to the enacting_formula."""
+    _label_until(lines, RECITALS_START, stop_type="enacting_formula", label="recitals")
 
-    Die Erkennung beginnt auf Seite 1 bei ``THE EUROPEAN COMMISSION,`` oder
-    ``DIE EUROPÄISCHE KOMMISSION`` und läuft bis zum Beginn der ``recitals``.
 
-    Args:
-        lines: Geordnete Textzeilen des Dokuments.
+def detect_citations_lines(lines: list[SectionLine]) -> None:
+    """Label the citations: from "THE EUROPEAN COMMISSION," on page 1 up to the recitals."""
+    _label_until(lines, CITATIONS_START, stop_type="recitals", label="citations")
 
-    Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
 
-    Siehe auch:
-        ``section-detection.md``
+def detect_header_lines(lines: list[SectionLine]) -> None:
+    """Label the header: from "COMMISSION DELEGATED REGULATION (EU)" on page 1 up to the citations."""
+    _label_until(lines, HEADER_START, stop_type="citations", label="header")
+
+
+def detect_footnote_lines(lines: list[SectionLine]) -> None:
+    """Label footnotes: the first footnote line and every line after it on the same page.
+
+    A line starts the footnotes of its page if its font is at most 5 % above
+    the smallest font size of the document, it begins with a number such as
+    "1" or "(1)" and it lies below y = 500.
     """
-
-    begin_fill = False
+    smallest_font_size = min(line.font_size for line in lines)
+    footnote_page = None  # page on which the footnotes have started
 
     for line in lines:
-        if (line.section_type == "recitals"):
-            break
-        
-        if (begin_fill):
-            line.section_type = "citations"
-        
-        if (re.match(r"^THE EUROPEAN COMMISSION,", line.text) and line.page_number == 1):
-                line.section_type = "citations"
-                begin_fill = True
-        if (re.match(r"^DIE EUROP.*ISCHE KOMMISSION", line.text) and line.page_number == 1):
-                line.section_type = "citations"
-                begin_fill = True
-
-    return lines
-
-def detect_header_lines(lines: list) -> list:
-    """Markiert den Kopfbereich einer Verordnung.
-
-    Die Erkennung beginnt auf Seite 1 bei ``COMMISSION DELEGATED REGULATION
-    (EU)`` oder ``DELEGIERTE VERORDNUNG (EU)`` und läuft bis zum Beginn der
-    ``citations``.
-
-    Args:
-        lines: Geordnete Textzeilen des Dokuments.
-
-    Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
-
-    Siehe auch:
-        ``section-detection.md``
-    """
-
-    begin_fill = False
-
-    for line in lines:
-        if (line.section_type == "citations"):
-            break
-        
-        if (begin_fill):
-            line.section_type = "header"
-        
-        if (re.match(r"^COMMISSION DELEGATED REGULATION \(EU\)", line.text) and line.page_number == 1):
-                line.section_type = "header"
-                begin_fill = True
-        if (re.match(r"^DELEGIERTE VERORDNUNG \(EU\)", line.text) and line.page_number == 1):
-                line.section_type = "header"
-                begin_fill = True
-
-    return lines
-
-def detect_footnote_lines(lines: list) -> list:
-    """Erkennt Fußnoten anhand von Schriftgröße, Präfix und Position.
-
-    Eine Zeile wird als Fußnote klassifiziert, wenn alle drei Kriterien
-    erfüllt sind: Die Schriftgröße liegt höchstens fünf Prozent über der
-    kleinsten Dokument-Schriftgröße, der Text beginnt mit einer numerischen
-    Markierung wie ``1`` oder ``(1)``, und die vertikale Position ``y`` ist
-    kleiner als ``500``. Nach einer erkannten Fußnotenzeile werden weitere
-    Zeilen derselben Seite ebenfalls als Fußnoten übernommen.
-
-    Args:
-        lines: Textzeilen mit den Attributen ``font_size``, ``text``, ``y``
-            und ``page_number``.
-
-    Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
-
-    Raises:
-        ValueError: Wenn ``lines`` leer ist und keine minimale Schriftgröße
-            ermittelt werden kann.
-
-    Siehe auch:
-        ``section-detection.md``
-    """
-
-    min_font_size = min(
-        line.font_size
-        for line in lines
-    )
-    line_before = False
-    line_before_page = 1
-    
-    for line in lines:
-        score = 0
-
-        if (line.page_number == line_before_page and line_before) :
+        if line.page_number == footnote_page:
             line.section_type = "footnotes"
             continue
-
-                
-
         if (
-            line.font_size <= min_font_size * 1.05
-            ): score  += 1
-
-        if (
-            re.match(r"^(?:\(\d+\)|\d+)\s*", line.text)
+            line.font_size <= smallest_font_size * FOOTNOTE_MAX_FONT_FACTOR
+            and FOOTNOTE_MARKER.match(line.text)
+            and line.y < FOOTNOTE_MAX_Y
         ):
-            score += 1
-
-        if (
-            line.y < 500
-        ):
-            score += 1
-
-        if score >= 3: 
             line.section_type = "footnotes"
-            line_before = True
-            line_before_page = line.page_number
+            footnote_page = line.page_number
 
-            
-            
-    
-    
-    
-    return lines
+
 def detect_sections(lines: list[SectionLine]) -> list[SectionLine]:
-    """Führt die vollständige Abschnittserkennung in definierter Reihenfolge aus.
+    """Run all detectors in the required order and return the same, now labeled lines.
 
-    Die einzelnen Erkennungsschritte werden für Einleitungsformel,
-    Schlussformel, verfügenden Teil, Erwägungsgründe, Zitierungen, Kopfbereich
-    und Fußnoten ausgeführt. Die Reihenfolge darf nicht verändert werden.
-
-    Args:
-        lines: In Dokumentreihenfolge sortierte Textzeilen. Jede Zeile muss
-            mindestens ``text``, ``page_number``, ``font_size``, ``y`` und
-            ``section_type`` bereitstellen.
-
-    Returns:
-        Dieselbe Liste von Zeilen mit den erkannten ``section_type``-Werten.
-
-    Siehe auch:
-        ``section-detection.md``
+    The lines must be in document order.
     """
-    step1 = detect_enacting_formula_lines(lines)
-    step2 = detect_final_formula_lines(step1)
-    step3 = detect_enacting_terms_lines(step2)
-    step4 = detect_recitals_lines(step3)
-    step5 = detect_citations_lines(step4)
-    step6 = detect_header_lines(step5)
-    step7 = detect_footnote_lines(step6)
-    return step7
+    detect_enacting_formula_lines(lines)
+    detect_final_formula_lines(lines)
+    detect_enacting_terms_lines(lines)
+    detect_recitals_lines(lines)
+    detect_citations_lines(lines)
+    detect_header_lines(lines)
+    detect_footnote_lines(lines)
+    return lines

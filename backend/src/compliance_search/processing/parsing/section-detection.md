@@ -1,38 +1,28 @@
-# Abschnittserkennung
+# Section detection
 
-Die Abschnittserkennung klassifiziert die extrahierten Textzeilen eines Dokuments. Dazu werden Textmuster, Seitennummern und Layoutinformationen wie Schriftgröße und vertikale Position ausgewertet.
+Section detection assigns a `section_type` to every line of a delegated regulation (level 1). It uses text patterns, page numbers and layout signals such as font size and vertical position.
 
-Die Implementierung befindet sich in [`section_detection.py`](section_detection.py).
+The code is in [`section_detection.py`](section_detection.py).
 
-## Erkannte Abschnittstypen
+## Section types
 
-Die Erkennung verwendet folgende Werte für `line.section_type`:
-
-| Wert | Bedeutung |
+| Value | Meaning |
 |---|---|
-| `header` | Kopfbereich bzw. Titel der Verordnung |
-| `citations` | Einleitung mit der zuständigen Institution |
-| `recitals` | Erwägungsgründe |
-| `enacting_formula` | Einleitungsformel vor den verfügenden Bestimmungen |
-| `enacting_terms` | Verfügender bzw. erlassender Teil der Verordnung |
-| `final_formula` | Schlussformel einschließlich der folgenden Zeilen |
-| `footnotes` | Fußnoten und deren Folgezeilen auf derselben Seite |
+| `header` | number, date and title of the act |
+| `citations` | "THE EUROPEAN COMMISSION," and the legal bases ("Having regard to …") |
+| `recitals` | the numbered reasons ("Whereas: (1) …") |
+| `enacting_formula` | "HAS ADOPTED THIS REGULATION:" |
+| `enacting_terms` | the articles |
+| `final_formula` | "Done at Brussels, …" and everything after it (signatures) |
+| `footnotes` | footnotes, including their continuation lines on the same page |
 
-## Voraussetzungen für die Eingabe
+## Input
 
-Die Funktion erwartet eine geordnete Liste von Zeilenobjekten. Jede Zeile muss mindestens über folgende Attribute verfügen:
+`detect_sections(lines)` expects the `SectionLine`s of one document in document order. It uses `text`, `page_number`, `font_size` and `y` and sets `section_type` directly on each line. The lines are changed in place; no copy is made. The same list is returned.
 
-- `text`: Textinhalt der Zeile
-- `page_number`: Seitennummer, beginnend bei 1
-- `font_size`: erkannte Schriftgröße
-- `y`: vertikale Position der Zeile
-- `section_type`: beschreibbares Feld für das Erkennungsergebnis
+## Order
 
-Die Zeilen müssen in Dokumentreihenfolge vorliegen. Die Funktionen setzen `section_type` direkt am bestehenden Zeilenobjekt. Die Objekte werden also verändert; es wird keine unabhängige Kopie erzeugt.
-
-## Verarbeitungsreihenfolge
-
-`detect_sections(lines)` führt die Erkennung in dieser Reihenfolge aus:
+`detect_sections` runs the detectors in this order:
 
 1. `detect_enacting_formula_lines`
 2. `detect_final_formula_lines`
@@ -42,85 +32,51 @@ Die Zeilen müssen in Dokumentreihenfolge vorliegen. Die Funktionen setzen `sect
 6. `detect_header_lines`
 7. `detect_footnote_lines`
 
-Die Reihenfolge ist fachlich relevant. Die Erkennung der Einleitungs- und Schlussformel muss vor den verfügenden Bestimmungen erfolgen, weil die Grenzen von `enacting_terms` anhand dieser Markierungen bestimmt werden. Fußnoten werden zuletzt erkannt, da ihre Erkennung die kleinste Schriftgröße des gesamten Dokuments verwendet und bereits gesetzte Abschnittsmarkierungen überschreiben kann.
+The order matters. `enacting_terms` lie between the enacting formula and the final formula, so both must be found first. `recitals`, `citations` and `header` each stop where the next section begins, so they are filled backwards. Footnotes come last, because they overwrite lines that already belong to another section.
 
-## Erkennungsregeln
+## Rules
 
-### Einleitungsformel
+### Enacting formula
 
-Die deutsche Formel beginnt mit:
+Every line that starts with `HAS ADOPTED THIS REGULATION:` (DE: `HAT FOLGENDE VERORDNUNG ERLASSEN:`) becomes `enacting_formula`.
 
-- `HAT FOLGENDE VERORDNUNG ERLASSEN:`
+### Final formula
 
-Die englische Formel beginnt mit:
+The line that starts with `Done at Brussels,` (DE: `Brüssel, den`) and every line after it become `final_formula`.
 
-- `HAS ADOPTED THIS REGULATION:`
+### Enacting terms
 
-Nach der Erkennung wird die jeweilige Zeile als `enacting_formula` markiert.
+Every line after the `enacting_formula` that is not `final_formula` becomes `enacting_terms`.
 
-### Schlussformel
+### Recitals
 
-Die Erkennung beginnt bei einer Zeile, die mit einer der folgenden Formulierungen beginnt:
+From the line on page 1 that starts with `Whereas` (DE: `in Erwägung nachstehender Gründe:`) up to the `enacting_formula`.
 
-- `Brüssel, den` beziehungsweise die entsprechende erkannte Zeichenfolge
-- `Done at Brussels,`
+### Citations
 
-Die Startzeile und alle danach folgenden Zeilen werden als `final_formula` markiert.
+From the line on page 1 that starts with `THE EUROPEAN COMMISSION,` (DE: `DIE EUROPÄISCHE KOMMISSION`) up to the `recitals`.
 
-### Verfügende Bestimmungen
+### Header
 
-Sobald eine `enacting_formula` erkannt wurde, werden die nachfolgenden Zeilen als `enacting_terms` markiert. Die Erkennung endet, sobald eine Zeile bereits als `final_formula` markiert ist.
+From the line on page 1 that starts with `COMMISSION DELEGATED REGULATION (EU)` (DE: `DELEGIERTE VERORDNUNG (EU)`) up to the `citations`.
 
-### Erwägungsgründe
+### Footnotes
 
-Die Erkennung startet auf Seite 1 bei einer Zeile, die mit einer der folgenden Formulierungen beginnt:
+First the smallest font size of the document is determined. A line starts the footnotes of its page if all three are true:
 
-- `Whereas`
-- `in Erwägung nachstehender Gründe:`
+1. `font_size` is at most 5 % above the smallest font size.
+2. The text starts with a number such as `1` or `(1)`.
+3. `y` is below `500`.
 
-Ab dieser Zeile werden die Zeilen bis zur `enacting_formula` als `recitals` markiert.
+That line and every following line on the same page become `footnotes`. On the next page the check starts again.
 
-### Zitierungen
+An empty list raises a `ValueError`, because there is no smallest font size.
 
-Die Erkennung startet auf Seite 1 bei einer Zeile, die mit einer der folgenden Formulierungen beginnt:
-
-- `THE EUROPEAN COMMISSION,`
-- `DIE EUROPÄISCHE KOMMISSION`
-
-Die Zeilen werden bis zum Beginn der `recitals` als `citations` markiert.
-
-### Kopfbereich
-
-Die Erkennung startet auf Seite 1 bei einer Zeile, die mit einer der folgenden Formulierungen beginnt:
-
-- `COMMISSION DELEGATED REGULATION (EU)`
-- `DELEGIERTE VERORDNUNG (EU)`
-
-Die Zeilen werden bis zum Beginn der `citations` als `header` markiert.
-
-### Fußnoten
-
-Für jedes Dokument wird zunächst die kleinste vorkommende Schriftgröße ermittelt. Eine Zeile wird als Fußnote erkannt, wenn alle drei folgenden Kriterien erfüllt sind:
-
-1. `font_size` ist höchstens fünf Prozent größer als die kleinste Schriftgröße.
-2. Der Text beginnt mit einer numerischen Markierung wie `1` oder `(1)`.
-3. `y` ist kleiner als `500`.
-
-Nach einer erkannten Fußnotenzeile werden weitere Zeilen derselben Seite ebenfalls als `footnotes` markiert. Beim Wechsel auf eine neue Seite wird die normale Erkennung erneut angewendet.
-
-## Rückgabewert und Seiteneffekte
-
-Alle Erkennungsfunktionen geben dieselbe übergebene Liste zurück. Zusätzlich verändern sie die `section_type`-Eigenschaft der enthaltenen Zeilen direkt. Bereits gesetzte Werte können durch nachfolgende Erkennungsschritte überschrieben werden.
-
-Bei einer leeren Liste kann keine minimale Schriftgröße ermittelt werden. Die Fußnotenerkennung löst in diesem Fall einen `ValueError` aus.
-
-## Beispielablauf
+## Example
 
 ```python
-lines = detect_sections(lines)
+lines = detect_sections(build_lines(parse_pdf(pdf_path)))
 
 for line in lines:
-	print(line.section_type, line.text)
+    print(line.section_type, line.text)
 ```
-
-Die Abschnittskennung ist anschließend an jeder Zeile verfügbar und kann für die weitere Verarbeitung, beispielsweise die Bildung von Sektionen oder Chunks, verwendet werden.
