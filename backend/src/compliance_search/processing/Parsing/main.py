@@ -20,8 +20,10 @@ SOURCE_FOLDER = (
 )
 
 OUTPUT_FOLDER = (
-    Path(__file__).resolve().parent
-    / "ParsedDocuments"
+    REPOSITORY_ROOT
+    / "data"
+    / "pdfs"
+    / "parsed"
 )
 
 

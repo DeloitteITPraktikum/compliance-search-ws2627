@@ -18,3 +18,4 @@ personal_notes/
 
 # Generated parser output
 backend/src/compliance_search/processing/Parsing/ParsedDocuments/
+data/pdfs/parsed/
