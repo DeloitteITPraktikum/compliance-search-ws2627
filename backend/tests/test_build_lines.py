@@ -1,4 +1,4 @@
-from compliance_search.processing.Parsing.build_lines import build_lines
+from compliance_search.processing.parsing.build_lines import build_lines
 from compliance_search.processing.sections import TextFragment
 
 

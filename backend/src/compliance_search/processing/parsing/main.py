@@ -1,17 +1,17 @@
 import time
 from pathlib import Path
 
-from compliance_search.processing.Parsing.build_lines import build_lines
-from compliance_search.processing.Parsing.parse_pdf import parse_pdf
-from compliance_search.processing.Parsing.save_json import save_jsonl
-from compliance_search.processing.Parsing.run_report import (
+from compliance_search.processing.parsing.build_lines import build_lines
+from compliance_search.processing.parsing.parse_pdf import parse_pdf
+from compliance_search.processing.parsing.save_json import save_jsonl
+from compliance_search.processing.parsing.run_report import (
     RunStats,
     print_document,
     print_failure,
     print_start,
     print_summary,
 )
-from compliance_search.processing.Parsing.section_detection import detect_sections
+from compliance_search.processing.parsing.section_detection import detect_sections
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
 
