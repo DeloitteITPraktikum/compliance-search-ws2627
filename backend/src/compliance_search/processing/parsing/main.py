@@ -52,7 +52,6 @@ def main() -> None:
 
             save_jsonl(
                 document_id=document_id,
-                sections=[],
                 lines=labeled_lines,
                 output_folder=OUTPUT_FOLDER,
             )

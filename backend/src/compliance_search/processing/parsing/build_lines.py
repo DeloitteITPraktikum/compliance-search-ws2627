@@ -32,7 +32,6 @@ def build_lines(fragments: list[TextFragment]) -> list[SectionLine]:
         current_line_number += 1
 
         lines.append(SectionLine(
-            section_id="",
             page_number=first_fragment.page_number,
             seq=current_line_number,
             x=first_fragment.x,

@@ -6,7 +6,7 @@ Die Implementierung befindet sich in [`section_detection.py`](section_detection.
 
 ## Erkannte Abschnittstypen
 
-Die Erkennung verwendet folgende Werte für `line.section_id`:
+Die Erkennung verwendet folgende Werte für `line.section_type`:
 
 | Wert | Bedeutung |
 |---|---|
@@ -26,9 +26,9 @@ Die Funktion erwartet eine geordnete Liste von Zeilenobjekten. Jede Zeile muss m
 - `page_number`: Seitennummer, beginnend bei 1
 - `font_size`: erkannte Schriftgröße
 - `y`: vertikale Position der Zeile
-- `section_id`: beschreibbares Feld für das Erkennungsergebnis
+- `section_type`: beschreibbares Feld für das Erkennungsergebnis
 
-Die Zeilen müssen in Dokumentreihenfolge vorliegen. Die Funktionen setzen `section_id` direkt am bestehenden Zeilenobjekt. Die Objekte werden also verändert; es wird keine unabhängige Kopie erzeugt.
+Die Zeilen müssen in Dokumentreihenfolge vorliegen. Die Funktionen setzen `section_type` direkt am bestehenden Zeilenobjekt. Die Objekte werden also verändert; es wird keine unabhängige Kopie erzeugt.
 
 ## Verarbeitungsreihenfolge
 
@@ -110,7 +110,7 @@ Nach einer erkannten Fußnotenzeile werden weitere Zeilen derselben Seite ebenfa
 
 ## Rückgabewert und Seiteneffekte
 
-Alle Erkennungsfunktionen geben dieselbe übergebene Liste zurück. Zusätzlich verändern sie die `section_id`-Eigenschaft der enthaltenen Zeilen direkt. Bereits gesetzte Werte können durch nachfolgende Erkennungsschritte überschrieben werden.
+Alle Erkennungsfunktionen geben dieselbe übergebene Liste zurück. Zusätzlich verändern sie die `section_type`-Eigenschaft der enthaltenen Zeilen direkt. Bereits gesetzte Werte können durch nachfolgende Erkennungsschritte überschrieben werden.
 
 Bei einer leeren Liste kann keine minimale Schriftgröße ermittelt werden. Die Fußnotenerkennung löst in diesem Fall einen `ValueError` aus.
 
@@ -120,7 +120,7 @@ Bei einer leeren Liste kann keine minimale Schriftgröße ermittelt werden. Die 
 lines = detect_sections(lines)
 
 for line in lines:
-	print(line.section_id, line.text)
+	print(line.section_type, line.text)
 ```
 
 Die Abschnittskennung ist anschließend an jeder Zeile verfügbar und kann für die weitere Verarbeitung, beispielsweise die Bildung von Sektionen oder Chunks, verwendet werden.

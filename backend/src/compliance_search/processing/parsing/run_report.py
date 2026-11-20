@@ -71,7 +71,7 @@ def _progress(run: RunStats, number: int) -> str:
 
 def _print_section_counts(lines: list[SectionLine]) -> None:
     """Print how many lines each section got, largest first, and warn about unassigned lines."""
-    counts = Counter(line.section_id for line in lines)
+    counts = Counter(line.section_type for line in lines)
     unassigned = counts.pop("", 0)
 
     entries = [f"{section} {count}" for section, count in counts.most_common()]

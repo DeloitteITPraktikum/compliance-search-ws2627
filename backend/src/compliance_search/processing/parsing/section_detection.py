@@ -2,7 +2,7 @@
 """Erkennung und Klassifizierung von Dokumentabschnitten.
 
 Das Modul weist jeder Textzeile anhand ihres Inhalts, ihrer Position und
-ihrer Schriftgröße eine ``section_id`` zu. Die Funktionen verändern die
+ihrer Schriftgröße eine ``section_type`` zu. Die Funktionen verändern die
 übergebenen Zeilenobjekte direkt und geben anschließend dieselbe Liste zurück.
 
 Die Reihenfolge der Erkennung ist wichtig: Die Einleitungs- und Schlussformel
@@ -28,19 +28,19 @@ def detect_enacting_formula_lines(lines: list) -> list:
 
     Args:
         lines: Geordnete Textzeilen mit den Attributen ``text`` und
-            ``section_id``.
+            ``section_type``.
 
     Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_id``.
+        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
 
     Siehe auch:
         ``section-detection.md``
     """
     for line in lines:
         if re.match(r"^HAT FOLGENDE VERORDNUNG ERLASSEN:", line.text):
-            line.section_id = "enacting_formula"
+            line.section_type = "enacting_formula"
         if re.match(r"^HAS ADOPTED THIS REGULATION:", line.text):
-            line.section_id = "enacting_formula"
+            line.section_type = "enacting_formula"
 
     return lines
 
@@ -55,7 +55,7 @@ def detect_final_formula_lines(lines: list) -> list:
         lines: Geordnete Textzeilen des Dokuments.
 
     Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_id``.
+        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
 
     Siehe auch:
         ``section-detection.md``
@@ -63,12 +63,12 @@ def detect_final_formula_lines(lines: list) -> list:
     line_before = False
     for line in lines:
         if line_before:
-            line.section_id = "final_formula"
+            line.section_type = "final_formula"
         if re.match(r"^Br.*ssel, den", line.text):
-            line.section_id = "final_formula"
+            line.section_type = "final_formula"
             line_before = True
         if re.match(r"^Done at Brussels,", line.text):
-            line.section_id = "final_formula"
+            line.section_type = "final_formula"
             line_before = True
 
     return lines
@@ -85,18 +85,18 @@ def detect_enacting_terms_lines(lines: list) -> list:
         lines: Geordnete Textzeilen des Dokuments.
 
     Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_id``.
+        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
 
     Siehe auch:
         ``section-detection.md``
     """
     beginns = False
     for line in lines :
-        if line.section_id == "enacting_formula":
+        if line.section_type == "enacting_formula":
             beginns = True
             continue
-        if (beginns and not line.section_id == "final_formula"):
-            line.section_id = "enacting_terms"
+        if (beginns and not line.section_type == "final_formula"):
+            line.section_type = "enacting_terms"
 
     return lines
 
@@ -112,7 +112,7 @@ def detect_recitals_lines(lines: list) -> list:
         lines: Geordnete Textzeilen des Dokuments.
 
     Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_id``.
+        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
 
     Siehe auch:
         ``section-detection.md``
@@ -120,17 +120,17 @@ def detect_recitals_lines(lines: list) -> list:
     begin_fill = False
     
     for line in lines:
-        if (line.section_id == "enacting_formula"):
+        if (line.section_type == "enacting_formula"):
             break
         
         if (begin_fill):
-            line.section_id = "recitals"
+            line.section_type = "recitals"
         
         if (re.match(r"^Whereas", line.text) and line.page_number == 1):
-                line.section_id = "recitals"
+                line.section_type = "recitals"
                 begin_fill = True
         if (re.match(r"^in Erw.*gung nachstehender Gr.*nde:", line.text) and line.page_number == 1):
-                line.section_id = "recitals"
+                line.section_type = "recitals"
                 begin_fill = True
 
     return lines
@@ -145,7 +145,7 @@ def detect_citations_lines(lines: list) -> list:
         lines: Geordnete Textzeilen des Dokuments.
 
     Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_id``.
+        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
 
     Siehe auch:
         ``section-detection.md``
@@ -154,17 +154,17 @@ def detect_citations_lines(lines: list) -> list:
     begin_fill = False
 
     for line in lines:
-        if (line.section_id == "recitals"):
+        if (line.section_type == "recitals"):
             break
         
         if (begin_fill):
-            line.section_id = "citations"
+            line.section_type = "citations"
         
         if (re.match(r"^THE EUROPEAN COMMISSION,", line.text) and line.page_number == 1):
-                line.section_id = "citations"
+                line.section_type = "citations"
                 begin_fill = True
         if (re.match(r"^DIE EUROP.*ISCHE KOMMISSION", line.text) and line.page_number == 1):
-                line.section_id = "citations"
+                line.section_type = "citations"
                 begin_fill = True
 
     return lines
@@ -180,7 +180,7 @@ def detect_header_lines(lines: list) -> list:
         lines: Geordnete Textzeilen des Dokuments.
 
     Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_id``.
+        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
 
     Siehe auch:
         ``section-detection.md``
@@ -189,17 +189,17 @@ def detect_header_lines(lines: list) -> list:
     begin_fill = False
 
     for line in lines:
-        if (line.section_id == "citations"):
+        if (line.section_type == "citations"):
             break
         
         if (begin_fill):
-            line.section_id = "header"
+            line.section_type = "header"
         
         if (re.match(r"^COMMISSION DELEGATED REGULATION \(EU\)", line.text) and line.page_number == 1):
-                line.section_id = "header"
+                line.section_type = "header"
                 begin_fill = True
         if (re.match(r"^DELEGIERTE VERORDNUNG \(EU\)", line.text) and line.page_number == 1):
-                line.section_id = "header"
+                line.section_type = "header"
                 begin_fill = True
 
     return lines
@@ -219,7 +219,7 @@ def detect_footnote_lines(lines: list) -> list:
             und ``page_number``.
 
     Returns:
-        Dieselbe Liste von Zeilen mit gesetzter ``section_id``.
+        Dieselbe Liste von Zeilen mit gesetzter ``section_type``.
 
     Raises:
         ValueError: Wenn ``lines`` leer ist und keine minimale Schriftgröße
@@ -240,7 +240,7 @@ def detect_footnote_lines(lines: list) -> list:
         score = 0
 
         if (line.page_number == line_before_page and line_before) :
-            line.section_id = "footnotes"
+            line.section_type = "footnotes"
             continue
 
                 
@@ -260,7 +260,7 @@ def detect_footnote_lines(lines: list) -> list:
             score += 1
 
         if score >= 3: 
-            line.section_id = "footnotes"
+            line.section_type = "footnotes"
             line_before = True
             line_before_page = line.page_number
 
@@ -280,10 +280,10 @@ def detect_sections(lines: list[SectionLine]) -> list[SectionLine]:
     Args:
         lines: In Dokumentreihenfolge sortierte Textzeilen. Jede Zeile muss
             mindestens ``text``, ``page_number``, ``font_size``, ``y`` und
-            ``section_id`` bereitstellen.
+            ``section_type`` bereitstellen.
 
     Returns:
-        Dieselbe Liste von Zeilen mit den erkannten ``section_id``-Werten.
+        Dieselbe Liste von Zeilen mit den erkannten ``section_type``-Werten.
 
     Siehe auch:
         ``section-detection.md``
