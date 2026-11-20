@@ -1,12 +1,9 @@
 from pathlib import Path
 
-from compliance_search.processing.Parsing import (
-    build_lines,
-    parse_pdf,
-    save_json,
-    section_detection,
-)
-from compliance_search.processing import sections
+from compliance_search.processing.Parsing.build_lines import build_lines
+from compliance_search.processing.Parsing.parse_pdf import parse_pdf
+from compliance_search.processing.Parsing.save_json import save_jsonl
+from compliance_search.processing.Parsing.section_detection import section_detection
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
 
@@ -26,35 +23,26 @@ OUTPUT_FOLDER = (
     / "parsed"
 )
 
-
-
 def main() -> None:
 
     pdf_files = sorted(
-        SOURCE_FOLDER.glob("*")
+        SOURCE_FOLDER.rglob("*.pdf")
     )
-    print(len(pdf_files))
-
-    
 
     for pdf_file in pdf_files:
-
-        document_id = pdf_file.stem
-
+        document_id = pdf_file.stem #take name from the front of file name
         print(f"\nProcessing {document_id}")
-
         try:
-            document_parsed = parse_pdf.parse_pdf(pdf_file)
-
-            lines = build_lines.build_lines(
+            document_parsed = parse_pdf(pdf_file)
+            lines = build_lines(
                 document_parsed["fragments"],
                 document_id,
             )
 
             
-            step7 = section_detection.section_detection(lines)
+            step7 = section_detection(lines)
 
-            save_json.save_jsonl(
+            save_jsonl(
                 sections=[],
                 lines=step7,
                 output_folder=OUTPUT_FOLDER,
