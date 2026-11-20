@@ -13,9 +13,9 @@ def test_fragments_with_almost_the_same_y_form_one_line():
         fragment(x=100, y=90.00, text="Nächste Zeile"),
     ]
 
-    lines = build_lines(fragments)
+    lines = build_lines(fragments, document_id="test-doc")
 
-    assert [line["text"] for line in lines] == ["Hallo Welt", "Nächste Zeile"]
+    assert [line.text for line in lines] == ["Hallo Welt", "Nächste Zeile"]
 
 
 def test_spaces_come_only_from_the_fragments():
@@ -27,6 +27,6 @@ def test_spaces_come_only_from_the_fragments():
         fragment(x=149, y=100, text=", in"),
     ]
 
-    lines = build_lines(fragments)
+    lines = build_lines(fragments, document_id="test-doc")
 
-    assert lines[0]["text"] == "2016/1011 (1), in"
+    assert lines[0].text == "2016/1011 (1), in"
