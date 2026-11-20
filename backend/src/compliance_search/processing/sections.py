@@ -72,6 +72,18 @@ class SectionLine(BaseModel):
     bold: bool
 
     x: float  # distance to left edge in points
-    y: float # distance to upper edge in points
+    y: float  # distance to lower edge in points (PDF origin is bottom-left)
 
     text: str
+
+
+class TextFragment(BaseModel):
+    """One piece of text as pypdf delivers it, before it is grouped into lines."""
+
+    page_number: int  # starting at 1
+    x: float  # distance to left edge in points
+    y: float  # distance to lower edge in points (PDF origin is bottom-left)
+    font: str
+    font_size: float  # size on the page in points
+    bold: bool
+    text: str  # raw text including spaces (build_lines uses them to separate words)

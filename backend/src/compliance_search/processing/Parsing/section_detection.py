@@ -16,6 +16,8 @@ Eine ausführliche Beschreibung der Erkennungsregeln befindet sich in
 
 import re
 
+from compliance_search.processing.sections import SectionLine
+
 
 def detect_enacting_formula_lines(lines: list) -> list:
     """Markiert die Einleitungsformel einer Verordnung.
@@ -268,7 +270,7 @@ def detect_footnote_lines(lines: list) -> list:
     
     
     return lines
-def section_detection(lines: list) -> list:
+def detect_sections(lines: list[SectionLine]) -> list[SectionLine]:
     """Führt die vollständige Abschnittserkennung in definierter Reihenfolge aus.
 
     Die einzelnen Erkennungsschritte werden für Einleitungsformel,

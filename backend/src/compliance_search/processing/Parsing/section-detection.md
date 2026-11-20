@@ -32,7 +32,7 @@ Die Zeilen müssen in Dokumentreihenfolge vorliegen. Die Funktionen setzen `sect
 
 ## Verarbeitungsreihenfolge
 
-`section_detection(lines)` führt die Erkennung in dieser Reihenfolge aus:
+`detect_sections(lines)` führt die Erkennung in dieser Reihenfolge aus:
 
 1. `detect_enacting_formula_lines`
 2. `detect_final_formula_lines`
@@ -117,7 +117,7 @@ Bei einer leeren Liste kann keine minimale Schriftgröße ermittelt werden. Die 
 ## Beispielablauf
 
 ```python
-lines = section_detection(lines)
+lines = detect_sections(lines)
 
 for line in lines:
 	print(line.section_id, line.text)

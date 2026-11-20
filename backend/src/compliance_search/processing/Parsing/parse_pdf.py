@@ -1,19 +1,25 @@
 from pathlib import Path
-
 from pypdf import PdfReader
 
-def parse_pdf(source_path: Path) -> dict:
+from compliance_search.processing.sections import TextFragment
 
-    reader = PdfReader(source_path)
 
+def parse_pdf(pdf_path: Path) -> list[TextFragment]:
+    """Read a PDF and return its text fragments in pypdf order.
+
+    Coordinates are in points, with the origin at the bottom-left
+    of the page. Line building happens later in build_lines.
+    """
+    reader = PdfReader(pdf_path)
     all_fragments = []
-
     for pagenumber, page in enumerate(reader.pages, start=1):
 
         def visitor_function(text, cm, tm, font_dict, font_size):
 
-            # Skip empty fragments, but keep the raw text: its spaces show
-            # where the PDF separates words (used in build_lines)
+            # Skip fragments without visible text. In the delegated
+            # regulations these are only line breaks ("\n"). The spaces
+            # between words come inside the word fragments, and
+            # build_lines uses them to separate words.
             if not text.strip():
                 return
 
@@ -24,26 +30,22 @@ def parse_pdf(source_path: Path) -> dict:
             font = ""
 
             if font_dict:
-                font = str(font_dict.get("/BaseFont"))
+                font = str(font_dict.get("/BaseFont", ""))
 
             bold = "Bold" in font
 
-            all_fragments.append({
-                "page_number": pagenumber,
-                "x": x,
-                "y": y,
-                "font": font,
+            all_fragments.append(TextFragment(
+                page_number=pagenumber,
+                x=x,
+                y=y,
+                font=font,
                 # Font size on the page: pypdf's font_size (often 1.0)
                 # × vertical scale of tm × vertical scale of cm
-                "font_size": font_size * tm[3] * cm[3],
-                "bold": bold,
-                "text": text
-            })
+                font_size=font_size * tm[3] * cm[3],
+                bold=bold,
+                text=text,
+            ))
 
         page.extract_text(visitor_text=visitor_function)
 
-    return {
-        "document": str(source_path),
-        "pages": len(reader.pages),
-        "fragments": all_fragments
-    }
+    return all_fragments
