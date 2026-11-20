@@ -18,7 +18,7 @@ The code is in [`section_detection.py`](section_detection.py).
 
 ## Input
 
-`detect_sections(lines)` expects the `SectionLine`s of one document in document order. It uses `text`, `page_number`, `font_size` and `y` and sets `section_type` directly on each line. The lines are changed in place; no copy is made. The same list is returned.
+`detect_sections(lines)` expects the `SectionLine`s of one document in document order, already trimmed by [`trim_lines.py`](trim_lines.py) (running headers and footers removed). It uses `text`, `page_number`, `font_size` and `y` and sets `section_type` directly on each line. The lines are changed in place; no copy is made. The same list is returned.
 
 ## Order
 
@@ -58,7 +58,7 @@ From the line on page 1 that starts with `THE EUROPEAN COMMISSION,` (DE: `DIE EU
 
 ### Header
 
-From the line on page 1 that starts with `COMMISSION DELEGATED REGULATION (EU)` (DE: `DELEGIERTE VERORDNUNG (EU)`) up to the `citations`.
+Every line on page 1 before the `citations`. No start phrase is needed, because `trim_lines.py` has already removed every line at the very top (`y > 770`) and bottom (`y < 35`): the running header (on page 1 the long form `Official Journal EN` / `of the European Union L series`, after that e.g. `EN OJ L, 20.2.2025`) and the ELI footer. In the new layout the header therefore starts with the act's number and date (`2025/301 20.2.2025`), in the old layout with `REGULATIONS`.
 
 ### Footnotes
 
@@ -75,7 +75,7 @@ An empty list raises a `ValueError`, because there is no smallest font size.
 ## Example
 
 ```python
-lines = detect_sections(build_lines(parse_pdf(pdf_path)))
+lines = detect_sections(trim_lines(build_lines(parse_pdf(pdf_path))))
 
 for line in lines:
     print(line.section_type, line.text)

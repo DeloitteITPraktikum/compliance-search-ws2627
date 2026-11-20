@@ -12,6 +12,7 @@ from compliance_search.processing.parsing.run_report import (
     print_summary,
 )
 from compliance_search.processing.parsing.section_detection import detect_sections
+from compliance_search.processing.parsing.trim_lines import trim_lines
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
 
@@ -48,7 +49,8 @@ def main() -> None:
         try:
             fragments = parse_pdf(pdf_path) # extract all text fragments
             unlabeled_lines = build_lines(fragments)
-            labeled_lines = detect_sections(unlabeled_lines)
+            trimmed_lines = trim_lines(unlabeled_lines) # drop running headers and footers
+            labeled_lines = detect_sections(trimmed_lines)
 
             save_jsonl(
                 document_id=document_id,

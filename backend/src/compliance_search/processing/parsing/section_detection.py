@@ -20,7 +20,6 @@ ENACTING_FORMULA = re.compile(r"^(HAS ADOPTED THIS REGULATION:|HAT FOLGENDE VERO
 FINAL_FORMULA = re.compile(r"^(Done at Brussels,|Brüssel, den)")
 RECITALS_START = re.compile(r"^(Whereas|in Erwägung nachstehender Gründe:)")
 CITATIONS_START = re.compile(r"^(THE EUROPEAN COMMISSION,|DIE EUROPÄISCHE KOMMISSION)")
-HEADER_START = re.compile(r"^(COMMISSION DELEGATED REGULATION \(EU\)|DELEGIERTE VERORDNUNG \(EU\))")
 
 # Footnotes: small font, a number at the start, in the lower part of the page
 FOOTNOTE_MARKER = re.compile(r"^(?:\(\d+\)|\d+)\s*")  # "1" or "(1)"
@@ -79,8 +78,15 @@ def detect_citations_lines(lines: list[SectionLine]) -> None:
 
 
 def detect_header_lines(lines: list[SectionLine]) -> None:
-    """Label the header: from "COMMISSION DELEGATED REGULATION (EU)" on page 1 up to the citations."""
-    _label_until(lines, HEADER_START, stop_type="citations", label="header")
+    """Label every line on page 1 before the citations as header.
+
+    No start phrase is needed, because trim_lines has already removed the
+    running header. In the old layout "REGULATIONS" thereby belongs to the header.
+    """
+    for line in lines:
+        if line.section_type == "citations" or line.page_number > 1:
+            break
+        line.section_type = "header"
 
 
 def detect_footnote_lines(lines: list[SectionLine]) -> None:
@@ -109,7 +115,7 @@ def detect_footnote_lines(lines: list[SectionLine]) -> None:
 def detect_sections(lines: list[SectionLine]) -> list[SectionLine]:
     """Run all detectors in the required order and return the same, now labeled lines.
 
-    The lines must be in document order.
+    The lines must be in document order and already trimmed by trim_lines.
     """
     detect_enacting_formula_lines(lines)
     detect_final_formula_lines(lines)
