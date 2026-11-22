@@ -13,7 +13,7 @@ The code is in [`section_detection.py`](section_detection.py).
 | `recitals` | the numbered reasons ("Whereas: (1) …") |
 | `enacting_formula` | "HAS ADOPTED THIS REGULATION:" |
 | `enacting_terms` | the articles |
-| `final_formula` | "Done at Brussels, …" and everything after it (signatures) |
+| `final_formula` | "This Regulation shall be binding in its entirety …", "Done at Brussels, …" and everything after it (signatures) |
 | `footnotes` | footnotes, including their continuation lines on the same page |
 
 ## Input
@@ -42,7 +42,9 @@ Every line that starts with `HAS ADOPTED THIS REGULATION:` (DE: `HAT FOLGENDE VE
 
 ### Final formula
 
-The line that starts with `Done at Brussels,` (DE: `Brüssel, den`) and every line after it become `final_formula`.
+The line that starts with `This Regulation shall be binding in its entirety` (DE: `Diese Verordnung ist in allen ihren Teilen verbindlich`) and every line after it become `final_formula`. This binding clause stands after the last article and belongs to the whole regulation, not to the last article.
+
+If a document has no binding clause, the final formula starts at the line that starts with `Done at Brussels,` (DE: `Brüssel, den`).
 
 ### Enacting terms
 
