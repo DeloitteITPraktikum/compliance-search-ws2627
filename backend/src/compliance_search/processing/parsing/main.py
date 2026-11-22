@@ -4,6 +4,7 @@ from pathlib import Path
 from compliance_search.processing.parsing.article_detection import detect_articles
 from compliance_search.processing.parsing.build_lines import build_lines
 from compliance_search.processing.parsing.parse_pdf import parse_pdf
+from compliance_search.processing.parsing.recital_detection import detect_recitals
 from compliance_search.processing.parsing.save_json import save_jsonl
 from compliance_search.processing.parsing.run_report import (
     RunStats,
@@ -53,6 +54,7 @@ def main() -> None:
             trimmed_lines = trim_lines(unlabeled_lines) # drop running headers and footers
             labeled_lines = detect_sections(trimmed_lines)
             labeled_lines = detect_articles(labeled_lines)
+            labeled_lines = detect_recitals(labeled_lines)
 
             save_jsonl(
                 document_id=document_id,
