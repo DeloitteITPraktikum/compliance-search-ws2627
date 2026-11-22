@@ -24,3 +24,4 @@ That holds if you take our recommended stack too.
 | [0007](0007-backend-framework-fastapi.md) | The backend is a FastAPI app served by uvicorn | Proposed |
 | [0008](0008-database-provider.md) | The database provider is Supabase with pgvector and | Proposed |
 | [0009](0009-database-type.md) | The database type is a relational database (PostgreSQL) | Proposed |
+| [0010](0010-chunk-delegated-regulations-by-article.md) | Chunk Delegated Regulations by article and recital | Proposed |
