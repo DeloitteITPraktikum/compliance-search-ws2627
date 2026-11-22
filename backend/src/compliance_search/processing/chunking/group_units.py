@@ -9,12 +9,27 @@ article or recital number.
 2. The "Article N" line is not part of the text. The bold lines right after it
    are the article title.
 3. The leading "(N)" of a recital is not part of the text.
-4. A grouping heading (TITLE, CHAPTER, Section) and the bold lines after it are
-   remembered and given to every following article. A new TITLE clears the
-   chapter and section, a new CHAPTER clears the section.
+4. So that every article knows the TITLE, CHAPTER and Section it belongs to,
+   a grouping heading and the bold lines after it are remembered and given to
+   every following article. A new TITLE clears the chapter and section, a new
+   CHAPTER clears the section.
 5. Lines are joined with a space. A line ending in "-" before a lowercase word
    is joined without one ("third-" + "party" = "third-party"), except before
    "und", "oder", "and", "or" ("Audit- und Aufsicht").
+
+Example (input lines, simplified):
+
+    CHAPTER I              (heading, no article)
+    General provisions     (bold)
+    Article 1              (article=1)
+    Subject matter         (bold, article=1)
+    This Regulation lays   (article=1)
+    down third-            (article=1)
+    [footnote]             (skipped)
+    party rules.           (article=1, next page)
+
+Result: a unit "article 1" with headings ["CHAPTER I General provisions"],
+title "Subject matter" and text "This Regulation lays down third-party rules.".
 """
 from dataclasses import dataclass, field
 from typing import Literal
@@ -37,9 +52,9 @@ WORDS_AFTER_OPEN_HYPHEN = {"und", "oder", "and", "or"}
 class Unit:
     unit_type: Literal["article", "recital"]
     number: str
-    headings: list[str]
-    title_lines: list[str] = field(default_factory=list)
-    text_lines: list[str] = field(default_factory=list)
+    headings: list[str]  # one entry per heading level above the article, outermost first, e.g. ["TITLE II …", "CHAPTER I …"]; empty for recitals
+    title_lines: list[str] = field(default_factory=list)  # raw bold lines after "Article N", joined by .title; empty for recitals
+    text_lines: list[str] = field(default_factory=list)  # raw content lines (without "Article N" and "(N)"), joined by .text
     pages: list[int] = field(default_factory=list)
 
     @property

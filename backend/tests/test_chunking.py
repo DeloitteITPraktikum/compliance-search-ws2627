@@ -58,6 +58,25 @@ def test_context_line_names_chapter_and_article():
                                     "Article 1 – Subject matter\nThis Regulation lays down")
 
 
+# Does the title end at the first non-bold line, so later bold lines stay text?
+def test_title_ends_at_first_non_bold_line():
+    lines = [line("Article 3", article="3"), line("Reporting", article="3", bold=True),
+             line("Entities shall report", article="3"), line("without delay.", article="3", bold=True)]
+
+    [unit] = group_units(lines)
+
+    assert (unit.title, unit.text) == ("Reporting", "Entities shall report without delay.")
+
+
+# Does a recital get neither a title nor headings?
+def test_recital_has_no_title_and_no_headings():
+    lines = [line("(2) Bold start of a recital", section_type="recitals", recital="2", bold=True)]
+
+    [unit] = group_units(lines)
+
+    assert (unit.title, unit.headings, unit.text) == (None, [], "Bold start of a recital")
+
+
 # Does a new chapter clear the section of the chapter before?
 def test_new_chapter_clears_the_section():
     lines = [line("CHAPTER I"), line("Section 1"), line("Article 1", article="1"), line("text", article="1"),
