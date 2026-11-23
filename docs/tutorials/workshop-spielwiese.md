@@ -8,7 +8,7 @@ Die Aufgaben dazu stehen in [git-uv-workshop.md](git-uv-workshop.md).
 Ändere nur die zwei Zeilen unter deinem Namen.
 
 ### Aiman
-
+Meine changes lauten: hello world und sonst nichts anderes
 - Mein Betriebssystem: …
 - Darauf freue ich mich im Projekt: …
 
