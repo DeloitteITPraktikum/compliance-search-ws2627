@@ -17,7 +17,13 @@ from compliance_search.processing.sections import SectionLine
 
 # Start phrases, English and German
 ENACTING_FORMULA = re.compile(r"^(HAS ADOPTED THIS REGULATION:|HAT FOLGENDE VERORDNUNG ERLASSEN:)")
-FINAL_FORMULA = re.compile(r"^(Done at Brussels,|Brüssel, den)")
+# The final formula starts with the binding clause after the last article.
+# "Done at Brussels," is the fallback if a document has no binding clause.
+FINAL_FORMULA = re.compile(
+    r"^(This Regulation shall be binding in its entirety"
+    r"|Diese Verordnung ist in allen ihren Teilen verbindlich"
+    r"|Done at Brussels,|Brüssel, den)"
+)
 RECITALS_START = re.compile(r"^(Whereas|in Erwägung nachstehender Gründe:)")
 CITATIONS_START = re.compile(r"^(THE EUROPEAN COMMISSION,|DIE EUROPÄISCHE KOMMISSION)")
 
@@ -35,7 +41,7 @@ def detect_enacting_formula_lines(lines: list[SectionLine]) -> None:
 
 
 def detect_final_formula_lines(lines: list[SectionLine]) -> None:
-    """Label "Done at Brussels, …" and every line after it as final_formula."""
+    """Label the binding clause ("This Regulation shall be binding …") and every line after it as final_formula."""
     started = False
     for line in lines:
         if FINAL_FORMULA.match(line.text):

@@ -19,3 +19,6 @@ personal_notes/
 # Generated parser output
 backend/src/compliance_search/processing/parsing/ParsedDocuments/
 data/pdfs/parsed/
+
+# Generated chunker output
+data/chunks/
