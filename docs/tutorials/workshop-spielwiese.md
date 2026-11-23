@@ -14,7 +14,7 @@ Die Aufgaben dazu stehen in [git-uv-workshop.md](git-uv-workshop.md).
 
 ### Elias
 
-- Mein Betriebssystem: …
+- Mein Betriebssystem: MacOS
 - Darauf freue ich mich im Projekt: …
 
 ### Emelie
