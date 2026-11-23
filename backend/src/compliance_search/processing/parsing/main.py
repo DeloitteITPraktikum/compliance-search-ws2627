@@ -15,16 +15,16 @@ from compliance_search.processing.parsing.section_detection import detect_sectio
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
 
-# TODO: Switch this path to data/pdfs/... once DEL-91 is done.
-# Until then the parser reads the static PDF folder in docs/analysis.
 # Focus for now: only documents of doc_type "delegated_regulation"
 # (see docs/analysis/doc-type-structure/delegated_regulation.md).
-# The folder holds only those PDFs. Other doc types come later.
+# The sync sorts the PDFs into data/pdfs/<status>/<doc_type>/ (DEL-91).
+# Other doc types come later.
 SOURCE_FOLDER = (
     REPOSITORY_ROOT
-    /"docs"
-    / "analysis"
-    / "unlabled-pdfs"
+    / "data"
+    / "pdfs"
+    / "active"
+    / "delegated_regulation"
 )
 
 OUTPUT_FOLDER = (
