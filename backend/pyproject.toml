@@ -6,6 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.162.4",
     "openai>=1.60",
+    "pypdf>=7.1.0",
     "requests>=2.34.2",
     "uvicorn>=0.54.0",
 ]

@@ -1,0 +1,82 @@
+# Section detection
+
+Section detection assigns a `section_type` to every line of a delegated regulation (level 1). It uses text patterns, page numbers and layout signals such as font size and vertical position.
+
+The code is in [`section_detection.py`](section_detection.py).
+
+## Section types
+
+| Value | Meaning |
+|---|---|
+| `header` | number, date and title of the act |
+| `citations` | "THE EUROPEAN COMMISSION," and the legal bases ("Having regard to …") |
+| `recitals` | the numbered reasons ("Whereas: (1) …") |
+| `enacting_formula` | "HAS ADOPTED THIS REGULATION:" |
+| `enacting_terms` | the articles |
+| `final_formula` | "Done at Brussels, …" and everything after it (signatures) |
+| `footnotes` | footnotes, including their continuation lines on the same page |
+
+## Input
+
+`detect_sections(lines)` expects the `SectionLine`s of one document in document order. It uses `text`, `page_number`, `font_size` and `y` and sets `section_type` directly on each line. The lines are changed in place; no copy is made. The same list is returned.
+
+## Order
+
+`detect_sections` runs the detectors in this order:
+
+1. `detect_enacting_formula_lines`
+2. `detect_final_formula_lines`
+3. `detect_enacting_terms_lines`
+4. `detect_recitals_lines`
+5. `detect_citations_lines`
+6. `detect_header_lines`
+7. `detect_footnote_lines`
+
+The order matters. `enacting_terms` lie between the enacting formula and the final formula, so both must be found first. `recitals`, `citations` and `header` each stop where the next section begins, so they are filled backwards. Footnotes come last, because they overwrite lines that already belong to another section.
+
+## Rules
+
+### Enacting formula
+
+Every line that starts with `HAS ADOPTED THIS REGULATION:` (DE: `HAT FOLGENDE VERORDNUNG ERLASSEN:`) becomes `enacting_formula`.
+
+### Final formula
+
+The line that starts with `Done at Brussels,` (DE: `Brüssel, den`) and every line after it become `final_formula`.
+
+### Enacting terms
+
+Every line after the `enacting_formula` that is not `final_formula` becomes `enacting_terms`.
+
+### Recitals
+
+From the line on page 1 that starts with `Whereas` (DE: `in Erwägung nachstehender Gründe:`) up to the `enacting_formula`.
+
+### Citations
+
+From the line on page 1 that starts with `THE EUROPEAN COMMISSION,` (DE: `DIE EUROPÄISCHE KOMMISSION`) up to the `recitals`.
+
+### Header
+
+From the line on page 1 that starts with `COMMISSION DELEGATED REGULATION (EU)` (DE: `DELEGIERTE VERORDNUNG (EU)`) up to the `citations`.
+
+### Footnotes
+
+First the smallest font size of the document is determined. A line starts the footnotes of its page if all three are true:
+
+1. `font_size` is at most 5 % above the smallest font size.
+2. The text starts with a number such as `1` or `(1)`.
+3. `y` is below `500`.
+
+That line and every following line on the same page become `footnotes`. On the next page the check starts again.
+
+An empty list raises a `ValueError`, because there is no smallest font size.
+
+## Example
+
+```python
+lines = detect_sections(build_lines(parse_pdf(pdf_path)))
+
+for line in lines:
+    print(line.section_type, line.text)
+```
