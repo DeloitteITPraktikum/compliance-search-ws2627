@@ -276,7 +276,7 @@ Die Übungsdatei ist [`docs/tutorials/workshop-spielwiese.md`](workshop-spielwie
 5. Klick auf das **Plus** neben der Datei. Sie wandert nach **Staged Changes**.
 6. Schreib oben eine Nachricht, die sagt, was sich ändert, zum Beispiel `Fill in my operating system`, und klick **Commit**.
 7. Jetzt dasselbe im Terminal. Füll die **zweite** Zeile aus, speichere, dann:
-
+lalalalal
    ```sh
    git status
    git add docs/tutorials/workshop-spielwiese.md
