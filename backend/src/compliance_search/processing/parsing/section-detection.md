@@ -13,12 +13,12 @@ The code is in [`section_detection.py`](section_detection.py).
 | `recitals` | the numbered reasons ("Whereas: (1) …") |
 | `enacting_formula` | "HAS ADOPTED THIS REGULATION:" |
 | `enacting_terms` | the articles |
-| `final_formula` | "Done at Brussels, …" and everything after it (signatures) |
+| `final_formula` | "This Regulation shall be binding in its entirety …", "Done at Brussels, …" and everything after it (signatures) |
 | `footnotes` | footnotes, including their continuation lines on the same page |
 
 ## Input
 
-`detect_sections(lines)` expects the `SectionLine`s of one document in document order. It uses `text`, `page_number`, `font_size` and `y` and sets `section_type` directly on each line. The lines are changed in place; no copy is made. The same list is returned.
+`detect_sections(lines)` expects the `SectionLine`s of one document in document order, already trimmed by [`trim_lines.py`](trim_lines.py) (running headers and footers removed). It uses `text`, `page_number`, `font_size` and `y` and sets `section_type` directly on each line. The lines are changed in place; no copy is made. The same list is returned.
 
 ## Order
 
@@ -42,7 +42,9 @@ Every line that starts with `HAS ADOPTED THIS REGULATION:` (DE: `HAT FOLGENDE VE
 
 ### Final formula
 
-The line that starts with `Done at Brussels,` (DE: `Brüssel, den`) and every line after it become `final_formula`.
+The line that starts with `This Regulation shall be binding in its entirety` (DE: `Diese Verordnung ist in allen ihren Teilen verbindlich`) and every line after it become `final_formula`. This binding clause stands after the last article and belongs to the whole regulation, not to the last article.
+
+If a document has no binding clause, the final formula starts at the line that starts with `Done at Brussels,` (DE: `Brüssel, den`).
 
 ### Enacting terms
 
@@ -58,7 +60,7 @@ From the line on page 1 that starts with `THE EUROPEAN COMMISSION,` (DE: `DIE EU
 
 ### Header
 
-From the line on page 1 that starts with `COMMISSION DELEGATED REGULATION (EU)` (DE: `DELEGIERTE VERORDNUNG (EU)`) up to the `citations`.
+Every line on page 1 before the `citations`. No start phrase is needed, because `trim_lines.py` has already removed every line at the very top (`y > 770`) and bottom (`y < 35`): the running header (on page 1 the long form `Official Journal EN` / `of the European Union L series`, after that e.g. `EN OJ L, 20.2.2025`) and the ELI footer. In the new layout the header therefore starts with the act's number and date (`2025/301 20.2.2025`), in the old layout with `REGULATIONS`.
 
 ### Footnotes
 
@@ -75,7 +77,7 @@ An empty list raises a `ValueError`, because there is no smallest font size.
 ## Example
 
 ```python
-lines = detect_sections(build_lines(parse_pdf(pdf_path)))
+lines = detect_sections(trim_lines(build_lines(parse_pdf(pdf_path))))
 
 for line in lines:
     print(line.section_type, line.text)
