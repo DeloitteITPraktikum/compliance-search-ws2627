@@ -9,6 +9,7 @@ So arbeitest du mit dem Blatt:
 - Wer früher fertig ist, macht den **Bonus** oder hilft nebenan.
 - `DEL-44` ist das Workshop-Ticket, `<vorname>` dein Vorname in Kleinbuchstaben.
 - Git schreibt seine Meldungen je nach Laptop auf Deutsch oder Englisch. Die Befehle sind dieselben.
+- Unter jedem Befehl steht kurz, was seine Teile bedeuten. Teile mit `-` oder `--` davor sind Optionen, sie ändern, wie sich ein Befehl verhält.
 
 Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt, steht es dabei.
 
@@ -25,6 +26,8 @@ Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt,
    uv --version
    ```
 
+   - `--version`: gibt nur die Versionsnummer aus. Steht dort eine Nummer, ist das Werkzeug installiert.
+
 4. Prüfe, wer du für Git bist. Beide Befehle müssen etwas ausgeben:
 
    ```sh
@@ -32,7 +35,10 @@ Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt,
    git config user.email
    ```
 
-   Kommt nichts: `git config --global user.name "Dein Name"` und `git config --global user.email "deine@mail"`.
+   - `config`: liest oder schreibt eine Git-Einstellung.
+   - `user.name`, `user.email`: der Name der Einstellung. Ohne Wert dahinter liest Git sie nur aus.
+
+   Kommt nichts: `git config --global user.name "Dein Name"` und `git config --global user.email "deine@mail"`. `--global` speichert die Einstellung für alle Repos auf deinem Laptop, der Text in Anführungszeichen ist der neue Wert.
 
 5. Stell einmalig ein, dass `git pull` zusammenführt. Ohne diese Einstellung bricht `git pull` später in Block 5 mit einer Fehlermeldung ab:
 
@@ -40,12 +46,19 @@ Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt,
    git config --global pull.rebase false
    ```
 
+   - `--global`: gilt für alle Repos auf deinem Laptop.
+   - `pull.rebase`: legt fest, wie `git pull` neue Commits von GitHub einbaut.
+   - `false`: zusammenführen (Merge), statt deine Commits neu aufzureihen (Rebase).
+
 6. Hol den neuesten Stand:
 
    ```sh
    git switch main
    git pull
    ```
+
+   - `switch main`: wechselt auf den Branch `main`.
+   - `pull`: holt neue Commits von GitHub und führt sie in den Branch ein, auf dem du gerade bist.
 
 **Checkpoint:** Unten links in VS Code steht `main`, und `git status` meldet, dass nichts zu committen ist.
 
@@ -60,6 +73,9 @@ Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt,
    ls
    ```
 
+   - `pwd` (print working directory): zeigt den Ordner, in dem du gerade bist.
+   - `ls` (list): listet, was in diesem Ordner liegt.
+
 2. Geh in den Ordner `setup`. Tippe `cd se` und drück Tab, das Terminal ergänzt den Namen:
 
    ```sh
@@ -67,11 +83,16 @@ Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt,
    ls
    ```
 
+   - `cd` (change directory): wechselt den Ordner.
+   - `setup`: der Zielordner, gesucht im Ordner, in dem du gerade bist.
+
 3. Zeig auch die versteckten Dateien (Windows: `ls -Force`):
 
    ```sh
    ls -a
    ```
+
+   - `-a` (all): zeigt auch Dateien, deren Name mit einem Punkt beginnt. Die sind sonst versteckt.
 
    Jetzt siehst du `.env`. Dort steht dein Schlüssel.
 
@@ -82,6 +103,11 @@ Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt,
    git check-ignore -v .env
    ```
 
+   - `status`: zeigt deinen Branch und welche Dateien geändert oder neu sind.
+   - `check-ignore`: prüft, ob Git eine Datei ignoriert.
+   - `-v` (verbose, ausführlich): nennt zusätzlich die Regel, die greift, mit Datei und Zeilennummer.
+   - `.env`: die Datei, die geprüft wird.
+
    `git status` erwähnt `.env` nicht. Der zweite Befehl zeigt, warum: `.gitignore:2:.env`. Zeile 2 der `.gitignore` hält die Datei aus Git heraus.
 
 5. Geh eine Ebene hoch und prüfe, wo du bist:
@@ -90,6 +116,8 @@ Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt,
    cd ..
    pwd
    ```
+
+   - `..`: steht immer für den Ordner eine Ebene höher.
 
 **Checkpoint:** `pwd` endet auf `compliance-search-ws2627`. Du hast `.env` mit `ls -a` gesehen, aber nicht in `git status`.
 
@@ -106,6 +134,10 @@ cd setup
 uv run --env-file .env check.py
 ```
 
+- `run`: startet ein Programm mit den Paketen des Projekts. Fehlen Pakete, installiert uv sie vorher.
+- `--env-file .env`: gibt dem Programm die Werte aus `.env` mit, zum Beispiel deinen Schlüssel.
+- `check.py`: das Python-Skript, das gestartet wird.
+
 Du siehst fünf Zeilen, die mit `ok` beginnen.
 
 | Du siehst | Lösung |
@@ -120,6 +152,11 @@ Du siehst fünf Zeilen, die mit `ok` beginnen.
 python3 chat.py --model mock "hello"
 ```
 
+- `python3`: das Python, das auf deinem Laptop installiert ist.
+- `chat.py`: das Skript. Alles danach geht an das Skript, nicht an Python.
+- `--model mock`: eine Option von `chat.py`. Sie wählt das Testmodell `mock`.
+- `"hello"`: die Nachricht. Die Anführungszeichen halten Text mit Leerzeichen zusammen.
+
 Windows: `python` statt `python3`.
 
 Das scheitert mit `ModuleNotFoundError: No module named 'openai'`. Das Python deines Systems kennt die Pakete des Projekts nicht. Jetzt mit uv:
@@ -127,6 +164,8 @@ Das scheitert mit `ModuleNotFoundError: No module named 'openai'`. Das Python de
 ```sh
 uv run --env-file .env chat.py --model mock "hello"
 ```
+
+- Derselbe Aufruf, nur steht `uv run --env-file .env` statt `python3` davor.
 
 uv hat die Pakete in den Ordner `.venv` gelegt und den Schlüssel aus `.env` mitgegeben. Deshalb starten wir im Projekt alles mit `uv run`.
 
@@ -136,6 +175,9 @@ uv hat die Pakete in den Ordner `.venv` gelegt und den Schlüssel aus `.env` mit
 cd ../backend
 uv run pytest
 ```
+
+- `../backend`: eine Ebene hoch, dann in den Ordner `backend`.
+- `pytest`: das Testprogramm. Es findet die Tests im Ordner `tests` von selbst.
 
 Am Ende steht `8 passed`. Beim ersten Mal baut uv vorher die `.venv` für das Backend.
 
@@ -147,6 +189,10 @@ Am Ende steht `8 passed`. Beim ersten Mal baut uv vorher die `.venv` für das Ba
    uv run uvicorn compliance_search.api.app:app --port 8000
    ```
 
+   - `uvicorn`: der Webserver.
+   - `compliance_search.api.app:app`: vor dem Doppelpunkt die Datei `compliance_search/api/app.py`, dahinter die Variable `app` darin, also unsere Anwendung.
+   - `--port 8000`: die Nummer, unter der der Server im Browser erreichbar ist.
+
    Er läuft, sobald `Uvicorn running on http://127.0.0.1:8000` dasteht. Das Terminal ist jetzt belegt.
 
 2. Öffne im Browser `http://localhost:8000/docs`. Klick auf **POST /ask → Try it out**, trag eine Frage ein und klick **Execute**.
@@ -156,6 +202,12 @@ Am Ende steht `8 passed`. Beim ersten Mal baut uv vorher die `.venv` für das Ba
    ```sh
    curl -X POST http://localhost:8000/ask -H 'content-type: application/json' -d '{"question": "How often must TLPT run?"}'
    ```
+
+   - `curl`: schickt eine Anfrage an eine Adresse im Netz.
+   - `-X POST`: die Art der Anfrage. POST schickt Daten mit.
+   - `http://localhost:8000/ask`: die Adresse. `localhost` ist dein eigener Laptop.
+   - `-H 'content-type: application/json'`: eine Kopfzeile (Header), die sagt: Die Daten sind JSON.
+   - `-d '…'` (data): die Daten selbst, hier die Frage. Die einfachen Anführungszeichen schützen die doppelten darin.
 
 3. Schau ins erste Terminal: Dort steht deine Anfrage als `"POST /ask HTTP/1.1" 200 OK`.
 4. Stopp den Server mit **Ctrl + C**.
@@ -170,6 +222,9 @@ Am Ende steht `8 passed`. Beim ersten Mal baut uv vorher die `.venv` für das Ba
    git status
    ```
 
+   - `add`: trägt ein Paket in `pyproject.toml` ein, schreibt die genaue Version in `uv.lock` und installiert es.
+   - `rich`: der Name des Pakets.
+
    Git meldet zwei geänderte Dateien: `pyproject.toml` und `uv.lock`.
 
 2. Öffne in VS Code links **Source Control** (das Symbol mit den Verzweigungen) und klick auf `pyproject.toml`. Grün ist die neue Zeile `"rich>=…"`.
@@ -180,6 +235,8 @@ Am Ende steht `8 passed`. Beim ersten Mal baut uv vorher die `.venv` für das Ba
    uv sync
    git status
    ```
+
+   - `sync`: gleicht die `.venv` mit `uv.lock` ab. Fehlendes wird installiert, Überzähliges wie `rich` entfernt.
 
 **Checkpoint:** Fünfmal `ok`, `8 passed`, eine JSON-Antwort von `/ask`, und `git status` meldet wieder, dass nichts zu committen ist.
 
@@ -201,11 +258,16 @@ Die Übungsdatei ist [`docs/tutorials/workshop-spielwiese.md`](workshop-spielwie
    git pull
    ```
 
+   - Wie in Block 0: auf `main` wechseln und den neuesten Stand holen.
+
 2. Leg deinen Branch an:
 
    ```sh
    git switch -c DEL-44-workshop-<vorname>
    ```
+
+   - `-c` (create): legt den Branch neu an und wechselt gleich hinein.
+   - `DEL-44-workshop-<vorname>`: der Name des Branchs, aus Ticket, Thema und deinem Vornamen.
 
    Unten links in VS Code steht jetzt dein Branch.
 
@@ -221,11 +283,19 @@ Die Übungsdatei ist [`docs/tutorials/workshop-spielwiese.md`](workshop-spielwie
    git commit -m "Add what I look forward to"
    ```
 
+   - `add` mit Dateipfad: legt diese Datei in die Staged Changes, wie das Plus in VS Code.
+   - `commit`: speichert alles aus den Staged Changes als neuen Commit.
+   - `-m "…"` (message): die Commit-Nachricht. Ohne `-m` öffnet Git einen Editor dafür.
+
 8. Schau dir deinen Verlauf an:
 
    ```sh
    git log --oneline -3
    ```
+
+   - `log`: zeigt die Commits, die neuesten oben.
+   - `--oneline`: eine Zeile pro Commit, mit kurzer ID und Nachricht.
+   - `-3`: nur die letzten drei Commits.
 
 **Checkpoint:** Oben in der Liste stehen deine zwei Commits, darunter einer, der nicht von dir ist. `git status` meldet nichts zu committen.
 
@@ -247,6 +317,11 @@ Klick in **Source Control** auf **Publish Branch**. Im Terminal wäre das:
 ```sh
 git push -u origin DEL-44-workshop-<vorname>
 ```
+
+- `push`: lädt deine Commits zu GitHub hoch.
+- `-u` (upstream): merkt sich, zu welchem Branch auf GitHub dein Branch gehört.
+- `origin`: der Name, unter dem dein Laptop das Repo auf GitHub kennt.
+- `DEL-44-workshop-<vorname>`: der Branch, der hochgeladen wird.
 
 Ein einfaches `git push` scheitert beim ersten Mal, weil GitHub den Branch noch nicht kennt. Ab dem zweiten Mal reicht `git push` oder der **Sync**-Knopf.
 
@@ -281,6 +356,8 @@ Ein einfaches `git push` scheitert beim ersten Mal, weil GitHub den Branch noch 
    git pull
    ```
 
+   - Wie in Block 0: auf `main` wechseln und den neuesten Stand holen, jetzt mit beiden gemergten Pull Requests.
+
 **Checkpoint:** In deinem lokalen `main` stehen in der Übungsdatei dein Abschnitt **und** der deines Paars.
 
 | Du siehst | Lösung |
@@ -290,7 +367,7 @@ Ein einfaches `git push` scheitert beim ersten Mal, weil GitHub den Branch noch 
 | **Merge** ist grau | Die Freigabe fehlt noch. Dein Paar muss **Approve** wählen |
 | Du kannst deinen eigenen Pull Request nicht freigeben | Richtig so. Das macht immer eine zweite Person |
 
-**Bonus:** Lösch den gemergten Branch auch lokal: `git branch -d DEL-44-workshop-<vorname>`.
+**Bonus:** Lösch den gemergten Branch auch lokal: `git branch -d DEL-44-workshop-<vorname>`. `branch` verwaltet Branches, `-d` (delete) löscht einen, aber nur, wenn er schon gemergt ist.
 
 ---
 
@@ -306,6 +383,8 @@ Ihr ändert beide dieselbe Zeile. Legt fest, wer **A** ist und wer **B**.
    git switch -c DEL-44-konflikt-<vorname>
    ```
 
+   - Wie in Block 3: `main` aktualisieren, dann mit `-c` einen neuen Branch anlegen und hineinwechseln.
+
 2. Beide ändern in Teil 2 der Übungsdatei die Zeile eures Paars. Sprecht euch **nicht** ab, jede Person trägt einen anderen Lieblingsbefehl ein. Dann committen, **Publish Branch**, Pull Request öffnen.
 3. **A** bekommt die Freigabe von B und mergt.
 4. **B** lädt den eigenen Pull Request neu. GitHub meldet: **This branch has conflicts that must be resolved.**
@@ -314,6 +393,8 @@ Ihr ändert beide dieselbe Zeile. Legt fest, wer **A** ist und wer **B**.
    ```sh
    git pull origin main
    ```
+
+   - `origin main`: holt den Branch `main` von GitHub und führt ihn in den Branch ein, auf dem du gerade bist, also deinen Konflikt-Branch.
 
    Git meldet einen Merge-Konflikt in der Übungsdatei.
 
@@ -353,6 +434,8 @@ git pull
 git switch -c DEL-44-rueckgaengig-<vorname>
 ```
 
+- Wie in Block 3: `main` aktualisieren, dann mit `-c` einen neuen Branch anlegen und hineinwechseln.
+
 ### 6.1 Änderung verwerfen
 
 1. Schreib irgendetwas in die Übungsdatei und speichere.
@@ -367,7 +450,7 @@ Die Änderung ist weg. Sie kommt nicht wieder.
 
 Der Commit ist weg, deine Änderung liegt wieder unter **Staged Changes**. Hol sie mit dem **Minus** dort heraus und verwirf sie wie in 6.1.
 
-**Checkpoint:** `git status` meldet nichts zu committen, und `git log --oneline -1` zeigt nicht `Wrong commit`.
+**Checkpoint:** `git status` meldet nichts zu committen, und `git log --oneline -1` zeigt nicht `Wrong commit`. `-1` zeigt nur den neuesten Commit.
 
 Danach zeigt Elias zwei Fälle am Beamer: versehentlich auf `main` committet, und einen gemergten Pull Request mit **Revert** zurücknehmen.
 
@@ -383,6 +466,8 @@ Danach zeigt Elias zwei Fälle am Beamer: versehentlich auf `main` committet, un
    git pull
    git switch -c DEL-<nummer>-<kurzes-thema>
    ```
+
+   - `DEL-<nummer>-<kurzes-thema>`: der Branchname aus deiner Ticketnummer und zwei, drei Wörtern zum Thema, zum Beispiel `DEL-12-pdf-parser`.
 
 **Checkpoint:** Unten links in VS Code steht der Branch deines echten Tickets. Ab hier läuft alles wie in Block 3 bis 5.
 
