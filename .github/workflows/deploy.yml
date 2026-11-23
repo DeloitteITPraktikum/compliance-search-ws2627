@@ -1,11 +1,30 @@
-# Platzhalter, wird noch ausgearbeitet.
-name: deploy
+
+name: Deploy Backend to Render
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
-  placeholder:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - run: echo "deploy ist noch nicht eingerichtet"
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -f backend/Dockerfile -t backend-check backend
+
+      - name: Trigger Render deployment
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo "Render deploy hook secret is missing."
+            exit 1
+          fi
+          curl --fail --show-error --silent \
+            --request POST "$RENDER_DEPLOY_HOOK_URL"
