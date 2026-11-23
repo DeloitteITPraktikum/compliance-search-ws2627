@@ -50,6 +50,7 @@ class SectionLine(BaseModel):
 
     section_type: SectionType | Literal[""] = ""  # "" until section detection assigns one
     article: str | None = None  # "3" for Article 3 / Artikel 3, None outside articles
+    recital: str | None = None  # "12" for recital (12), None outside recitals
     seq: int #number of line on page to order the lines
     page_number: int
 
