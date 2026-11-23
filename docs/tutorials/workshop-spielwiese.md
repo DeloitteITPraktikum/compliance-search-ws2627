@@ -44,8 +44,8 @@ Die Aufgaben dazu stehen in [git-uv-workshop.md](git-uv-workshop.md).
 
 ### Tim
 
-- Mein Betriebssystem: …
-- Darauf freue ich mich im Projekt: …
+- Mein Betriebssystem: Windows
+- Darauf freue ich mich im Projekt: neues lernen, neue Leute kennenlernen, neue Erfahrungen sammeln, neue Ideen entwickeln, neue Projekte starten, neue Herausforderungen meistern, neue Technologien entdecken, neue Perspektiven gewinnen, neue Fähigkeiten erwerben, neue Möglichkeiten erkunden, neue Wege gehen, neue Horizonte erweitern, neue Kontakte knüpfen, neue Inspiration finden, neue Motivation schöpfen, neue Ziele setzen, neue Erfolge feiern.
 
 ### Vladimir
 
