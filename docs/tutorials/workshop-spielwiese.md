@@ -24,7 +24,7 @@ Die Aufgaben dazu stehen in [git-uv-workshop.md](git-uv-workshop.md).
 
 ### Gan
 
-- Mein Betriebssystem: MacOS
+- Mein Betriebssystem: …
 - Darauf freue ich mich im Projekt: …
 
 ### Leo
