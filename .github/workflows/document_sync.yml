@@ -1,0 +1,120 @@
+# The workflow name is displayed in the GitHub Actions overview.
+name: document_sync
+
+# Define the events that may start this workflow.
+on:
+  # Run once per day at 00:00 UTC.
+  # During German winter time this is 01:00; during summer time it is 02:00.
+  schedule:
+    - cron: "0 0 * * *"
+
+  # Allows a sync to be started manually from Actions -> sync -> Run workflow.
+  workflow_dispatch:
+
+# Grant only the repository permissions required by this workflow.
+permissions:
+  # Required to commit synchronized files and push them to the repository.
+  contents: write
+
+  # Required to open an issue when synchronization or publication fails.
+  issues: write
+
+# Prevent multiple synchronization jobs from running simultaneously.
+concurrency:
+  group: document-sync
+
+  # false means an already running sync is not canceled when another run starts.
+  cancel-in-progress: false
+
+jobs:
+  document_sync:
+    # Each run uses a fresh Ubuntu runner hosted by GitHub.
+    runs-on: ubuntu-latest
+
+
+    # Stop the complete job if synchronization takes longer than 30 minutes.
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out the repo
+        # Download the repository at the commit that triggered the workflow.
+        # Scheduled runs normally use the default branch, usually main.
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        # Install uv and make it available in subsequent workflow steps.
+        # uv creates the project environment and installs the locked dependencies.
+        uses: astral-sh/setup-uv@v6
+
+      - name: Run document sync
+        env:
+          # Public address of the document API.
+          DOCS_URL: https://tud-docs.pgoell.com
+
+          # Team-wide API key stored as a GitHub Actions secret.
+          # It must not be committed directly into this workflow or repository.
+          GATEWAY_KEY: ${{ secrets.CI_GATEWAY_KEY }}
+
+        # Run this step with Bash, as it is also used on Ubuntu runners.
+        shell: bash
+        run: |
+          # -e: stop immediately if a command exits unsuccessfully.
+          # -u: treat references to undefined variables as errors.
+          # -o pipefail: report an error if any command in a pipeline fails.
+          set -euo pipefail
+
+          # Check the secret before starting network requests or writing files.
+          # GitHub Secrets are not available on some untrusted pull request runs.
+          if [[ -z "${GATEWAY_KEY:-}" ]]; then
+            echo "::error::CI_GATEWAY_KEY is not configured"
+            exit 1
+          fi
+
+          # Run the Python sync module from the backend project.
+          # A traceback or non-zero process exit marks this workflow step as failed.
+          uv run --project backend python backend/src/compliance_search/sync/document_sync.py
+
+      - name: Commit and push new documents
+        # This step runs only after the document sync completed successfully.
+        shell: bash
+        run: |
+          # -e: stop immediately if a command exits unsuccessfully.
+          # -u: treat references to undefined variables as errors.
+          # -o pipefail: report an error if any command in a pipeline fails.
+          set -euo pipefail
+
+          # Configure an identity for the automated commit.
+          # It identifies the commit as a change produced by GitHub Actions.
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          # Add all generated and updated data files to the staging area.
+          # This includes metadata, PDFs, and synchronization state.
+          git add data
+
+          # Stop if there are no staged changes.
+          # This prevents an empty commit and an unnecessary GitHub run.
+          if git diff --cached --quiet; then
+            echo "No document changes."
+          else
+            # Commit only after the sync and staged change check succeeded.
+            git commit -m "Sync: update documents from Document API"
+
+            # Publish the synchronized files back to the repository.
+            git push
+          fi
+
+      - name: Notify team on failure
+        # This step runs when one of the earlier steps fails.
+        # GitHub normally skips it after a successful run.
+        if: failure()
+        env:
+          # Temporary token provided by GitHub Actions for this workflow run.
+          # It is also limited by the issues: write permission above.
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Open a GitHub Issue containing the date and a link to the logs.
+          # Backslash continuations join the title and body arguments.
+          gh issue create \
+            --title "Document sync failed ($(date -u +%Y-%m-%d))" \
+            --body "The document sync failed. Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

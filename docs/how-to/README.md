@@ -8,4 +8,5 @@ Steps only. Link to [explanation](../explanation/) for the why and to [reference
 | Guide | Task |
 |---|---|
 | [Git-Spickzettel](git-spickzettel.md) (German) | Take a ticket from branch to merged pull request, run code with uv, and fix the common Git mistakes |
-| _Add yours here_ | |
+| [Deploy Backend on Render](deploy-backend-render.md) | DEL-59: Backend Aufsetzen |
+
