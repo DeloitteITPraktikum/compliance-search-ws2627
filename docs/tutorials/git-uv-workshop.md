@@ -15,7 +15,7 @@ Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt,
 
 ---
 
-## Block 0: Ankommen (10 min)
+## Block 0: Ankommen
 
 1. Öffne VS Code, dann **File → Open Folder** und wähle den Ordner `compliance-search-ws2627`.
 2. Öffne das Terminal in VS Code: **Terminal → New Terminal**.
@@ -64,7 +64,7 @@ Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt,
 
 ---
 
-## Block 1: Terminal und Projekt (15 min)
+## Block 1: Terminal und Projekt
 
 1. Wo bin ich, was liegt hier?
 
@@ -125,7 +125,7 @@ Windows: Nimm das Terminal in VS Code (PowerShell). Wo ein Befehl anders heißt,
 
 ---
 
-## Block 2: Programme starten mit uv (30 min)
+## Block 2: Programme starten mit uv
 
 ### 2.1 Der Setup-Check
 
@@ -246,7 +246,7 @@ Am Ende steht `8 passed`. Beim ersten Mal baut uv vorher die `.venv` für das Ba
 
 ---
 
-## Block 3: Git lokal (30 min)
+## Block 3: Git lokal
 
 Die Übungsdatei ist [`docs/tutorials/workshop-spielwiese.md`](workshop-spielwiese.md). Dort gibt es einen Abschnitt mit deinem Namen.
 
@@ -308,7 +308,7 @@ Die Übungsdatei ist [`docs/tutorials/workshop-spielwiese.md`](workshop-spielwie
 
 ---
 
-## Block 4: Push, Pull Request, Review, Merge (35 min)
+## Block 4: Push, Pull Request, Review, Merge
 
 ### 4.1 Hochladen
 
@@ -371,7 +371,7 @@ Ein einfaches `git push` scheitert beim ersten Mal, weil GitHub den Branch noch 
 
 ---
 
-## Block 5: Ein Konflikt, mit Absicht (25 min)
+## Block 5: Ein Konflikt, mit Absicht
 
 Ihr ändert beide dieselbe Zeile. Legt fest, wer **A** ist und wer **B**.
 
@@ -424,7 +424,7 @@ Ihr ändert beide dieselbe Zeile. Legt fest, wer **A** ist und wer **B**.
 
 ---
 
-## Block 6: Fehler rückgängig machen (10 min)
+## Block 6: Fehler rückgängig machen
 
 Ihr arbeitet auf einem neuen Branch, damit nichts davon in `main` landet:
 
@@ -456,7 +456,7 @@ Danach zeigt Elias zwei Fälle am Beamer: versehentlich auf `main` committet, un
 
 ---
 
-## Block 7: Dein echtes Ticket (5 min)
+## Block 7: Dein echtes Ticket
 
 1. Such dir in Jira dein nächstes Ticket.
 2. Leg den Branch dafür an:
