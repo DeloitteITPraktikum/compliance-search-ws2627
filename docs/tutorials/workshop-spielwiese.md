@@ -19,7 +19,7 @@ Die Aufgaben dazu stehen in [git-uv-workshop.md](git-uv-workshop.md).
 
 ### Emelie
 
-- Mein Betriebssystem: …
+- Mein Betriebssystem: MacOS
 - Darauf freue ich mich im Projekt: …
 
 ### Gan
