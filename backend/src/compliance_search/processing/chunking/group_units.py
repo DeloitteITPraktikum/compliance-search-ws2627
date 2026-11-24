@@ -1,13 +1,14 @@
-"""Group the parsed lines of a delegated regulation into units: articles and recitals.
+"""Group the parsed lines of a regulation into units: articles, recitals and annexes.
 
-detect_articles and detect_recitals must have run, so every line knows its
-article or recital number.
+detect_articles, detect_recitals and detect_annexes must have run, so every
+line knows its article, recital or annex number.
 
 1. Consecutive lines with the same article number form one article,
-   consecutive lines with the same recital number form one recital.
+   consecutive lines with the same recital number form one recital,
+   consecutive lines with the same annex number form one annex.
    Footnotes are skipped, so a unit runs on across a page break.
-2. The "Article N" line is not part of the text. The bold lines right after it
-   are the article title.
+2. The "Article N" and "ANNEX N" lines are not part of the text. The bold
+   lines right after them are the article or annex title.
 3. The leading "(N)" of a recital is not part of the text.
 4. So that every article knows the TITLE, CHAPTER and Section it belongs to,
    a grouping heading and the bold lines after it are remembered and given to
@@ -34,6 +35,7 @@ title "Subject matter" and text "This Regulation lays down third-party rules.".
 from dataclasses import dataclass, field
 from typing import Literal
 
+from compliance_search.processing.parsing.annex_detection import ANNEX_START
 from compliance_search.processing.parsing.article_detection import ARTICLE_HEADING, GROUPING_HEADING
 from compliance_search.processing.parsing.recital_detection import RECITAL_START
 from compliance_search.processing.sections import SectionLine
@@ -50,11 +52,11 @@ WORDS_AFTER_OPEN_HYPHEN = {"und", "oder", "and", "or"}
 
 @dataclass
 class Unit:
-    unit_type: Literal["article", "recital"]
+    unit_type: Literal["article", "recital", "annex"]
     number: str
-    headings: list[str]  # one entry per heading level above the article, outermost first, e.g. ["TITLE II …", "CHAPTER I …"]; empty for recitals
-    title_lines: list[str] = field(default_factory=list)  # raw bold lines after "Article N", joined by .title; empty for recitals
-    text_lines: list[str] = field(default_factory=list)  # raw content lines (without "Article N" and "(N)"), joined by .text
+    headings: list[str]  # one entry per heading level above the article, outermost first, e.g. ["TITLE II …", "CHAPTER I …"]; empty for recitals and annexes
+    title_lines: list[str] = field(default_factory=list)  # raw bold lines after "Article N" or "ANNEX N", joined by .title; empty for recitals
+    text_lines: list[str] = field(default_factory=list)  # raw content lines (without "Article N", "ANNEX N" and "(N)"), joined by .text
     pages: list[int] = field(default_factory=list)
 
     @property
@@ -84,7 +86,7 @@ def join_lines(texts: list[str]) -> str:
 
 
 def group_units(lines: list[SectionLine]) -> list[Unit]:
-    """Return the articles and recitals of one document in reading order."""
+    """Return the articles, recitals and annexes of one document in reading order."""
     units: list[Unit] = []
     headings: list[list[str]] = [[], [], []]  # lines of the current title, chapter, section heading
     open_heading: int | None = None  # level whose bold title lines are still being collected
@@ -110,6 +112,8 @@ def group_units(lines: list[SectionLine]) -> list[Unit]:
             unit_type, number = "article", line.article
         elif line.section_type == "recitals" and line.recital is not None:
             unit_type, number = "recital", line.recital
+        elif line.section_type == "annex" and line.annex is not None:
+            unit_type, number = "annex", line.annex
         else:  # footnotes, introduction line before recital 1, other sections
             continue
 
@@ -122,7 +126,8 @@ def group_units(lines: list[SectionLine]) -> list[Unit]:
 
         unit.pages.append(line.page_number)
 
-        if unit_type == "article" and ARTICLE_HEADING.match(text):
+        if (unit_type == "article" and ARTICLE_HEADING.match(text)
+                or unit_type == "annex" and ANNEX_START.match(text)):
             in_title = True
             continue
         if in_title and line.bold:
