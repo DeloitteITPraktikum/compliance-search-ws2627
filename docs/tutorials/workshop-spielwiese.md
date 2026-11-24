@@ -8,7 +8,7 @@ Die Aufgaben dazu stehen in [git-uv-workshop.md](git-uv-workshop.md).
 Ändere nur die zwei Zeilen unter deinem Namen.
 
 ### Aiman
-
+Meine changes lauten: hello world und sonst nichts anderes
 - Mein Betriebssystem: …
 - Darauf freue ich mich im Projekt: …
 
@@ -19,7 +19,7 @@ Die Aufgaben dazu stehen in [git-uv-workshop.md](git-uv-workshop.md).
 
 ### Emelie
 
-- Mein Betriebssystem: …
+- Mein Betriebssystem: MacOS
 - Darauf freue ich mich im Projekt: …
 
 ### Gan
@@ -29,7 +29,7 @@ Die Aufgaben dazu stehen in [git-uv-workshop.md](git-uv-workshop.md).
 
 ### Leo
 
-- Mein Betriebssystem: …
+- Mein Betriebssystem: ...
 - Darauf freue ich mich im Projekt: …
 
 ### Nahla
@@ -39,13 +39,13 @@ Die Aufgaben dazu stehen in [git-uv-workshop.md](git-uv-workshop.md).
 
 ### Silvia
 
-- Mein Betriebssystem: …
+- Mein Betriebssystem: MacOS
 - Darauf freue ich mich im Projekt: …
 
 ### Tim
 
-- Mein Betriebssystem: …
-- Darauf freue ich mich im Projekt: …
+- Mein Betriebssystem: Windows
+- Darauf freue ich mich im Projekt: neues lernen, neue Leute kennenlernen, neue Erfahrungen sammeln, neue Ideen entwickeln, neue Projekte starten, neue Herausforderungen meistern, neue Technologien entdecken, neue Perspektiven gewinnen, neue Fähigkeiten erwerben, neue Möglichkeiten erkunden, neue Wege gehen, neue Horizonte erweitern, neue Kontakte knüpfen, neue Inspiration finden, neue Motivation schöpfen, neue Ziele setzen, neue Erfolge feiern.
 
 ### Vladimir
 
