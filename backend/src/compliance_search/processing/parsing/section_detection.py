@@ -35,8 +35,7 @@ SECTION_RULES: dict[DocumentType, SectionRules] = {
         ),
         final_formula=re.compile(
             r"^(This Regulation shall be binding in its entirety"
-            r"|Diese Verordnung ist in allen ihren Teilen verbindlich"
-            r"|Done at Brussels,|Brüssel, den)"
+            r"|Diese Verordnung ist in allen ihren Teilen verbindlich)"
         ),
         recitals_start=re.compile(r"^(Whereas|in Erwägung nachstehender Gründe:)"),
         citations_start=re.compile(
@@ -47,9 +46,12 @@ SECTION_RULES: dict[DocumentType, SectionRules] = {
         enacting_formula=re.compile(
             r"^(HAVE ADOPTED THIS REGULATION:|HABEN FOLGENDE VERORDNUNG ERLASSEN:)"
         ),
+        # The final formula starts with the binding clause. "Done at …" only
+        # follows it, so it is no start phrase. DORA (DE) writes "in allen
+        # Teilen", without "ihren".
         final_formula=re.compile(
-            r"^(Done at Strasbourg,|Done at Brussels,|"
-            r"Geschehen zu Straßburg am|Brüssel, den)"
+            r"^(This Regulation shall be binding in its entirety"
+            r"|Diese Verordnung ist in allen (?:ihren )?Teilen verbindlich)"
         ),
         recitals_start=re.compile(r"^(Whereas|in Erwägung nachstehender Gründe:)"),
         citations_start=re.compile(
