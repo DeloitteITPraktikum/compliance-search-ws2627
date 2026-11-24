@@ -1,6 +1,7 @@
 """Console output for a run of main.py.
 
 Only for reading the run: nothing here changes what the parser produces.
+chunking/main.py uses RunStats, progress, print_failure and print_summary too.
 """
 import time
 from collections import Counter
@@ -42,7 +43,7 @@ def print_document(
     pages = max((fragment.page_number for fragment in fragments), default=0)
     seconds = time.perf_counter() - start
     print(
-        f"{_progress(run, number)} {document_id}  {pages} pages · {len(fragments):,} fragments"
+        f"{progress(run, number)} {document_id}  {pages} pages · {len(fragments):,} fragments"
         f" · {len(lines):,} lines  ({seconds:.1f} s)"
     )
     _print_section_counts(lines)
@@ -51,7 +52,7 @@ def print_document(
 def print_failure(run: RunStats, number: int, document_id: str, exc: Exception) -> None:
     """Print why a document failed and remember it for the summary."""
     run.failed.append(document_id)
-    print(f"{_progress(run, number)} {document_id}  FAILED: {type(exc).__name__}: {exc}")
+    print(f"{progress(run, number)} {document_id}  FAILED: {type(exc).__name__}: {exc}")
 
 
 def print_summary(run: RunStats) -> None:
@@ -63,7 +64,7 @@ def print_summary(run: RunStats) -> None:
         print(f"  failed: {', '.join(run.failed)}")
 
 
-def _progress(run: RunStats, number: int) -> str:
+def progress(run: RunStats, number: int) -> str:
     """Return e.g. "[ 7/13]", padded so all progress markers line up."""
     width = len(str(run.total))
     return f"[{number:>{width}}/{run.total}]"

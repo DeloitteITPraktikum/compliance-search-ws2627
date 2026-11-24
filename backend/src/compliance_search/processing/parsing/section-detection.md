@@ -44,7 +44,9 @@ Every line that starts with `HAS ADOPTED THIS REGULATION:` (DE: `HAT FOLGENDE VE
 
 The line that starts with `This Regulation shall be binding in its entirety` (DE: `Diese Verordnung ist in allen ihren Teilen verbindlich`) and every line after it become `final_formula`. This binding clause stands after the last article and belongs to the whole regulation, not to the last article.
 
-If a document has no binding clause, the final formula starts at the line that starts with `Done at Brussels,` (DE: `Brüssel, den`).
+`Done at Brussels,` (DE: `Brüssel, den`) only follows the binding clause, so it is no start phrase and there is no fallback.
+
+Regulations (`document_type="regulation"`) use the same rule: `Done at Strasbourg,` / `Done at Brussels,` (DE: `Geschehen zu Straßburg am`) only follow the binding clause. The German DORA writes the binding clause without "ihren" (`Diese Verordnung ist in allen Teilen verbindlich`), so both forms match. If the binding clause is missing, `final_formula` is not found and the parser reports the document as failed.
 
 ### Enacting terms
 
