@@ -5,14 +5,13 @@ from pathlib import Path
 
 from pypdf import PdfReader
 
-# Path to one test PDF, seen from the backend folder
-PDF_PATH = Path("../data/pdfs/active/32025R0532_DE.pdf")
+# Folders with the PDFs and their metadata (both saved by the sync)
+PDF_DIR = Path("../data/pdfs/active")
+METADATA_DIR = Path("../data/metadata")
 
-# Metadata of the same document (from the document API, saved by the sync)
-METADATA_PATH = Path("../data/metadata/32025R0532_DE.json")
 
 # Where the chunks are written (data/chunks/ is not in git )
-CHUNKS_DIR = Path("../data/chunks")
+CHUNKS_DIR = Path("../data/chunks/trivial")
 
 CHUNK_SIZE = 2000  # characters per chunk (about 500 tokens)
 OVERLAP = 200 # characters of overlap between chunks (10 %)
@@ -33,38 +32,50 @@ def cut (text : str, size: int, overlap: int) -> list[str]:
     return chunks
 
 
-# Open the PDF
-reader = PdfReader(PDF_PATH)
+def chunk_document(meta: dict) -> int:
+    """Chunk one PDF and save its chunks as JSONL. Returns the number of chunks."""
+    # Open the PDF that belongs to this metadata
+    reader = PdfReader(PDF_DIR / f"{meta['id']}.pdf")
 
-# Read the metadata: title, family_id, language, version ...
-meta = json.loads(METADATA_PATH.read_text(encoding="utf-8"))
+    # All chunks of the document, filled in the loop below
+    all_chunks = []
+    for page_number, page in enumerate(reader.pages, start=1):
+        text = clean(page.extract_text())
+        pieces = cut(text, CHUNK_SIZE, OVERLAP)
+        # Metadata needed for citations (document, version, page) and the grader (family_id).
+        # Field names match processing/chunks.py.
+        for number, piece in enumerate(pieces, start=1):
+            all_chunks.append({
+                "chunk_id": f"{meta['id']}#p{page_number}-{number}",
+                "document_id": meta["id"],
+                "family_id": meta["family_id"],
+                "version": meta["version_date"],
+                "language": meta["language"],
+                "doc_type": meta["doc_type"],
+                "page_start": page_number,
+                "page_end": page_number,
+                "text": piece,
+            })
+            
 
-# All chunks of the document, filled in the loop below
-all_chunks = []
+    # Save all chunks: one JSON object per line (JSONL)
+    CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
+    chunks_file = CHUNKS_DIR / f"{meta['id']}TrivialChunks.jsonl"
+    with chunks_file.open("w", encoding="utf-8") as file:
+        for chunk in all_chunks:
+            file.write(json.dumps(chunk, ensure_ascii=False) + "\n")
 
-# Go through all pages and print the page number and the length of the text
-for page_number, page in enumerate(reader.pages, start=1):
-    text = clean(page.extract_text())
-    pieces = cut(text, CHUNK_SIZE, OVERLAP)
+    print(f"{meta['id']}: {len(all_chunks)} chunks -> {chunks_file}")
+    return len(all_chunks)
 
-    for number, piece in enumerate(pieces, start=1):
-        all_chunks.append({
-            "chunk_id": f"{meta['id']}#p{page_number}-{number}",
-            "document_id": meta["id"],
-            "family_id": meta["family_id"],
-            "version": meta["version_date"],
-            "language": meta["language"],
-            "doc_type": meta["doc_type"],
-            "page_start": page_number,
-            "page_end": page_number,
-            "text": piece,
-        })
+# Chunk every delegated regulation that has a PDF
+total = 0
+for metadata_file in sorted(METADATA_DIR.glob("*.json")):
+    meta = json.loads(metadata_file.read_text(encoding="utf-8"))
+    if meta["doc_type"] != "delegated_regulation":
+        continue
+    if not (PDF_DIR / f"{meta['id']}.pdf").exists():
+        continue
+    total = total + chunk_document(meta)
 
- # Save all chunks: one JSON object per line (JSONL)
-CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
-chunks_file = CHUNKS_DIR / f"{meta['id']}TrivialChunks.jsonl"
-with chunks_file.open("w", encoding="utf-8") as file:
-    for chunk in all_chunks:
-        file.write(json.dumps(chunk, ensure_ascii=False) + "\n")
-
-print(f"{meta['id']}: {len(all_chunks)} chunks -> {chunks_file}")
+print(f"done: {total} chunks")
