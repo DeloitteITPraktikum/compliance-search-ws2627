@@ -20,14 +20,11 @@ from compliance_search.processing.parsing.trim_lines import trim_lines
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
 
-# TODO: Switch this path to data/pdfs/... once DEL-91 is done.
-# Until then the parser reads the static PDF folder in docs/analysis.
-SOURCE_FOLDER = (
-    REPOSITORY_ROOT
-    /"docs"
-    / "analysis"
-    / "unlabled-pdfs"
-)
+# The sync sorts the PDFs into data/pdfs/<status>/<doc_type>/ (DEL-91).
+# Parse only the doc types that section_detection has rules for.
+# Other doc types come later.
+SOURCE_ROOT = REPOSITORY_ROOT / "data" / "pdfs" / "active"
+SOURCE_DOC_TYPES = ["delegated_regulation", "regulation"]
 
 OUTPUT_FOLDER = (
     REPOSITORY_ROOT
@@ -40,9 +37,11 @@ METADATA_FOLDER = REPOSITORY_ROOT / "data" / "metadata"  # one <document_id>.jso
 def main() -> None:
 
     pdf_files = sorted(
-        SOURCE_FOLDER.rglob("*.pdf")
+        pdf_path
+        for doc_type in SOURCE_DOC_TYPES
+        for pdf_path in (SOURCE_ROOT / doc_type).rglob("*.pdf")
     )
-    print_start(pdf_files, SOURCE_FOLDER, OUTPUT_FOLDER, REPOSITORY_ROOT)
+    print_start(pdf_files, SOURCE_ROOT, OUTPUT_FOLDER, REPOSITORY_ROOT)
 
     run = RunStats(total=len(pdf_files))
     for number, pdf_path in enumerate(pdf_files, start=1):
