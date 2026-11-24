@@ -68,12 +68,10 @@ def chunk_document(meta: dict) -> int:
     print(f"{meta['id']}: {len(all_chunks)} chunks -> {chunks_file}")
     return len(all_chunks)
 
-# Chunk every delegated regulation that has a PDF
+# Chunk every document that has a PDF
 total = 0
 for metadata_file in sorted(METADATA_DIR.glob("*.json")):
     meta = json.loads(metadata_file.read_text(encoding="utf-8"))
-    if meta["doc_type"] != "delegated_regulation":
-        continue
     if not (PDF_DIR / f"{meta['id']}.pdf").exists():
         continue
     total = total + chunk_document(meta)
