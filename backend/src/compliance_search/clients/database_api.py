@@ -1,0 +1,432 @@
+"""Supabase REST and Storage API client."""
+
+import hashlib
+import os
+import time
+from collections import deque
+from collections.abc import Mapping
+from datetime import datetime, timezone
+from pathlib import Path
+from threading import Lock
+from typing import Any
+
+import requests
+
+SUPABASE_PROJECT_URL = "https://lnzvigpjsxzxdlndesdb.supabase.co"
+SUPABASE_REST_URL = f"{SUPABASE_PROJECT_URL}/rest/v1"
+SUPABASE_DOCUMENT_STORAGE_BUCKET = "documents"
+MAX_REQUESTS_PER_MINUTE = 60
+SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
+
+requestTimes: deque[float] = deque()
+requestLock = Lock()
+
+
+# General API functions
+
+def sendApiRequest(
+    session: requests.Session,
+    method: str,
+    url: str,
+    *,
+    params: dict[str, str] | None = None,
+    jsonData: Mapping[str, Any] | list[Mapping[str, Any]] | None = None,
+    data: bytes | None = None,
+    headers: dict[str, str] | None = None,
+    timeout: int = 60,
+) -> requests.Response:
+    """Send a rate-limited Supabase API request with Retry-After handling."""
+    for attempt in range(5):
+        with requestLock:
+            now = time.monotonic()
+            while requestTimes and now - requestTimes[0] >= 60:
+                requestTimes.popleft()
+
+            if len(requestTimes) >= MAX_REQUESTS_PER_MINUTE:
+                waitSeconds = 60 - (now - requestTimes[0]) + 0.1
+                time.sleep(waitSeconds)
+
+            requestTimes.append(time.monotonic())
+
+        response = session.request(
+            method,
+            url,
+            params=params,
+            json=dict(jsonData) if isinstance(jsonData, Mapping) else jsonData,
+            data=data,
+            headers=headers,
+            timeout=timeout,
+        )
+
+        if response.status_code != 429:
+            response.raise_for_status()
+            return response
+
+        retryAfter = response.headers.get("Retry-After")
+        try:
+            waitSeconds = float(retryAfter) if retryAfter else 2 ** attempt
+        except (TypeError, ValueError):
+            waitSeconds = 2 ** attempt
+        time.sleep(max(waitSeconds, 0.1))
+
+    raise requests.HTTPError(
+        "API request limit persisted after five retries.",
+        response=response,
+    )
+
+
+def startSession(apiKey: str | None = None) -> requests.Session:
+    """Create a session authenticated with the Supabase API key."""
+    key = apiKey or SUPABASE_API_KEY
+    if not key:
+        raise RuntimeError("SUPABASE_API_KEY is missing.")
+
+    session = requests.Session()
+    session.headers.update({
+        "apikey": key,
+        "Authorization": f"Bearer {key}",
+        "Content-Type": "application/json",
+    })
+    return session
+
+
+# Table functions
+
+def listTablesAndHeaders(
+    session: requests.Session,
+    timeout: int = 30,
+) -> dict[str, list[str]]:
+    """Return table names and their column names from the Supabase API schema."""
+    response = sendApiRequest(
+        session,
+        "GET",
+        f"{SUPABASE_REST_URL}/",
+        headers={"Accept": "application/openapi+json"},
+        timeout=timeout,
+    )
+    schema = response.json()
+
+    tables: dict[str, list[str]] = {}
+    for definitionName, definition in schema.get("definitions", {}).items():
+        properties = definition.get("properties", {})
+        tables[definitionName] = list(properties)
+
+    if tables:
+        return tables
+
+    for path in schema.get("paths", {}):
+        tableName = path.strip("/")
+        if tableName and "/" not in tableName:
+            tables.setdefault(tableName, [])
+    return tables
+
+
+def saveTableRows(
+    session: requests.Session,
+    table: str,
+    rows: Mapping[str, Any] | list[Mapping[str, Any]],
+    *,
+    onConflict: str | None = None,
+    timeout: int = 30,
+) -> list[dict[str, Any]]:
+    """Insert or upsert one row or multiple rows in a Supabase table."""
+    if not table or any(character in table for character in "/?#"):
+        raise ValueError("table is invalid.")
+    if isinstance(rows, Mapping):
+        payload: Mapping[str, Any] | list[Mapping[str, Any]] = dict(rows)
+    else:
+        payload = [dict(row) for row in rows]
+    if not payload:
+        raise ValueError("rows must not be empty.")
+
+    headers = {
+        "Prefer": (
+            "resolution=merge-duplicates,return=representation"
+            if onConflict
+            else "return=representation"
+        ),
+    }
+    params = {"on_conflict": onConflict} if onConflict else None
+    response = sendApiRequest(
+        session,
+        "POST",
+        f"{SUPABASE_REST_URL}/{table}",
+        params=params,
+        jsonData=payload,
+        headers=headers,
+        timeout=timeout,
+    )
+    return response.json() if response.content else []
+
+
+def downloadTable(
+    session: requests.Session,
+    table: str,
+    *,
+    dataFormat: str = "json",
+    filters: Mapping[str, str] | None = None,
+    timeout: int = 30,
+) -> list[dict[str, Any]] | str:
+    """Download table rows as JSON or CSV without saving a local file."""
+    if not table or any(character in table for character in "/?#"):
+        raise ValueError("table is invalid.")
+
+    normalizedFormat = dataFormat.lower()
+    if normalizedFormat not in {"json", "csv"}:
+        raise ValueError("dataFormat must be 'json' or 'csv'.")
+
+    headers = {
+        "Accept": (
+            "application/json"
+            if normalizedFormat == "json"
+            else "text/csv"
+        ),
+    }
+    response = sendApiRequest(
+        session,
+        "GET",
+        f"{SUPABASE_REST_URL}/{table}",
+        params=dict(filters or {}),
+        headers=headers,
+        timeout=timeout,
+    )
+    if normalizedFormat == "csv":
+        return response.text
+    return response.json()
+
+
+def searchTableRows(
+    session: requests.Session,
+    table: str,
+    filters: Mapping[str, str],
+    *,
+    columns: str = "*",
+    limit: int | None = None,
+    offset: int | None = None,
+    timeout: int = 30,
+) -> list[dict[str, Any]]:
+    """Search rows by column entries and return matching rows.
+
+    Filters use Supabase/PostgREST syntax, for example:
+    ``{"status": "eq.active", "doc_type": "eq.consolidated"}``.
+    """
+    if not table or any(character in table for character in "/?#"):
+        raise ValueError("table is invalid.")
+    if not columns.strip():
+        raise ValueError("columns must not be empty.")
+    if limit is not None and limit < 1:
+        raise ValueError("limit must be at least 1.")
+    if offset is not None and offset < 0:
+        raise ValueError("offset must not be negative.")
+
+    params: dict[str, str] = {
+        "select": columns,
+        **dict(filters),
+    }
+    if limit is not None:
+        params["limit"] = str(limit)
+    if offset is not None:
+        params["offset"] = str(offset)
+
+    response = sendApiRequest(
+        session,
+        "GET",
+        f"{SUPABASE_REST_URL}/{table}",
+        params=params,
+        timeout=timeout,
+    )
+    return response.json()
+
+
+def downloadTableRow(
+    session: requests.Session,
+    table: str,
+    column: str,
+    value: str,
+    *,
+    columns: str = "*",
+    timeout: int = 30,
+) -> dict[str, Any] | None:
+    """Download exactly one table row by a column value."""
+    if not table or any(character in table for character in "/?#"):
+        raise ValueError("table is invalid.")
+    if not column or "/" in column or "?" in column or "#" in column:
+        raise ValueError("column is invalid.")
+    if not columns.strip():
+        raise ValueError("columns must not be empty.")
+
+    response = sendApiRequest(
+        session,
+        "GET",
+        f"{SUPABASE_REST_URL}/{table}",
+        params={
+            "select": columns,
+            column: f"eq.{value}",
+            "limit": "1",
+        },
+        timeout=timeout,
+    )
+    rows = response.json()
+    return rows[0] if rows else None
+
+
+def deleteTableRows(
+    session: requests.Session,
+    table: str,
+    filters: Mapping[str, str],
+    *,
+    timeout: int = 30,
+) -> list[dict[str, Any]]:
+    """Delete matching table rows and return the deleted rows."""
+    if not table or any(character in table for character in "/?#"):
+        raise ValueError("table is invalid.")
+    if not filters:
+        raise ValueError("At least one delete filter is required.")
+
+    response = sendApiRequest(
+        session,
+        "DELETE",
+        f"{SUPABASE_REST_URL}/{table}",
+        params=dict(filters),
+        headers={"Prefer": "return=representation"},
+        timeout=timeout,
+    )
+    return response.json() if response.content else []
+
+
+def deleteTableRow(
+    session: requests.Session,
+    table: str,
+    column: str,
+    value: str,
+    *,
+    timeout: int = 30,
+) -> list[dict[str, Any]]:
+    """Delete exactly matching rows identified by a column value."""
+    if not column or "/" in column or "?" in column or "#" in column:
+        raise ValueError("column is invalid.")
+
+    return deleteTableRows(
+        session,
+        table,
+        {column: f"eq.{value}"},
+        timeout=timeout,
+    )
+
+
+def uploadDocument(
+    session: requests.Session,
+    metadata: Mapping[str, Any],
+    *,
+    timeout: int = 30,
+) -> list[dict[str, Any]]:
+    """Upload one document metadata row to the documents table."""
+    documentId = metadata.get("id")
+    if not isinstance(documentId, str) or not documentId.strip():
+        raise ValueError("metadata must contain a unique 'id'.")
+
+    now = datetime.now(timezone.utc).isoformat()
+    row = {
+        "id": documentId,
+        "doc_type": metadata.get("doc_type"),
+        "sha256": metadata.get("sha256"),
+        "last_synced_at": now,
+        "version_date": metadata.get("version_date"),
+        "status": metadata.get("status", "active"),
+        "metadata": dict(metadata),
+    }
+    return saveTableRows(
+        session,
+        "documents",
+        row,
+        onConflict="id",
+        timeout=timeout,
+    )
+
+
+# PDF storage functions
+
+def uploadPdf(
+    session: requests.Session,
+    pdfBytes: bytes,
+    documentId: str,
+    *,
+    bucket: str = SUPABASE_DOCUMENT_STORAGE_BUCKET,
+    timeout: int = 60,
+) -> dict[str, Any]:
+    """Upload PDF bytes to Supabase Storage and return storage information."""
+    if not documentId or "/" in documentId or "\\" in documentId:
+        raise ValueError("documentId is invalid.")
+    if not pdfBytes:
+        raise ValueError("pdfBytes must not be empty.")
+
+    sha256 = hashlib.sha256(pdfBytes).hexdigest()
+    storagePath = f"{documentId}.pdf"
+    response = sendApiRequest(
+        session,
+        "PUT",
+        f"{SUPABASE_PROJECT_URL}/storage/v1/object/{bucket}/{storagePath}",
+        data=pdfBytes,
+        headers={
+            "Content-Type": "application/pdf",
+            "x-upsert": "true",
+        },
+        timeout=timeout,
+    )
+
+    result = response.json() if response.content else {}
+    if isinstance(result, dict):
+        result.update({
+            "bucket": bucket,
+            "path": storagePath,
+            "sha256": sha256,
+            "size_bytes": len(pdfBytes),
+        })
+    return result
+
+
+def downloadPdf(
+    session: requests.Session,
+    documentId: str,
+    *,
+    bucket: str = SUPABASE_DOCUMENT_STORAGE_BUCKET,
+    timeout: int = 60,
+) -> bytes:
+    """Download a PDF by document ID and return its bytes."""
+    if not documentId or "/" in documentId or "\\" in documentId:
+        raise ValueError("documentId is invalid.")
+
+    storagePath = f"{documentId}.pdf"
+    response = sendApiRequest(
+        session,
+        "GET",
+        f"{SUPABASE_PROJECT_URL}/storage/v1/object/{bucket}/{storagePath}",
+        timeout=timeout,
+    )
+    return response.content
+
+
+def deletePdf(
+    session: requests.Session,
+    documentId: str,
+    *,
+    bucket: str = SUPABASE_DOCUMENT_STORAGE_BUCKET,
+    timeout: int = 60,
+) -> list[dict[str, Any]]:
+    """Delete a document PDF from Supabase Storage."""
+    if not documentId or "/" in documentId or "\\" in documentId:
+        raise ValueError("documentId is invalid.")
+
+    storagePath = f"{documentId}.pdf"
+    response = sendApiRequest(
+        session,
+        "DELETE",
+        f"{SUPABASE_PROJECT_URL}/storage/v1/object/{bucket}",
+        jsonData={"prefixes": [storagePath]},
+        headers={"Content-Type": "application/json"},
+        timeout=timeout,
+    )
+    result = response.json() if response.content else []
+    return result if isinstance(result, list) else []
+
+
