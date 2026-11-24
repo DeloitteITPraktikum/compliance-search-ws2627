@@ -1,10 +1,7 @@
 import time
 from pathlib import Path
 
-from compliance_search.processing.document_types import (
-    get_document_type,
-    load_document_metadata,
-)
+from compliance_search.processing.document_types import get_document_type
 from compliance_search.processing.parsing.annex_detection import detect_annexes
 from compliance_search.processing.parsing.article_detection import detect_articles
 from compliance_search.processing.parsing.build_lines import build_lines
@@ -38,7 +35,7 @@ OUTPUT_FOLDER = (
     / "pdfs"
     / "parsed"
 )
-METADATA_PATH = REPOSITORY_ROOT / "setup" / "downloads" / "documents.json"
+METADATA_FOLDER = REPOSITORY_ROOT / "data" / "metadata"  # one <document_id>.json per document
 
 def main() -> None:
 
@@ -46,14 +43,13 @@ def main() -> None:
         SOURCE_FOLDER.rglob("*.pdf")
     )
     print_start(pdf_files, SOURCE_FOLDER, OUTPUT_FOLDER, REPOSITORY_ROOT)
-    documents = load_document_metadata(METADATA_PATH)
 
     run = RunStats(total=len(pdf_files))
     for number, pdf_path in enumerate(pdf_files, start=1):
         document_id = pdf_path.stem #take name from the front of file name
         start = time.perf_counter()
         try:
-            document_type = get_document_type(document_id, documents)
+            document_type = get_document_type(document_id, METADATA_FOLDER)
             fragments = parse_pdf(pdf_path) # extract all text fragments
             unlabeled_lines = build_lines(fragments)
             trimmed_lines = trim_lines(unlabeled_lines) # drop running headers and footers
