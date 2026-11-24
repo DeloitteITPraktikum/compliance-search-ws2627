@@ -14,11 +14,24 @@ def clean (text : str) -> str:
     """Replace line breaks and multiple spaces with a single space."""
     return re.sub(r"\s+", " ", text).strip()
 
+def cut (text : str, size: int, overlap: int) -> list[str]:
+    """Cut text into pieces of `size` characters; each piece shares `overlap` characters with the next."""    
+    chunks = []
+    start =0
+    while start < len(text):
+       chunks.append(text[start:start+size])
+       if start + size >= len(text):
+              break
+       start = start + size -overlap 
+    return chunks
+
+
 # Open the PDF
 reader = PdfReader(PDF_PATH)
 
 # Go through all pages and print the page number and the length of the text
 for page_number, page in enumerate(reader.pages, start=1):
     text = clean(page.extract_text())
-    print (page_number, len(text))
+    pieces = cut(text, CHUNK_SIZE, OVERLAP)
+    print (page_number, len(text), len (pieces), [len(p) for p in pieces])
 
