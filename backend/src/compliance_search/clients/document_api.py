@@ -1,59 +1,8 @@
 from pathlib import Path
 from typing import Any
 import json
-import time
-from collections import deque
-from threading import Lock
 import requests
-
-requestTimes: deque[float] = deque()
-requestLock = Lock()
-MAX_REQUESTS_PER_MINUTE = 60
-
-def sendApiRequest(
-    session: requests.Session,
-    method: str,
-    url: str,
-    *,
-    params: dict[str, str] | None = None,
-    timeout: int = 60,
-) -> requests.Response:
-    """Send an API request with sliding-window rate limiting and Retry-After handling."""
-    for attempt in range(5):
-        with requestLock:
-            now = time.monotonic()
-            while requestTimes and now - requestTimes[0] >= 60:
-                requestTimes.popleft()
-
-            if len(requestTimes) >= MAX_REQUESTS_PER_MINUTE:
-                waitSeconds = 60 - (now - requestTimes[0]) + 0.1
-                time.sleep(waitSeconds)
-
-            requestTimes.append(time.monotonic())
-
-        response = session.request(method, url, params=params, timeout=timeout)
-
-        if response.status_code != 429:
-            response.raise_for_status()
-            return response
-
-        retryAfter = response.headers.get("Retry-After")
-        try:
-            waitSeconds = float(retryAfter) if retryAfter else 2 ** attempt
-        except (TypeError, ValueError):
-            waitSeconds = 2 ** attempt
-        time.sleep(max(waitSeconds, 0.1))
-
-    raise requests.HTTPError(
-        "API request limit persisted after five retries.",
-        response=response,
-    )
-
-def startSession(gatewayKey: str) -> requests.Session:
-    """Create an HTTP session and configure the gateway key as a Bearer token."""
-    session = requests.Session()
-    session.headers["Authorization"] = f"Bearer {gatewayKey}"
-    return session
+from compliance_search.clients.general_api import sendApiRequest
 
 def healthCheck(session: requests.Session, docsUrl: str) -> bool:
     """Check whether the document API at the specified URL is reachable."""
