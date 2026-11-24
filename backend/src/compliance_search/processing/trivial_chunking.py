@@ -11,6 +11,9 @@ PDF_PATH = Path("../data/pdfs/active/32025R0532_DE.pdf")
 # Metadata of the same document (from the document API, saved by the sync)
 METADATA_PATH = Path("../data/metadata/32025R0532_DE.json")
 
+# Where the chunks are written (data/chunks/ is not in git )
+CHUNKS_DIR = Path("../data/chunks")
+
 CHUNK_SIZE = 2000  # characters per chunk (about 500 tokens)
 OVERLAP = 200 # characters of overlap between chunks (10 %)
 
@@ -55,5 +58,11 @@ for page_number, page in enumerate(reader.pages, start=1):
             "page_end": page_number,
             "text": piece,
         })
-print(len(all_chunks))
-print(all_chunks[0])
+ # Save all chunks: one JSON object per line (JSONL)
+CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
+out_path = CHUNKS_DIR / f"{meta['id']}TrivialChunks.jsonl"
+with out_path.open("w", encoding="utf-8") as file:
+    for chunk in all_chunks:
+        file.write(json.dumps(chunk, ensure_ascii=False) + "\n")
+
+print(f"{meta['id']}: {len(all_chunks)} chunks -> {out_path}")
