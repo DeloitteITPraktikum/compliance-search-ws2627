@@ -46,6 +46,7 @@ all_chunks = []
 for page_number, page in enumerate(reader.pages, start=1):
     text = clean(page.extract_text())
     pieces = cut(text, CHUNK_SIZE, OVERLAP)
+
     for number, piece in enumerate(pieces, start=1):
         all_chunks.append({
             "chunk_id": f"{meta['id']}#p{page_number}-{number}",
@@ -58,11 +59,12 @@ for page_number, page in enumerate(reader.pages, start=1):
             "page_end": page_number,
             "text": piece,
         })
+
  # Save all chunks: one JSON object per line (JSONL)
 CHUNKS_DIR.mkdir(parents=True, exist_ok=True)
-out_path = CHUNKS_DIR / f"{meta['id']}TrivialChunks.jsonl"
-with out_path.open("w", encoding="utf-8") as file:
+chunks_file = CHUNKS_DIR / f"{meta['id']}TrivialChunks.jsonl"
+with chunks_file.open("w", encoding="utf-8") as file:
     for chunk in all_chunks:
         file.write(json.dumps(chunk, ensure_ascii=False) + "\n")
 
-print(f"{meta['id']}: {len(all_chunks)} chunks -> {out_path}")
+print(f"{meta['id']}: {len(all_chunks)} chunks -> {chunks_file}")
