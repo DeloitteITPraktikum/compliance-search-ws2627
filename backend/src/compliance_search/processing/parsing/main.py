@@ -17,6 +17,7 @@ from compliance_search.processing.parsing.run_report import (
 )
 from compliance_search.processing.parsing.section_detection import detect_sections
 from compliance_search.processing.parsing.trim_lines import trim_lines
+from compliance_search.processing.sections import SectionLine
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[5]
 
@@ -33,6 +34,21 @@ OUTPUT_FOLDER = (
     / "parsed"
 )
 METADATA_FOLDER = REPOSITORY_ROOT / "data" / "metadata"  # one <document_id>.json per document
+
+# Every regulation and delegated regulation has these sections. If a start
+# phrase is not found, its section is missing and the document must fail.
+REQUIRED_SECTIONS = ["citations", "recitals", "enacting_formula", "enacting_terms", "final_formula"]
+
+
+def check_lines(lines: list[SectionLine]) -> None:
+    """Raise a ValueError if a required section or every article is missing."""
+    found = {line.section_type for line in lines}
+    missing = [section for section in REQUIRED_SECTIONS if section not in found]
+    if missing:
+        raise ValueError(f"sections not found: {', '.join(missing)}")
+    if not any(line.article for line in lines):
+        raise ValueError("no articles found")
+
 
 def main() -> None:
 
@@ -56,6 +72,7 @@ def main() -> None:
             labeled_lines = detect_annexes(labeled_lines)
             labeled_lines = detect_articles(labeled_lines)
             labeled_lines = detect_recitals(labeled_lines)
+            check_lines(labeled_lines)
 
             save_jsonl(
                 document_id=document_id,
@@ -67,6 +84,8 @@ def main() -> None:
 
         except Exception as exc:
             print_failure(run, number, document_id, exc)
+            # Delete the output of an earlier run, so chunking does not use stale lines
+            (OUTPUT_FOLDER / f"{document_id}LinesParsed.jsonl").unlink(missing_ok=True)
 
     print_summary(run)
 
