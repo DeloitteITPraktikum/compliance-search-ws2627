@@ -35,7 +35,8 @@ def cut (text : str, size: int, overlap: int) -> list[str]:
 def chunk_document(meta: dict) -> int:
     """Chunk one PDF and save its chunks as JSONL. Returns the number of chunks."""
     # Open the PDF that belongs to this metadata
-    reader = PdfReader(PDF_DIR / f"{meta['id']}.pdf")
+    # The sync sorts the PDFs into pdfs/active/<doc_type>/
+    reader = PdfReader(PDF_DIR / meta["doc_type"] / f"{meta['id']}.pdf")
 
     # All chunks of the document, filled in the loop below
     all_chunks = []
@@ -68,12 +69,18 @@ def chunk_document(meta: dict) -> int:
     print(f"{meta['id']}: {len(all_chunks)} chunks -> {chunks_file}")
     return len(all_chunks)
 
-# Chunk every document that has a PDF
-total = 0
-for metadata_file in sorted(METADATA_DIR.glob("*.json")):
-    meta = json.loads(metadata_file.read_text(encoding="utf-8"))
-    if not (PDF_DIR / f"{meta['id']}.pdf").exists():
-        continue
-    total = total + chunk_document(meta)
+def main() -> None:
+    """Chunk every document that has a PDF."""
+    total = 0
+    for metadata_file in sorted(METADATA_DIR.glob("*.json")):
+        meta = json.loads(metadata_file.read_text(encoding="utf-8"))
+        if not (PDF_DIR / meta["doc_type"] / f"{meta['id']}.pdf").exists():
+            continue
+        total = total + chunk_document(meta)
 
-print(f"done: {total} chunks")
+    print(f"done: {total} chunks")
+
+
+# Only chunk when the file is run directly, not when it is imported
+if __name__ == "__main__":
+    main()
