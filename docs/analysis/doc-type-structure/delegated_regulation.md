@@ -27,7 +27,7 @@ The 12 DORA RTS exist in DE and EN; `32016R0098` only in EN.
 | `recitals` | `Whereas:`, then (1), (2), … | `in Erwägung nachstehender Gründe:` |
 | `enacting_formula` | `HAS ADOPTED THIS REGULATION:` | `HAT FOLGENDE VERORDNUNG ERLASSEN:` |
 | `enacting_terms` | first grouping heading or `Article 1`, see level 2 | `KAPITEL I`, `TITEL I` or `Artikel 1` |
-| `final_formula` | `Done at Brussels, <date>.` + signature | `Brüssel, den <date>` + signature |
+| `final_formula` | `This Regulation shall be binding in its entirety …`, then `Done at Brussels, <date>.` + signature | `Diese Verordnung ist in allen ihren Teilen verbindlich …`, then `Brüssel, den <date>` + signature |
 
 - No document of this type has an `annex` section.
 - `enacting_terms` starts with `CHAPTER 1` (2016/98, Arabic), `CHAPTER I` (1772), `TITLE I` (1774) or directly with `Article 1` (1773, 0301, 0420, 0532).
