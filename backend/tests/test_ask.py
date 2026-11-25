@@ -63,3 +63,16 @@ def test_ask_turns_an_internal_error_into_a_500_response(monkeypatch):
 
     assert response.status_code == 500
     assert response.json() == {"detail": "Internal server error"}
+    
+@pytest.mark.parametrize(
+    "question",
+    [
+        "Wie oft muss TLPT durchgeführt werden?",
+        "How often must TLPT be performed?",
+    ],
+)
+def test_ask_accepts_german_and_english(client, question):
+    response = client.post("/ask", json={"question": question})
+
+    assert response.status_code == 200
+    assert isinstance(response.json()["answer"], str)
