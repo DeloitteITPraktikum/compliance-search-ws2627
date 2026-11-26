@@ -1,168 +1,46 @@
 """Supabase REST and Storage API client."""
 
 import hashlib
+import json
+import math
 import os
-from collections.abc import Mapping
-from datetime import datetime, timezone
+import uuid
+from collections.abc import Mapping, Sequence
 from typing import Any
 
 import requests
-from compliance_search.clients.general_api import sendApiRequest
+from compliance_search.clients.general_api import sendApiRequest, startSession
 
 # Constants for the Supabase REST and Storage API client.
-SUPABASE_PROJECT_URL = "https://lnzvigpjsxzxdlndesdb.supabase.co"
+SUPABASE_PROJECT_URL = os.environ.get("SUPABASE_URL", "https://lnzvigpjsxzxdlndesdb.supabase.co")   
 SUPABASE_REST_URL = f"{SUPABASE_PROJECT_URL}/rest/v1"
 SUPABASE_DOCUMENT_STORAGE_BUCKET = "documents"
 SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
 
 
-# Table functions
-
-# List the available tables and their column names.
-def listTablesAndHeaders(
-    session: requests.Session,
-    timeout: int = 30,
-) -> dict[str, list[str]]:
-    """Return table names and their column names from the Supabase API schema.
-
-    Args:
-        session: Authenticated Supabase session.
-        timeout: Request timeout in seconds.
-
-    Returns:
-        A mapping from table names to their column names.
-
-    Raises:
-        requests.HTTPError: If the schema request fails.
-    """
-    response = sendApiRequest(
-        session,
-        "GET",
-        f"{SUPABASE_REST_URL}/",
-        headers={"Accept": "application/openapi+json"},
-        timeout=timeout,
-    )
-    schema = response.json()
-
-    tables: dict[str, list[str]] = {}
-    for definitionName, definition in schema.get("definitions", {}).items():
-        properties = definition.get("properties", {})
-        tables[definitionName] = list(properties)
-
-    if tables:
-        return tables
-
-    for path in schema.get("paths", {}):
-        tableName = path.strip("/")
-        if tableName and "/" not in tableName:
-            tables.setdefault(tableName, [])
-    return tables
-
-
-# Insert or upsert one or more table rows.
-def saveTableRows(
+# Standard table functions
+def insertTableRow(
     session: requests.Session,
     table: str,
-    rows: Mapping[str, Any] | list[Mapping[str, Any]],
+    row: Mapping[str, Any],
     *,
-    onConflict: str | None = None,
     timeout: int = 30,
 ) -> list[dict[str, Any]]:
-    """Insert or upsert one row or multiple rows in a Supabase table.
-
-    Args:
-        session: Authenticated Supabase session.
-        table: Name of the target table.
-        rows: One row mapping or a list of row mappings.
-        onConflict: Optional column used for merge-duplicate upserts.
-        timeout: Request timeout in seconds.
-
-    Returns:
-        The inserted or updated rows returned by Supabase.
-
-    Raises:
-        ValueError: If the table name or row payload is invalid.
-        requests.HTTPError: If the insert or upsert request fails.
-    """
+    """Insert one row and return the inserted representation."""
     if not table or any(character in table for character in "/?#"):
         raise ValueError("table is invalid.")
-    if isinstance(rows, Mapping):
-        payload: Mapping[str, Any] | list[Mapping[str, Any]] = dict(rows)
-    else:
-        payload = [dict(row) for row in rows]
-    if not payload:
-        raise ValueError("rows must not be empty.")
+    if not row:
+        raise ValueError("row must not be empty.")
 
-    headers = {
-        "Prefer": (
-            "resolution=merge-duplicates,return=representation"
-            if onConflict
-            else "return=representation"
-        ),
-    }
-    params = {"on_conflict": onConflict} if onConflict else None
     response = sendApiRequest(
         session,
         "POST",
         f"{SUPABASE_REST_URL}/{table}",
-        params=params,
-        jsonData=payload,
-        headers=headers,
+        jsonData=dict(row),
+        headers={"Prefer": "return=representation"},
         timeout=timeout,
     )
     return response.json() if response.content else []
-
-
-# Download table rows in JSON or CSV format.
-def downloadTable(
-    session: requests.Session,
-    table: str,
-    *,
-    dataFormat: str = "json",
-    filters: Mapping[str, str] | None = None,
-    timeout: int = 30,
-) -> list[dict[str, Any]] | str:
-    """Download table rows as JSON or CSV without saving a local file.
-
-    Args:
-        session: Authenticated Supabase session.
-        table: Name of the source table.
-        dataFormat: Output format, either ``json`` or ``csv``.
-        filters: Optional PostgREST query filters.
-        timeout: Request timeout in seconds.
-
-    Returns:
-        Parsed JSON rows or CSV text.
-
-    Raises:
-        ValueError: If the table name or data format is invalid.
-        requests.HTTPError: If the download request fails.
-    """
-    if not table or any(character in table for character in "/?#"):
-        raise ValueError("table is invalid.")
-
-    normalizedFormat = dataFormat.lower()
-    if normalizedFormat not in {"json", "csv"}:
-        raise ValueError("dataFormat must be 'json' or 'csv'.")
-
-    headers = {
-        "Accept": (
-            "application/json"
-            if normalizedFormat == "json"
-            else "text/csv"
-        ),
-    }
-    response = sendApiRequest(
-        session,
-        "GET",
-        f"{SUPABASE_REST_URL}/{table}",
-        params=dict(filters or {}),
-        headers=headers,
-        timeout=timeout,
-    )
-    if normalizedFormat == "csv":
-        return response.text
-    return response.json()
 
 
 # Search table rows using PostgREST filters.
@@ -225,92 +103,50 @@ def searchTableRows(
     return response.json()
 
 
-# Download exactly one matching table row.
-def downloadTableRow(
+# Print every row in a table as formatted JSON.
+def printTable(
     session: requests.Session,
     table: str,
-    column: str,
-    value: str,
     *,
-    columns: str = "*",
-    timeout: int = 30,
-) -> dict[str, Any] | None:
-    """Download exactly one table row by a column value.
-
-    Args:
-        session: Authenticated Supabase session.
-        table: Name of the source table.
-        column: Column used to identify the row.
-        value: Exact value expected in the column.
-        columns: Comma-separated columns to select.
-        timeout: Request timeout in seconds.
-
-    Returns:
-        The first matching row, or ``None`` if no row exists.
-
-    Raises:
-        ValueError: If the table, column, or selected columns are invalid.
-        requests.HTTPError: If the download request fails.
-    """
-    if not table or any(character in table for character in "/?#"):
-        raise ValueError("table is invalid.")
-    if not column or "/" in column or "?" in column or "#" in column:
-        raise ValueError("column is invalid.")
-    if not columns.strip():
-        raise ValueError("columns must not be empty.")
-
-    response = sendApiRequest(
-        session,
-        "GET",
-        f"{SUPABASE_REST_URL}/{table}",
-        params={
-            "select": columns,
-            column: f"eq.{value}",
-            "limit": "1",
-        },
-        timeout=timeout,
-    )
-    rows = response.json()
-    return rows[0] if rows else None
-
-
-# Delete table rows that match all supplied filters.
-def deleteTableRows(
-    session: requests.Session,
-    table: str,
-    filters: Mapping[str, str],
-    *,
+    pageSize: int = 1000,
     timeout: int = 30,
 ) -> list[dict[str, Any]]:
-    """Delete matching table rows and return the deleted rows.
+    """Print and return all rows in a table, fetching them in pages.
 
     Args:
         session: Authenticated Supabase session.
-        table: Name of the source table.
-        filters: Required PostgREST filter parameters.
+        table: Name of the table to print.
+        pageSize: Number of rows to request per page.
         timeout: Request timeout in seconds.
 
     Returns:
-        The deleted rows when Supabase returns representations.
+        All rows returned by the table.
 
     Raises:
-        ValueError: If the table name is invalid or no filters are supplied.
-        requests.HTTPError: If the delete request fails.
+        ValueError: If the table name or page size is invalid.
+        requests.HTTPError: If a table request fails.
     """
-    if not table or any(character in table for character in "/?#"):
-        raise ValueError("table is invalid.")
-    if not filters:
-        raise ValueError("At least one delete filter is required.")
+    if pageSize < 1:
+        raise ValueError("pageSize must be at least 1.")
 
-    response = sendApiRequest(
-        session,
-        "DELETE",
-        f"{SUPABASE_REST_URL}/{table}",
-        params=dict(filters),
-        headers={"Prefer": "return=representation"},
-        timeout=timeout,
-    )
-    return response.json() if response.content else []
+    rows: list[dict[str, Any]] = []
+    offset = 0
+    while True:
+        page = searchTableRows(
+            session,
+            table,
+            {},
+            limit=pageSize,
+            offset=offset,
+            timeout=timeout,
+        )
+        rows.extend(page)
+        if len(page) < pageSize:
+            break
+        offset += pageSize
+
+    print(json.dumps(rows, indent=2, ensure_ascii=False))
+    return rows
 
 
 # Delete rows identified by one exact column value.
@@ -335,63 +171,70 @@ def deleteTableRow(
         The deleted rows returned by Supabase.
 
     Raises:
-        ValueError: If the column name is invalid.
+        ValueError: If the table or column name is invalid.
         requests.HTTPError: If the delete request fails.
     """
-    if not column or "/" in column or "?" in column or "#" in column:
+    if not table or any(character in table for character in "/?#"):
+        raise ValueError("table is invalid.")
+    if not column or any(character in column for character in "/?#"):
         raise ValueError("column is invalid.")
 
-    return deleteTableRows(
+    response = sendApiRequest(
         session,
-        table,
-        {column: f"eq.{value}"},
+        "DELETE",
+        f"{SUPABASE_REST_URL}/{table}",
+        params={column: f"eq.{value}"},
+        headers={"Prefer": "return=representation"},
         timeout=timeout,
     )
+    return response.json() if response.content else []
 
 
-# Store document metadata in the documents table.
-def uploadDocument(
+# Update one field on the row selected by a column and value.
+def updateTableField(
     session: requests.Session,
-    metadata: Mapping[str, Any],
+    table: str,
+    rowColumn: str,
+    rowValue: str,
+    column: str,
+    value: Any,
     *,
     timeout: int = 30,
 ) -> list[dict[str, Any]]:
-    """Upload one document metadata row to the documents table.
+    """Update one column on rows matching the supplied row identifier.
 
     Args:
         session: Authenticated Supabase session.
-        metadata: Document metadata containing at least a unique ``id``.
+        table: Name of the target table.
+        rowColumn: Column used to identify the row.
+        rowValue: Exact value expected in the identifying column.
+        column: Column to update.
+        value: New value for the column.
         timeout: Request timeout in seconds.
 
     Returns:
-        The inserted or updated document row.
+        The updated rows returned by Supabase.
 
     Raises:
-        ValueError: If metadata does not contain a non-empty document ID.
-        requests.HTTPError: If the table upsert fails.
+        ValueError: If the table or either column name is invalid.
+        requests.HTTPError: If the update request fails.
     """
-    documentId = metadata.get("id")
-    if not isinstance(documentId, str) or not documentId.strip():
-        raise ValueError("metadata must contain a unique 'id'.")
+    if not table or any(character in table for character in "/?#"):
+        raise ValueError("table is invalid.")
+    for columnName in (rowColumn, column):
+        if not columnName or any(character in columnName for character in "/?#"):
+            raise ValueError("column is invalid.")
 
-    now = datetime.now(timezone.utc).isoformat()
-    row = {
-        "id": documentId,
-        "doc_type": metadata.get("doc_type"),
-        "sha256": metadata.get("sha256"),
-        "last_synced_at": now,
-        "version_date": metadata.get("version_date"),
-        "status": metadata.get("status", "active"),
-        "metadata": dict(metadata),
-    }
-    return saveTableRows(
+    response = sendApiRequest(
         session,
-        "documents",
-        row,
-        onConflict="id",
+        "PATCH",
+        f"{SUPABASE_REST_URL}/{table}",
+        params={rowColumn: f"eq.{rowValue}"},
+        jsonData={column: value},
+        headers={"Prefer": "return=representation"},
         timeout=timeout,
     )
-
+    return response.json() if response.content else []
 
 # PDF storage functions
 
