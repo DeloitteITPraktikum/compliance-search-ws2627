@@ -9,7 +9,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 import requests
-from compliance_search.clients.general_api import sendApiRequest, startSession
+from compliance_search.clients.general_api import sendApiRequest
 
 # Constants for the Supabase REST and Storage API client.
 SUPABASE_PROJECT_URL = os.environ.get("SUPABASE_URL", "https://lnzvigpjsxzxdlndesdb.supabase.co")   
@@ -26,7 +26,23 @@ def insertTableRow(
     *,
     timeout: int = 30,
 ) -> list[dict[str, Any]]:
-    """Insert one row and return the inserted representation."""
+    """Insert one row into a Supabase table and return its representation.
+
+    Args:
+        session: Authenticated HTTP session.
+        table: Name of the target table. Must not be empty or contain
+            ``/``, ``?``, or ``#``.
+        row: Column names and values for the row. Must not be empty.
+        timeout: Request timeout in seconds.
+
+    Returns:
+        The inserted row as a list of dictionaries, or an empty list if the
+        response has no content.
+
+    Raises:
+        ValueError: If the table name is invalid or the row is empty.
+        requests.HTTPError: If the Supabase request fails.
+    """
     if not table or any(character in table for character in "/?#"):
         raise ValueError("table is invalid.")
     if not row:
