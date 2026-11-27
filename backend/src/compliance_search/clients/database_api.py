@@ -24,36 +24,52 @@ def insertTableRow(
     table: str,
     row: Mapping[str, Any],
     *,
+    conflictColumn: str | None = None,
     timeout: int = 30,
 ) -> list[dict[str, Any]]:
-    """Insert one row into a Supabase table and return its representation.
+    """Insert one row or upsert it using a unique conflict column.
 
     Args:
         session: Authenticated HTTP session.
         table: Name of the target table. Must not be empty or contain
             ``/``, ``?``, or ``#``.
         row: Column names and values for the row. Must not be empty.
+        conflictColumn: Optional unique column used to update an existing row.
         timeout: Request timeout in seconds.
 
     Returns:
-        The inserted row as a list of dictionaries, or an empty list if the
-        response has no content.
+        The inserted or upserted row as a list of dictionaries, or an empty
+        list if the response has no content.
 
     Raises:
-        ValueError: If the table name is invalid or the row is empty.
+        ValueError: If the table, row, or conflict column is invalid.
         requests.HTTPError: If the Supabase request fails.
     """
     if not table or any(character in table for character in "/?#"):
         raise ValueError("table is invalid.")
     if not row:
         raise ValueError("row must not be empty.")
+    if conflictColumn is not None and (
+        not conflictColumn
+        or any(character in conflictColumn for character in "/?#,")
+        or conflictColumn not in row
+    ):
+        raise ValueError("conflictColumn must be a column present in row.")
+
+    headers = (
+        {"Prefer": "resolution=merge-duplicates,return=representation"}
+        if conflictColumn is not None
+        else {"Prefer": "return=representation"}
+    )
+    params = {"on_conflict": conflictColumn} if conflictColumn is not None else None
 
     response = sendApiRequest(
         session,
         "POST",
         f"{SUPABASE_REST_URL}/{table}",
+        params=params,
         jsonData=dict(row),
-        headers={"Prefer": "return=representation"},
+        headers=headers,
         timeout=timeout,
     )
     return response.json() if response.content else []
@@ -204,6 +220,42 @@ def deleteTableRow(
         timeout=timeout,
     )
     return response.json() if response.content else []
+
+
+# Read one field from the uniquely identified row in a table.
+def getTableField(
+    session: requests.Session,
+    table: str,
+    rowColumn: str,
+    rowValue: str,
+    column: str,
+    *,
+    timeout: int = 30,
+) -> Any:
+    """Return one field from the uniquely identified row in a Supabase table.
+
+    Raises:
+        LookupError: If no matching row exists.
+        ValueError: If multiple rows match or an identifier is invalid.
+        requests.HTTPError: If the Supabase request fails.
+    """
+    for columnName in (rowColumn, column):
+        if not columnName or any(character in columnName for character in "/?#,"):
+            raise ValueError("column is invalid.")
+
+    rows = searchTableRows(
+        session,
+        table,
+        {rowColumn: f"eq.{rowValue}"},
+        columns=column,
+        limit=2,
+        timeout=timeout,
+    )
+    if not rows:
+        raise LookupError(f"No row found in {table} for {rowColumn}={rowValue!r}.")
+    if len(rows) > 1:
+        raise ValueError(f"Multiple rows found in {table} for {rowColumn}={rowValue!r}.")
+    return rows[0][column]
 
 
 # Update one field on the row selected by a column and value.
