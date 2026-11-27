@@ -1,5 +1,5 @@
 # The workflow name is displayed in the GitHub Actions overview.
-name: document_sync
+name: Synchronize documents from the Document API to Database
 
 # Define the events that may start this workflow.
 on:
@@ -13,10 +13,10 @@ on:
 
 # Grant only the repository permissions required by this workflow.
 permissions:
-  # Required to commit synchronized files and push them to the repository.
-  contents: write
+  # The workflow only checks out code; synchronized data is stored in Supabase.
+  contents: read
 
-  # Required to open an issue when synchronization or publication fails.
+  # Required to open an issue when synchronization fails.
   issues: write
 
 # Prevent multiple synchronization jobs from running simultaneously.
@@ -40,10 +40,6 @@ jobs:
         # Download the repository at the commit that triggered the workflow.
         # Scheduled runs normally use the default branch, usually main.
         uses: actions/checkout@v4
-        with:
-          # main only takes pull requests. This deploy key is the one exception,
-          # so the push at the end of this job still goes through.
-          ssh-key: ${{ secrets.SYNC_DEPLOY_KEY }}
 
       - name: Install uv
         # Install uv and make it available in subsequent workflow steps.
@@ -59,6 +55,10 @@ jobs:
           # It must not be committed directly into this workflow or repository.
           GATEWAY_KEY: ${{ secrets.CI_GATEWAY_KEY }}
 
+          # Supabase credentials are separate from the Document API credentials.
+          SUPABASE_URL: https://lnzvigpjsxzxdlndesdb.supabase.co
+          SUPABASE_API_KEY: ${{ secrets.SUPABASE_API_KEY }}
+
         # Run this step with Bash, as it is also used on Ubuntu runners.
         shell: bash
         run: |
@@ -73,40 +73,17 @@ jobs:
             echo "::error::CI_GATEWAY_KEY is not configured"
             exit 1
           fi
-
-          # Run the Python sync module from the backend project.
-          # A traceback or non-zero process exit marks this workflow step as failed.
-          uv run --project backend python backend/src/compliance_search/sync/document_sync.py
-
-      - name: Commit and push new documents
-        # This step runs only after the document sync completed successfully.
-        shell: bash
-        run: |
-          # -e: stop immediately if a command exits unsuccessfully.
-          # -u: treat references to undefined variables as errors.
-          # -o pipefail: report an error if any command in a pipeline fails.
-          set -euo pipefail
-
-          # Configure an identity for the automated commit.
-          # It identifies the commit as a change produced by GitHub Actions.
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          # Add all generated and updated data files to the staging area.
-          # This includes metadata, PDFs, and synchronization state.
-          git add data
-
-          # Stop if there are no staged changes.
-          # This prevents an empty commit and an unnecessary GitHub run.
-          if git diff --cached --quiet; then
-            echo "No document changes."
-          else
-            # Commit only after the sync and staged change check succeeded.
-            git commit -m "Sync: update documents from Document API"
-
-            # Publish the synchronized files back to the repository.
-            git push
+          if [[ -z "${SUPABASE_URL:-}" ]]; then
+            echo "::error::SUPABASE_URL is not configured"
+            exit 1
           fi
+          if [[ -z "${SUPABASE_API_KEY:-}" ]]; then
+            echo "::error::SUPABASE_API_KEY is not configured"
+            exit 1
+          fi
+
+          # Synchronize metadata and PDFs directly with Supabase.
+          uv run --project backend python backend/src/compliance_search/sync/document_sync_db.py
 
       - name: Notify team on failure
         # This step runs when one of the earlier steps fails.
