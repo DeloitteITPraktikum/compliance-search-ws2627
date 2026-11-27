@@ -3,57 +3,66 @@
 import hashlib
 import json
 import math
-import os
 import uuid
 from collections.abc import Mapping, Sequence
 from typing import Any
 
 import requests
-from compliance_search.clients.general_api import sendApiRequest
-
-# Constants for the Supabase REST and Storage API client.
-SUPABASE_PROJECT_URL = os.environ.get("SUPABASE_URL", "https://lnzvigpjsxzxdlndesdb.supabase.co")   
-SUPABASE_REST_URL = f"{SUPABASE_PROJECT_URL}/rest/v1"
-SUPABASE_DOCUMENT_STORAGE_BUCKET = "documents"
-SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
-
+from compliance_search.clients.general_REST_api import sendApiRequest
 
 # Standard table functions
 def insertTableRow(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     row: Mapping[str, Any],
     *,
+    conflictColumn: str | None = None,
     timeout: int = 30,
 ) -> list[dict[str, Any]]:
-    """Insert one row into a Supabase table and return its representation.
+    """Insert one row or upsert it using a unique conflict column.
 
     Args:
         session: Authenticated HTTP session.
         table: Name of the target table. Must not be empty or contain
             ``/``, ``?``, or ``#``.
         row: Column names and values for the row. Must not be empty.
+        conflictColumn: Optional unique column used to update an existing row.
         timeout: Request timeout in seconds.
 
     Returns:
-        The inserted row as a list of dictionaries, or an empty list if the
-        response has no content.
+        The inserted or upserted row as a list of dictionaries, or an empty
+        list if the response has no content.
 
     Raises:
-        ValueError: If the table name is invalid or the row is empty.
+        ValueError: If the table, row, or conflict column is invalid.
         requests.HTTPError: If the Supabase request fails.
     """
     if not table or any(character in table for character in "/?#"):
         raise ValueError("table is invalid.")
     if not row:
         raise ValueError("row must not be empty.")
+    if conflictColumn is not None and (
+        not conflictColumn
+        or any(character in conflictColumn for character in "/?#,")
+        or conflictColumn not in row
+    ):
+        raise ValueError("conflictColumn must be a column present in row.")
+
+    headers = (
+        {"Prefer": "resolution=merge-duplicates,return=representation"}
+        if conflictColumn is not None
+        else {"Prefer": "return=representation"}
+    )
+    params = {"on_conflict": conflictColumn} if conflictColumn is not None else None
 
     response = sendApiRequest(
         session,
         "POST",
-        f"{SUPABASE_REST_URL}/{table}",
+        f"{supabaseUrl.rstrip('/')}/rest/v1/{table}",
+        params=params,
         jsonData=dict(row),
-        headers={"Prefer": "return=representation"},
+        headers=headers,
         timeout=timeout,
     )
     return response.json() if response.content else []
@@ -62,6 +71,7 @@ def insertTableRow(
 # Search table rows using PostgREST filters.
 def searchTableRows(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     filters: Mapping[str, str],
     *,
@@ -112,7 +122,7 @@ def searchTableRows(
     response = sendApiRequest(
         session,
         "GET",
-        f"{SUPABASE_REST_URL}/{table}",
+        f"{supabaseUrl.rstrip('/')}/rest/v1/{table}",
         params=params,
         timeout=timeout,
     )
@@ -122,6 +132,7 @@ def searchTableRows(
 # Print every row in a table as formatted JSON.
 def printTable(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     *,
     pageSize: int = 1000,
@@ -150,6 +161,7 @@ def printTable(
     while True:
         page = searchTableRows(
             session,
+            supabaseUrl,
             table,
             {},
             limit=pageSize,
@@ -168,6 +180,7 @@ def printTable(
 # Delete rows identified by one exact column value.
 def deleteTableRow(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     column: str,
     value: str,
@@ -198,7 +211,7 @@ def deleteTableRow(
     response = sendApiRequest(
         session,
         "DELETE",
-        f"{SUPABASE_REST_URL}/{table}",
+        f"{supabaseUrl.rstrip('/')}/rest/v1/{table}",
         params={column: f"eq.{value}"},
         headers={"Prefer": "return=representation"},
         timeout=timeout,
@@ -206,9 +219,48 @@ def deleteTableRow(
     return response.json() if response.content else []
 
 
+# Read one field from the uniquely identified row in a table.
+def getTableField(
+    session: requests.Session,
+    supabaseUrl: str,
+    table: str,
+    rowColumn: str,
+    rowValue: str,
+    column: str,
+    *,
+    timeout: int = 30,
+) -> Any:
+    """Return one field from the uniquely identified row in a Supabase table.
+
+    Raises:
+        LookupError: If no matching row exists.
+        ValueError: If multiple rows match or an identifier is invalid.
+        requests.HTTPError: If the Supabase request fails.
+    """
+    for columnName in (rowColumn, column):
+        if not columnName or any(character in columnName for character in "/?#,"):
+            raise ValueError("column is invalid.")
+
+    rows = searchTableRows(
+        session,
+        supabaseUrl,
+        table,
+        {rowColumn: f"eq.{rowValue}"},
+        columns=column,
+        limit=2,
+        timeout=timeout,
+    )
+    if not rows:
+        raise LookupError(f"No row found in {table} for {rowColumn}={rowValue!r}.")
+    if len(rows) > 1:
+        raise ValueError(f"Multiple rows found in {table} for {rowColumn}={rowValue!r}.")
+    return rows[0][column]
+
+
 # Update one field on the row selected by a column and value.
 def updateTableField(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     rowColumn: str,
     rowValue: str,
@@ -244,7 +296,7 @@ def updateTableField(
     response = sendApiRequest(
         session,
         "PATCH",
-        f"{SUPABASE_REST_URL}/{table}",
+        f"{supabaseUrl.rstrip('/')}/rest/v1/{table}",
         params={rowColumn: f"eq.{rowValue}"},
         jsonData={column: value},
         headers={"Prefer": "return=representation"},
@@ -257,10 +309,11 @@ def updateTableField(
 # Upload PDF bytes to Supabase Storage.
 def uploadPdf(
     session: requests.Session,
+    supabaseUrl: str,
     pdfBytes: bytes,
     documentId: str,
     *,
-    bucket: str = SUPABASE_DOCUMENT_STORAGE_BUCKET,
+    bucket: str = "documents",
     timeout: int = 60,
 ) -> dict[str, Any]:
     """Upload PDF bytes to Supabase Storage and return storage information.
@@ -289,7 +342,7 @@ def uploadPdf(
     response = sendApiRequest(
         session,
         "PUT",
-        f"{SUPABASE_PROJECT_URL}/storage/v1/object/{bucket}/{storagePath}",
+        f"{supabaseUrl.rstrip('/')}/storage/v1/object/{bucket}/{storagePath}",
         data=pdfBytes,
         headers={
             "Content-Type": "application/pdf",
@@ -312,9 +365,10 @@ def uploadPdf(
 # Download a PDF from Supabase Storage.
 def downloadPdf(
     session: requests.Session,
+    supabaseUrl: str,
     documentId: str,
     *,
-    bucket: str = SUPABASE_DOCUMENT_STORAGE_BUCKET,
+    bucket: str = "documents",
     timeout: int = 60,
 ) -> bytes:
     """Download a PDF by document ID and return its bytes.
@@ -339,18 +393,52 @@ def downloadPdf(
     response = sendApiRequest(
         session,
         "GET",
-        f"{SUPABASE_PROJECT_URL}/storage/v1/object/{bucket}/{storagePath}",
+        f"{supabaseUrl.rstrip('/')}/storage/v1/object/{bucket}/{storagePath}",
         timeout=timeout,
     )
     return response.content
 
 
+# Check whether a PDF exists in Supabase Storage without downloading it.
+def pdfExists(
+    session: requests.Session,
+    supabaseUrl: str,
+    documentId: str,
+    *,
+    bucket: str = "documents",
+    timeout: int = 60,
+) -> bool:
+    """Return whether the PDF for a document exists in Supabase Storage.
+
+    Raises:
+        ValueError: If the document ID is invalid.
+        requests.HTTPError: If the Storage request fails for another reason.
+    """
+    if not documentId or "/" in documentId or "\\" in documentId:
+        raise ValueError("documentId is invalid.")
+
+    storagePath = f"{documentId}.pdf"
+    try:
+        sendApiRequest(
+            session,
+            "HEAD",
+            f"{supabaseUrl.rstrip('/')}/storage/v1/object/{bucket}/{storagePath}",
+            timeout=timeout,
+        )
+    except requests.HTTPError as error:
+        if error.response is not None and error.response.status_code in (400, 404):
+            return False
+        raise
+    return True
+
+
 # Delete a PDF from Supabase Storage.
 def deletePdf(
     session: requests.Session,
+    supabaseUrl: str,
     documentId: str,
     *,
-    bucket: str = SUPABASE_DOCUMENT_STORAGE_BUCKET,
+    bucket: str = "documents",
     timeout: int = 60,
 ) -> list[dict[str, Any]]:
     """Delete a document PDF from Supabase Storage.
@@ -375,7 +463,7 @@ def deletePdf(
     response = sendApiRequest(
         session,
         "DELETE",
-        f"{SUPABASE_PROJECT_URL}/storage/v1/object/{bucket}",
+        f"{supabaseUrl.rstrip('/')}/storage/v1/object/{bucket}",
         jsonData={"prefixes": [storagePath]},
         headers={"Content-Type": "application/json"},
         timeout=timeout,

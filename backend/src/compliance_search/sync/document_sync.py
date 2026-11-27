@@ -8,7 +8,7 @@ from compliance_search.clients.document_api import (
     downloadDocuments,
     listDocuments,
 )
-from compliance_search.clients.general_api import startSession
+from compliance_search.clients.general_REST_api import startSession
 
 # Environment variables
 
