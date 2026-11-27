@@ -10,6 +10,7 @@ from compliance_search.clients.database_api import (
     deletePdf,
     getTableField,
     insertTableRow,
+    pdfExists,
     uploadPdf,
 )
 from compliance_search.clients.document_api import downloadDocuments, listDocuments
@@ -51,24 +52,11 @@ def syncDocuments(
             raise ValueError("Document API returned a document without an id.")
 
         if remoteMetadata.get("status") == "deleted":
-            try:
-                existingStatus = getTableField(
-                    databaseSession,
-                    supabaseUrl,
-                    DOCUMENTS_TABLE,
-                    "id",
-                    documentId,
-                    "status",
-                )
-            except LookupError:
-                existingStatus = None
-
-            if existingStatus is not None and existingStatus != "deleted":
-                deletePdf(
-                    databaseSession,
-                    supabaseUrl,
-                    documentId,
-                )
+            deletePdf(
+                databaseSession,
+                supabaseUrl,
+                documentId,
+            )
 
             row = dict(remoteMetadata)
             row["last_synced_at"] = datetime.now(timezone.utc).isoformat()
@@ -95,7 +83,15 @@ def syncDocuments(
         except LookupError:
             storedSha256 = None
 
-        if remoteSha256 is None or storedSha256 != remoteSha256:
+        shouldDownload = remoteSha256 is None or storedSha256 != remoteSha256
+        if not shouldDownload:
+            shouldDownload = not pdfExists(
+                databaseSession,
+                supabaseUrl,
+                documentId,
+            )
+
+        if shouldDownload:
             pdfData = downloadDocuments(documentSession, docsUrl.rstrip("/"), documentId)
             downloadedSha256 = hashlib.sha256(pdfData).hexdigest()
             if remoteSha256 is not None and downloadedSha256 != remoteSha256:

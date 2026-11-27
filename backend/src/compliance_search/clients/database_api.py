@@ -399,6 +399,39 @@ def downloadPdf(
     return response.content
 
 
+# Check whether a PDF exists in Supabase Storage without downloading it.
+def pdfExists(
+    session: requests.Session,
+    supabaseUrl: str,
+    documentId: str,
+    *,
+    bucket: str = "documents",
+    timeout: int = 60,
+) -> bool:
+    """Return whether the PDF for a document exists in Supabase Storage.
+
+    Raises:
+        ValueError: If the document ID is invalid.
+        requests.HTTPError: If the Storage request fails for another reason.
+    """
+    if not documentId or "/" in documentId or "\\" in documentId:
+        raise ValueError("documentId is invalid.")
+
+    storagePath = f"{documentId}.pdf"
+    try:
+        sendApiRequest(
+            session,
+            "HEAD",
+            f"{supabaseUrl.rstrip('/')}/storage/v1/object/{bucket}/{storagePath}",
+            timeout=timeout,
+        )
+    except requests.HTTPError as error:
+        if error.response is not None and error.response.status_code == 404:
+            return False
+        raise
+    return True
+
+
 # Delete a PDF from Supabase Storage.
 def deletePdf(
     session: requests.Session,
