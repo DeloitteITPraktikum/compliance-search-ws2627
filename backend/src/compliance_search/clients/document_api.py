@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Any
 import json
 import requests
-from compliance_search.clients.general_api import sendApiRequest
+from compliance_search.clients.general_REST_api import sendApiRequest
 
 def healthCheck(session: requests.Session, docsUrl: str) -> bool:
     """Check whether the document API at the specified URL is reachable."""

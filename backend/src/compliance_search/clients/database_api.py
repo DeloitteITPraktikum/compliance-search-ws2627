@@ -8,7 +8,7 @@ from collections.abc import Mapping, Sequence
 from typing import Any
 
 import requests
-from compliance_search.clients.general_api import sendApiRequest
+from compliance_search.clients.general_REST_api import sendApiRequest
 
 # Standard table functions
 def insertTableRow(
