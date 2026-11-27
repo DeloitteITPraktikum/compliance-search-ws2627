@@ -1,4 +1,4 @@
-"""Turn the units of one document into chunks: one chunk per article or recital.
+"""Turn the units of one document into chunks: one chunk per article, recital or annex.
 
 The context line in front of the embedding text names the document, the grouping
 headings and the article, because embeddings do not read article numbers well
@@ -11,7 +11,7 @@ import hashlib
 from compliance_search.processing.chunking.group_units import Unit
 from compliance_search.processing.chunks import CHUNKER_VERSION, Chunk
 
-LABEL_WORD = {"article": "Article", "recital": "Recital"}
+LABEL_WORD = {"article": "Article", "recital": "Recital", "annex": "Annex"}
 
 
 def build_chunks(units: list[Unit], metadata: dict) -> list[Chunk]:

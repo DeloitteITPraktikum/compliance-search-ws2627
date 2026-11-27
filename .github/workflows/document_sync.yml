@@ -40,6 +40,10 @@ jobs:
         # Download the repository at the commit that triggered the workflow.
         # Scheduled runs normally use the default branch, usually main.
         uses: actions/checkout@v4
+        with:
+          # main only takes pull requests. This deploy key is the one exception,
+          # so the push at the end of this job still goes through.
+          ssh-key: ${{ secrets.SYNC_DEPLOY_KEY }}
 
       - name: Install uv
         # Install uv and make it available in subsequent workflow steps.

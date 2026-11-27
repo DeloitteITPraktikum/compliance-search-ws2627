@@ -6,8 +6,8 @@ METADATA = {"id": "32025R0301_EN", "family_id": "32025R0301", "version_date": "2
             "language": "EN", "doc_type": "delegated_regulation", "title": "Delegated Regulation (EU) 2025/301"}
 
 
-def line(text, section_type="enacting_terms", article=None, recital=None, bold=False, page=2):
-    return SectionLine(section_type=section_type, article=article, recital=recital, seq=1, page_number=page,
+def line(text, section_type="enacting_terms", article=None, recital=None, annex=None, bold=False, page=2):
+    return SectionLine(section_type=section_type, article=article, recital=recital, annex=annex, seq=1, page_number=page,
                        font_size=9.6, font="/Regular", bold=bold, x=68, y=500, text=text)
 
 
@@ -33,6 +33,17 @@ def test_recital_becomes_one_chunk():
     [chunk] = chunks(lines)
 
     assert (chunk.label, chunk.text) == ("Recital 1", "To ensure harmonisation,")
+
+
+# Does one annex become one chunk with its label and title, without "ANNEX III"?
+def test_annex_becomes_one_chunk():
+    lines = [line("ANNEX III", section_type="annex", annex="III"),
+             line("High-risk AI systems", section_type="annex", annex="III", bold=True),
+             line("1. Biometrics", section_type="annex", annex="III")]
+
+    [chunk] = chunks(lines)
+
+    assert (chunk.label, chunk.title, chunk.text) == ("Annex III", "High-risk AI systems", "1. Biometrics")
 
 
 # Is a footnote left out without ending the article?

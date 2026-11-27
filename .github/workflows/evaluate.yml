@@ -23,7 +23,7 @@ jobs:
       #   uv sync
       #   uv run uvicorn app.main:app --port 8000 &
       - name: Start the app
-        run: echo "TODO: start your app here" && exit 1
+        run: 'echo "TODO: start your app here" && exit 1'
 
       - name: Wait for the app
         run: |
