@@ -7,8 +7,8 @@ import json
 from compliance_search.clients.document_api import (
     downloadDocuments,
     listDocuments,
-    startSession,
 )
+from compliance_search.clients.general_api import startSession
 
 # Environment variables
 
