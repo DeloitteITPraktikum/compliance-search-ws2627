@@ -1,5 +1,5 @@
 # The workflow name is displayed in the GitHub Actions overview.
-name: Synchronize documents from the Document API to Database
+name: Synchronize documents from the Document API to the Database
 
 # Define the events that may start this workflow.
 on:
@@ -94,8 +94,18 @@ jobs:
           # It is also limited by the issues: write permission above.
           GH_TOKEN: ${{ github.token }}
         run: |
-          # Open a GitHub Issue containing the date and a link to the logs.
-          # Backslash continuations join the title and body arguments.
-          gh issue create \
-            --title "Document sync failed ($(date -u +%Y-%m-%d))" \
-            --body "The document sync failed. Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          # Reuse one open issue for repeated failures instead of creating duplicates.
+          title="Document sync failed"
+          body="The document sync failed. Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          issue_number="$(gh issue list \
+            --state open \
+            --search 'in:title "Document sync failed"' \
+            --limit 100 \
+            --json number,title \
+            --jq '.[] | select(.title == "Document sync failed") | .number' | head -n 1)"
+
+          if [[ -n "$issue_number" ]]; then
+            gh issue comment "$issue_number" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi
