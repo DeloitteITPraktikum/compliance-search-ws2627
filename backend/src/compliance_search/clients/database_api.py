@@ -426,7 +426,7 @@ def pdfExists(
             timeout=timeout,
         )
     except requests.HTTPError as error:
-        if error.response is not None and error.response.status_code == 404:
+        if error.response is not None and error.response.status_code in (400, 404):
             return False
         raise
     return True

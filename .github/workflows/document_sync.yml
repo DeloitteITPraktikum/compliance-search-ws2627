@@ -94,6 +94,8 @@ jobs:
           # It is also limited by the issues: write permission above.
           GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
+
           # Reuse one open issue for repeated failures instead of creating duplicates.
           title="Document sync failed"
           body="The document sync failed. Logs: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
