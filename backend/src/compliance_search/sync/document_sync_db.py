@@ -7,24 +7,25 @@ from datetime import datetime, timezone
 from typing import Any
 
 from compliance_search.clients.database_api import (
-    SUPABASE_API_KEY,
-    SUPABASE_DOCUMENT_STORAGE_BUCKET,
     deletePdf,
     getTableField,
     insertTableRow,
     uploadPdf,
 )
 from compliance_search.clients.document_api import downloadDocuments, listDocuments
-from compliance_search.clients.general_api import startSession
+from compliance_search.clients.general_REST_api import startSession
 
 DOCS_URL = os.environ.get("DOCS_URL")
 GATEWAY_KEY = os.environ.get("GATEWAY_KEY")
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
 DOCUMENTS_TABLE = "documents"
 
 
 def syncDocuments(
     docsUrl: str,
     gatewayKey: str,
+    supabaseUrl: str,
     supabaseApiKey: str,
 ) -> dict[str, int]:
     """Synchronize all document metadata and PDFs to Supabase.
@@ -53,6 +54,7 @@ def syncDocuments(
             try:
                 existingStatus = getTableField(
                     databaseSession,
+                    supabaseUrl,
                     DOCUMENTS_TABLE,
                     "id",
                     documentId,
@@ -64,14 +66,15 @@ def syncDocuments(
             if existingStatus is not None and existingStatus != "deleted":
                 deletePdf(
                     databaseSession,
+                    supabaseUrl,
                     documentId,
-                    bucket=SUPABASE_DOCUMENT_STORAGE_BUCKET,
                 )
 
             row = dict(remoteMetadata)
             row["last_synced_at"] = datetime.now(timezone.utc).isoformat()
             insertTableRow(
                 databaseSession,
+                supabaseUrl,
                 DOCUMENTS_TABLE,
                 row,
                 conflictColumn="id",
@@ -83,6 +86,7 @@ def syncDocuments(
         try:
             storedSha256 = getTableField(
                 databaseSession,
+                supabaseUrl,
                 DOCUMENTS_TABLE,
                 "id",
                 documentId,
@@ -100,9 +104,9 @@ def syncDocuments(
                 )
             uploadPdf(
                 databaseSession,
+                supabaseUrl,
                 pdfData,
                 documentId,
-                bucket=SUPABASE_DOCUMENT_STORAGE_BUCKET,
             )
             downloaded += 1
         else:
@@ -112,6 +116,7 @@ def syncDocuments(
         row["last_synced_at"] = datetime.now(timezone.utc).isoformat()
         insertTableRow(
             databaseSession,
+            supabaseUrl,
             DOCUMENTS_TABLE,
             row,
             conflictColumn="id",
@@ -129,10 +134,17 @@ def main() -> None:
         raise RuntimeError("DOCS_URL fehlt!")
     if not GATEWAY_KEY:
         raise RuntimeError("GATEWAY_KEY fehlt!")
+    if not SUPABASE_URL:
+        raise RuntimeError("SUPABASE_URL fehlt!")
     if not SUPABASE_API_KEY:
         raise RuntimeError("SUPABASE_API_KEY fehlt!")
 
-    syncReport = syncDocuments(DOCS_URL, GATEWAY_KEY, SUPABASE_API_KEY)
+    syncReport = syncDocuments(
+        DOCS_URL,
+        GATEWAY_KEY,
+        SUPABASE_URL,
+        SUPABASE_API_KEY,
+    )
     print(json.dumps(syncReport, indent=2, ensure_ascii=False))
 
 
