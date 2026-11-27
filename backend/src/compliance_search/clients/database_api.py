@@ -3,7 +3,6 @@
 import hashlib
 import json
 import math
-import os
 import uuid
 from collections.abc import Mapping, Sequence
 from typing import Any
@@ -11,16 +10,10 @@ from typing import Any
 import requests
 from compliance_search.clients.general_api import sendApiRequest
 
-# Constants for the Supabase REST and Storage API client.
-SUPABASE_PROJECT_URL = os.environ.get("SUPABASE_URL", "https://lnzvigpjsxzxdlndesdb.supabase.co")   
-SUPABASE_REST_URL = f"{SUPABASE_PROJECT_URL}/rest/v1"
-SUPABASE_DOCUMENT_STORAGE_BUCKET = "documents"
-SUPABASE_API_KEY = os.environ.get("SUPABASE_API_KEY")
-
-
 # Standard table functions
 def insertTableRow(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     row: Mapping[str, Any],
     *,
@@ -66,7 +59,7 @@ def insertTableRow(
     response = sendApiRequest(
         session,
         "POST",
-        f"{SUPABASE_REST_URL}/{table}",
+        f"{supabaseUrl.rstrip('/')}/rest/v1/{table}",
         params=params,
         jsonData=dict(row),
         headers=headers,
@@ -78,6 +71,7 @@ def insertTableRow(
 # Search table rows using PostgREST filters.
 def searchTableRows(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     filters: Mapping[str, str],
     *,
@@ -128,7 +122,7 @@ def searchTableRows(
     response = sendApiRequest(
         session,
         "GET",
-        f"{SUPABASE_REST_URL}/{table}",
+        f"{supabaseUrl.rstrip('/')}/rest/v1/{table}",
         params=params,
         timeout=timeout,
     )
@@ -138,6 +132,7 @@ def searchTableRows(
 # Print every row in a table as formatted JSON.
 def printTable(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     *,
     pageSize: int = 1000,
@@ -166,6 +161,7 @@ def printTable(
     while True:
         page = searchTableRows(
             session,
+            supabaseUrl,
             table,
             {},
             limit=pageSize,
@@ -184,6 +180,7 @@ def printTable(
 # Delete rows identified by one exact column value.
 def deleteTableRow(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     column: str,
     value: str,
@@ -214,7 +211,7 @@ def deleteTableRow(
     response = sendApiRequest(
         session,
         "DELETE",
-        f"{SUPABASE_REST_URL}/{table}",
+        f"{supabaseUrl.rstrip('/')}/rest/v1/{table}",
         params={column: f"eq.{value}"},
         headers={"Prefer": "return=representation"},
         timeout=timeout,
@@ -225,6 +222,7 @@ def deleteTableRow(
 # Read one field from the uniquely identified row in a table.
 def getTableField(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     rowColumn: str,
     rowValue: str,
@@ -245,6 +243,7 @@ def getTableField(
 
     rows = searchTableRows(
         session,
+        supabaseUrl,
         table,
         {rowColumn: f"eq.{rowValue}"},
         columns=column,
@@ -261,6 +260,7 @@ def getTableField(
 # Update one field on the row selected by a column and value.
 def updateTableField(
     session: requests.Session,
+    supabaseUrl: str,
     table: str,
     rowColumn: str,
     rowValue: str,
@@ -296,7 +296,7 @@ def updateTableField(
     response = sendApiRequest(
         session,
         "PATCH",
-        f"{SUPABASE_REST_URL}/{table}",
+        f"{supabaseUrl.rstrip('/')}/rest/v1/{table}",
         params={rowColumn: f"eq.{rowValue}"},
         jsonData={column: value},
         headers={"Prefer": "return=representation"},
@@ -309,10 +309,11 @@ def updateTableField(
 # Upload PDF bytes to Supabase Storage.
 def uploadPdf(
     session: requests.Session,
+    supabaseUrl: str,
     pdfBytes: bytes,
     documentId: str,
     *,
-    bucket: str = SUPABASE_DOCUMENT_STORAGE_BUCKET,
+    bucket: str = "documents",
     timeout: int = 60,
 ) -> dict[str, Any]:
     """Upload PDF bytes to Supabase Storage and return storage information.
@@ -341,7 +342,7 @@ def uploadPdf(
     response = sendApiRequest(
         session,
         "PUT",
-        f"{SUPABASE_PROJECT_URL}/storage/v1/object/{bucket}/{storagePath}",
+        f"{supabaseUrl.rstrip('/')}/storage/v1/object/{bucket}/{storagePath}",
         data=pdfBytes,
         headers={
             "Content-Type": "application/pdf",
@@ -364,9 +365,10 @@ def uploadPdf(
 # Download a PDF from Supabase Storage.
 def downloadPdf(
     session: requests.Session,
+    supabaseUrl: str,
     documentId: str,
     *,
-    bucket: str = SUPABASE_DOCUMENT_STORAGE_BUCKET,
+    bucket: str = "documents",
     timeout: int = 60,
 ) -> bytes:
     """Download a PDF by document ID and return its bytes.
@@ -391,7 +393,7 @@ def downloadPdf(
     response = sendApiRequest(
         session,
         "GET",
-        f"{SUPABASE_PROJECT_URL}/storage/v1/object/{bucket}/{storagePath}",
+        f"{supabaseUrl.rstrip('/')}/storage/v1/object/{bucket}/{storagePath}",
         timeout=timeout,
     )
     return response.content
@@ -400,9 +402,10 @@ def downloadPdf(
 # Delete a PDF from Supabase Storage.
 def deletePdf(
     session: requests.Session,
+    supabaseUrl: str,
     documentId: str,
     *,
-    bucket: str = SUPABASE_DOCUMENT_STORAGE_BUCKET,
+    bucket: str = "documents",
     timeout: int = 60,
 ) -> list[dict[str, Any]]:
     """Delete a document PDF from Supabase Storage.
@@ -427,7 +430,7 @@ def deletePdf(
     response = sendApiRequest(
         session,
         "DELETE",
-        f"{SUPABASE_PROJECT_URL}/storage/v1/object/{bucket}",
+        f"{supabaseUrl.rstrip('/')}/storage/v1/object/{bucket}",
         jsonData={"prefixes": [storagePath]},
         headers={"Content-Type": "application/json"},
         timeout=timeout,
